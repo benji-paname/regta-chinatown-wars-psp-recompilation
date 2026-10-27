@@ -121,6 +121,8 @@ pub struct Car {
     pub yaw_rate: f32,
     /// Front wheel angle in radians.
     pub steer_angle: f32,
+    /// Player-only assistance preference; NPC controls never enable it.
+    pub steering_assist: bool,
     /// Transmission gear (-1 = reverse, 0 = neutral, 1..=num_gears = forward).
     pub gear: i8,
     /// Normalized engine RPM (0.2 .. 1.0).
@@ -498,6 +500,7 @@ pub(crate) fn make_vehicle(
         lat_vel: 0.,
         yaw_rate: 0.,
         steer_angle: 0.,
+        steering_assist: false,
         gear: 1,
         rpm: 0.22,
         roll: 0.,

@@ -57,6 +57,7 @@ pub struct Options {
     pub audit: bool,
     pub freecam: bool,
     pub camera_profile: Option<CameraProfile>,
+    pub steering_assist: Option<bool>,
     pub debug: bool,
     pub pace: u8,
     pub heading: f32,
@@ -89,6 +90,7 @@ impl Default for Options {
             audit: false,
             freecam: false,
             camera_profile: None,
+            steering_assist: None,
             debug: false,
             pace: 2,
             heading: 0.,
@@ -387,14 +389,15 @@ pub fn run(
     let start = player.p;
     let initial_heading = (options.heading * 65536. / 360.) as i32 as u16;
     let settings_path = output.join("camera-settings.json");
-    let saved_profile = if options.headless || options.frames.is_some() {
+    let saved_settings = if options.headless || options.frames.is_some() {
         None
     } else {
         fs::read(&settings_path)
             .ok()
             .and_then(|b| serde_json::from_slice::<serde_json::Value>(&b).ok())
-            .and_then(|v| v["camera"].as_str().and_then(CameraProfile::parse))
     };
+    let saved_profile = saved_settings.as_ref().and_then(|v| v["camera"].as_str().and_then(CameraProfile::parse));
+    let mut steering_assist = options.steering_assist.or_else(|| saved_settings.as_ref().and_then(|v| v["steering_assist"].as_bool())).unwrap_or(true);
     let mut camera = Camera::new(
         player.p,
         initial_heading,
@@ -927,13 +930,13 @@ pub fn run(
         if !map_consumes
             && (pressed.contains(&Key::F3)
                 || profile_button
-                || (pad.pressed(crate::gamepad::RSTICK) && !pad.held(crate::gamepad::LB)))
+                || (pad.pressed(crate::gamepad::RSTICK) && !pad.held(crate::gamepad::LB) && !pad.held(crate::gamepad::RB)))
         {
             camera.set_profile(camera.profile.next(), player.p);
             if !options.headless && options.frames.is_none() {
                 if let Err(error) = fs::write(
                     &settings_path,
-                    serde_json::json!({"camera":camera.profile.name()}).to_string(),
+                    serde_json::json!({"camera":camera.profile.name(),"steering_assist":steering_assist}).to_string(),
                 ) {
                     eprintln!("Impossible de memoriser la camera : {error}");
                 }
@@ -942,6 +945,17 @@ pub fn run(
             reload = true;
         }
         left_was_down = left_down;
+        if !map_consumes && (pressed.contains(&Key::F6)
+            || (pad.held(crate::gamepad::RB) && pad.pressed(crate::gamepad::RSTICK) && !pad.held(crate::gamepad::LB))) {
+            steering_assist = !steering_assist;
+            gps.message = if steering_assist { "DIRECTION ASSISTEE ON - F6 / RB+RS" } else { "DIRECTION ASSISTEE OFF - F6 / RB+RS" };
+            if !options.headless && options.frames.is_none() {
+                if let Err(error) = fs::write(&settings_path,
+                    serde_json::json!({"camera":camera.profile.name(),"steering_assist":steering_assist}).to_string()) {
+                    eprintln!("Unable to save driving preferences: {error}");
+                }
+            }
+        }
         if !map_consumes
             && (pressed.contains(&Key::F2) || camera_button || pad.pressed(crate::gamepad::DPAD_UP))
         {
@@ -1199,7 +1213,7 @@ pub fn run(
                     }
                     let is_handbrake = held(&[Key::Space]) > 0.
                         || vault_button
-                        || pad.held(crate::gamepad::RB)
+                        || (pad.held(crate::gamepad::RB) && !pad.held(crate::gamepad::RSTICK))
                         || pad.held(crate::gamepad::B)
                         || options.brake_at.is_some_and(|t| ticks >= t);
 
@@ -1220,6 +1234,9 @@ pub fn run(
                         crate::actors::DriveInput::controls(gas, foot_brake, steer, is_handbrake)
                     };
                     let was_driving = s.driving;
+                    for (id, car) in s.cars.iter_mut().enumerate() {
+                        car.steering_assist = steering_assist && was_driving == Some(id);
+                    }
                     let bike_info = was_driving.and_then(|idx| {
                         let car = &s.cars[idx];
                         if car.is_bike() {
@@ -1386,23 +1403,35 @@ pub fn run(
                 } else {
                     None
                 };
-                camera.step_with_input(
+                let recenter = held(&[Key::C]) > 0.
+                    || (pad.held(crate::gamepad::LB) && !pad.held(crate::gamepad::Y));
+                if let Some((id, car)) = scene.as_ref().and_then(|s| s.driving.map(|id| (id, &s.cars[id]))) {
+                    camera.step_vehicle(crate::camera::VehicleView {
+                        id,
+                        position: car.p,
+                        heading: (-car.angle * 65536. / std::f32::consts::TAU) as i32 as u16,
+                        forward_speed: car.speed,
+                        lateral_speed: car.lat_vel,
+                        half_length: car.h[1],
+                        recenter,
+                    }, &collision);
+                } else {
+                    camera.step_with_input(
                     player.p,
                     heading,
                     velocity,
                     &collision,
                     crate::camera::FollowInput {
-                        sprint: run || driving,
+                        sprint: run,
                         walk_angle,
-                        recenter: (driving && player.velocity[0].hypot(player.velocity[1]) > 3.)
-                            || held(&[Key::C]) > 0.
-                            || (pad.held(crate::gamepad::LB) && !pad.held(crate::gamepad::Y)),
+                        recenter,
                     },
                 );
+                }
             }
             if let Some(s) = scene.as_ref() {
                 if ticks % 15 == 0 && scene_samples.len() < 256 {
-                    scene_samples.push(serde_json::json!({"tick":ticks,"p":player.p,"driving":s.driving,"health":s.health,"armour":s.armour,"hits":s.hits,"speed":s.driving.map(|i|s.cars[i].speed)}));
+                    scene_samples.push(serde_json::json!({"tick":ticks,"p":player.p,"driving":s.driving,"health":s.health,"armour":s.armour,"hits":s.hits,"speed":s.driving.map(|i|s.cars[i].speed),"camera_eye":camera.eye(),"camera_yaw":camera.yaw,"camera_pitch":camera.pitch,"camera_profile":camera.profile.name()}));
                 }
             }
             accumulator -= 1. / 30.;
@@ -1505,6 +1534,19 @@ pub fn run(
         "weather": weather_tables.is_some(), "sound": sound_reference_loaded,
         "psp_provenance_verified": false
     });
+    report["steering_assist"] = serde_json::json!({"enabled":steering_assist,
+        "source":"PSP ULES01347 0x089cb264..0x089cb720", "full_original_parity_verified":false,
+        "keyboard":"F6", "xinput":"RB+RS"});
+    let in_vehicle = scene.as_ref().is_some_and(|s| s.driving.is_some());
+    report["camera"]["controller"] = serde_json::json!(if in_vehicle { "FollowCarCam2" } else { "FollowPedCam" });
+    if in_vehicle {
+        report["camera"]["height"] = serde_json::Value::Null;
+        report["camera"]["reference"] = serde_json::json!(match camera.profile {
+            CameraProfile::Psp => "ULES01347 0x088ca5b8/0x088cc17c",
+            CameraProfile::Ds => "YGXP ARM9 0x020c5778/0x0214bd58",
+            CameraProfile::Mobile => "supplied APK libGame.so 0x0072c9f0 phone profile",
+        });
+    }
     report["shader"] = serde_json::json!(renderer.shader_status);
     report["texture_pack"] = crate::texture_pack::report();
     report["hud"]["fullscreen"] = serde_json::json!(renderer.fullscreen);

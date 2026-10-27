@@ -1,4 +1,52 @@
-# ACTIVE HANDOFF - driving and traffic repair
+# ACTIVE HANDOFF - vehicle cameras and steering assistance
+
+Updated: 2026-10-28 00:20 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini can resume directly from here.
+
+## Resume in 10 seconds
+
+```powershell
+Get-Content outputs/CTW-Rust/AI_HANDOFF_GUIDE.md -TotalCount 65
+Get-Content docs/reference/DRIVING-CAMERAS.md
+Get-Content target/validation/build-report.json
+```
+
+Before a new task, run the mandatory upstream check, review relevant changes and record the conclusion. To rebuild: `powershell -ExecutionPolicy Bypass -File .\Compiler.ps1 -Test`.
+
+## Exact delivered state
+
+- Baseline: `f43a801`. This checkpoint adds a dedicated native FollowCarCam2 instead of the on-foot sprint/recenter path, plus player-only PSP steering assistance.
+- Final build report: **2026-10-28T00:19:48.1143555+01:00**, **221 passed, 0 failed, 0 ignored, 0 warnings**. Log: `target/camera-build.log`. Three Python progress-inventory tests also pass. The build regenerates the treemap/badges/site/README from Rust only: 1026 runtime functions, 247 test/helper functions, 49 modules. PSP completion remains unmeasured.
+- Delivered executable: `outputs/CTW-Rust/CTW-Rust.exe`; SHA-256 `c8fa9ed883fc6d9cb4ef56a4ad4bb26c8e1bb0a10ea912b843b8d40366965a6d`, verified against build report. No GitHub push performed.
+- Latest upstream review: CTW-Native `f7a45b3b7aac9bd9f4662d104d276d421c1fca52`, highcmd `6562163b6f504a1db93e1be5ce580d8cd6f024a7`. Relevant sources/changes reviewed in `docs/UPSTREAM_REVIEW.md`.
+
+## Implementation / controls
+
+- `src/car_camera.rs` (child module of camera.rs): original reverse delay/orbit/unwinding, stopped-side retention, speed/size framing, spring and yaw/pitch convergence; profile switches retain the view, freecam suspends following, entry/exit reset controller state. PSP/DS base height 27/max39; Android phone 28/max42. DS/Android altitude lift differs from PSP. Evidence and boundaries: `docs/reference/DRIVING-CAMERAS.md`.
+- `src/handling.rs`: PSP FillInDrivingYoke cardinal-axis assistance within about 18 degrees, proportional half-lock steering; manual steering/brake/reverse take priority. NPC assistance stays disabled. Ordinary grounded driving repair is preserved.
+- **F3 / right-stick click** cycles PSP/mobile/DS. **F6 / RB + right-stick click** toggles assistance (default on); **C / LB** holds recenter. Camera and assistance preferences persist in the output folder's camera-settings.json. `--steering-assist on|off` overrides the preference. Updated French/English hint; handbrake hint corrected to B / RB.
+- `play.rs` selects the occupied vehicle AFTER simulation, passes actual speed/lateral velocity/size, records camera poses in validation samples. Controller report now distinguishes FollowCarCam2 from FollowPedCam.
+- Private research files are in `work/original-cameras/`; do not commit binaries, extracted assets or disassembly. DS initializer at 0x0214bd58 belongs to FollowCarCam2; preceding routine 0x020c55b0 is a DIFFERENT camera, not its constants.
+
+## Validation and honest limits
+
+- Eight added Rust tests cover reverse threshold/delay/unwind, interrupted reverse, stationary direction, angle wrap, profile framing, freecam/exit transitions, assistance window/sign/manual priority and physical yaw direction.
+- Inspected native captures `target/camera-psp.bmp`, `target/camera-ds.bmp`, `target/camera-mobile.bmp`: each 180 render frames / 90 simulation ticks, identical 65.006317-unit trajectory and end position, zero player collision contacts. On this ground-level run PSP and DS coincide as expected; mobile has a different height. Captures preceded the final CLI-help/handbrake-label-only edit; physics/camera code is unchanged. Reports: `target/camera-{profile}/play-validation.json`.
+- Earlier `target/camera-reverse.bmp` confirms a rendered front-facing reverse view, but its vehicle speed does not sustain the state-0 threshold; the 31-tick threshold is covered by the unit test, not claimed from that capture.
+- No physical XInput controller connected; no full live emulator side-by-side comparison. Do not claim 100% parity. Remaining original branches: near-axis quaternion snap with its original gates, full 3D suspension/orientation, exact sphere/world sweep, lookup-table trig, mission/cinematic gates, distance setting, burnout camera and reverse-disabled state 2. Android profile is phone, not tablet.
+- Existing traffic obstruction follow-up remains: links 197->142, 443->428, 626->1439. See `docs/GEMINI_DRIVING_NEXT.md` and `docs/DRIVING_TRAFFIC_REPAIR.md`. Do not weaken collisions or allow boat nodes to conceal failures. Android gear ratios still need independent PSP confirmation.
+
+## Reproduce a native camera capture
+
+```powershell
+& ./target/release/ctw-rust.exe --iso work/Chinatown-Wars-PSP.iso --map --slice --demo-drive --camera psp --headless --frames 180 --walk 0.5 1 --capture target/camera-psp.bmp --output target/camera-psp
+python -m unittest discover -s tools/progress -p test_progress.py -v
+```
+
+Use `ds` or `mobile` with distinct output/capture names for the other profiles. Preserve current logos/film and all private game data. Public language English; branding ReGTA CTW PC Recomp. Runtime remains native Rust without an emulated CPU.
+
+---
+
+# HISTORICAL CHECKPOINT - driving and traffic repair
 
 Updated: 2026-10-27 19:00 Europe/Paris. Repair implemented and validated locally. Read this before historical sections below.
 

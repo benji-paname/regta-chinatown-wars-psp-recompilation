@@ -15,6 +15,7 @@ RUST_MODULE_MAP = {
     'handling.rs': ['CEngine', 'CTyre', 'cWheeledVehicle'],
     'traffic.rs': ['cWanderRoads', 'cAISpline', 'cDrivingRecovery'],
     'camera.rs': ['cCamera', 'cBaseCam', 'cFollowPedCam', 'cCam'],
+    'car_camera.rs': ['cFollowCarCam2'],
     'vehicle.rs': [
         'cVehicle', 'cWheeledVehicle', 'cCar', 'cBike', 'Vehicle', 'VehicleType', 'cSeats',
         'cTrafficLight', 'cTrafficLightManager', 'cTrafficManager', 'cWanderRoads', 'cCarController',

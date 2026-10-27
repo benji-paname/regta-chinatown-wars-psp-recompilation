@@ -23,6 +23,33 @@ fn speed_units(speed: i32) -> i32 {
     (((u >> 7) - (u >> 63)) >> 20) as i32
 }
 
+/// cPlayer::FillInDrivingYoke, PSP 0x089cb264..0x089cb720.
+/// Cardinal-axis correction, not road following. Returns the original Q12
+/// proportional-steering yoke; explicit steering and brake/reverse take priority.
+fn assisted_yoke(car: &crate::actors::Car, input: crate::actors::DriveInput) -> Option<i32> {
+    if !car.steering_assist || car.disabled || car.health <= 0.
+        || input.steer != 0. || input.throttle < 0.
+        || !matches!(crate::vehicle::spec(car.info_id).kind, 0 | 1 | 5) {
+        return None;
+    }
+    let (s, c) = car.angle.sin_cos();
+    let forward = [q(-s), q(c)];
+    let length = magnitude(forward[0], forward[1]).max(1);
+    let forward = forward.map(|v| (v as i64 * Q as i64 / length as i64) as i32);
+    let threshold = ((0x4ccc as f64 * std::f64::consts::TAU / 65536.).sin() * Q as f64) as i32;
+    for axis in [[0, Q], [Q, 0], [0, -Q], [-Q, 0]] {
+        let dot = mul(forward[0], axis[0]) + mul(forward[1], axis[1]);
+        if dot < threshold { continue; }
+        let u = (((dot - threshold) as i64 * Q as i64) / (Q - threshold) as i64).clamp(0, Q as i64) as i32;
+        // PSP 0x089c5e3c: atan(sqrt(1-u*u)/u), quarter angle then quarter yoke.
+        let root = ((Q as i64 * Q as i64 - u as i64 * u as i64) as f64).sqrt().floor();
+        let a = (root.atan2(u as f64) * 65536. / std::f64::consts::TAU) as i32;
+        let cross = forward[0] as i64 * axis[1] as i64 - forward[1] as i64 * axis[0] as i64;
+        return Some((if cross > 0 { -(a / 4) } else { a / 4 }) >> 2);
+    }
+    None
+}
+
 #[derive(Clone, Debug)]
 pub struct Parameters {
     mass: i32,
@@ -187,7 +214,9 @@ impl State {
         let red = (t / 0x19be) >> 20;
         let mut limit = if car.gear < 0 { 0xf5b } else { (((p.lock / 2) as i64 * Q as i64 - red * p.reduction as i64) >> 12).max(0) as i32 };
         if car.flat_tires[0] || car.flat_tires[1] { limit >>= 1; }
-        let rack = wanted.clamp(-limit, limit);
+        // Original assisted flag selects a proportional half-lock rack instead
+        // of the digital accumulation/speed clamp (APK 0x008f268c..0x008f26a8).
+        let rack = assisted_yoke(car, input).map_or_else(|| wanted.clamp(-limit, limit), |v| mul(v, p.lock / 2));
         car.steer_angle = f(rack);
 
         let mut drive = 0;
@@ -330,4 +359,58 @@ fn test_parameters(id: usize) -> Parameters {
         (0x6c, s.max_torque_q12), (0x70, 6000 * Q)] { r[off..off + 4].copy_from_slice(&value.to_le_bytes()); }
     r[0x4c] = s.num_gears;
     Parameters::parse(&r).unwrap()
+}
+
+#[cfg(test)]
+mod assist_tests {
+    use super::*;
+    use crate::actors::{make_car, DriveInput};
+
+    #[test]
+    fn assistance_is_bounded_symmetric_and_only_near_cardinal_axes() {
+        let mut car = make_car([0.; 3], 0., 0, 0, 0);
+        car.steering_assist = true;
+        let input = DriveInput::default();
+        for axis in 0..4 {
+            car.angle = axis as f32 * std::f32::consts::FRAC_PI_2;
+            assert!(assisted_yoke(&car, input).unwrap().abs() <= 1);
+            car.angle += 10_f32.to_radians();
+            let right = assisted_yoke(&car, input).unwrap();
+            assert!((1..=1024).contains(&right));
+            car.angle -= 20_f32.to_radians();
+            let left = assisted_yoke(&car, input).unwrap();
+            assert!(left < 0 && (left + right).abs() <= 2);
+            car.angle = axis as f32 * std::f32::consts::FRAC_PI_2 + 20_f32.to_radians();
+            assert!(assisted_yoke(&car, input).is_none());
+        }
+    }
+
+    #[test]
+    fn assistance_yields_to_player_and_cannot_enable_for_npcs_or_disabled_cars() {
+        let mut car = make_car([0.; 3], 0.1, 0, 0, 0);
+        assert!(assisted_yoke(&car, DriveInput::default()).is_none());
+        car.steering_assist = true;
+        assert!(assisted_yoke(&car, DriveInput::controls(1., 0., 0.01, false)).is_none());
+        assert!(assisted_yoke(&car, DriveInput::controls(0., 1., 0., false)).is_none());
+        car.disabled = true;
+        assert!(assisted_yoke(&car, DriveInput::default()).is_none());
+    }
+
+    #[test]
+    fn proportional_assist_turns_physics_towards_axis_and_manual_rack_is_unchanged() {
+        let mut car = make_car([0.; 3], 0.1, 0, 0, 0);
+        car.speed = 20.;
+        car.steering_assist = true;
+        let p = test_parameters(0);
+        State::default().step(&p, &mut car, DriveInput::controls(1., 0., 0., false));
+        assert!(car.steer_angle > 0. && car.yaw_rate < 0.);
+        let mut assisted = make_car([0.; 3], 0.1, 0, 0, 0);
+        let mut manual = make_car([0.; 3], 0.1, 0, 0, 0);
+        assisted.steering_assist = true;
+        let input = DriveInput::controls(1., 0., -0.5, false);
+        State::default().step(&p, &mut assisted, input);
+        State::default().step(&p, &mut manual, input);
+        assert_eq!((assisted.steer_angle, assisted.speed, assisted.yaw_rate),
+            (manual.steer_angle, manual.speed, manual.yaw_rate));
+    }
 }

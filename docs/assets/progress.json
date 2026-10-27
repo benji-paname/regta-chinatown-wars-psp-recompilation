@@ -3,10 +3,10 @@
   "measurement": "native Rust function inventory; not original-code coverage",
   "pspParityVerified": false,
   "pspCompletionPercent": null,
-  "sourceSha256": "7091e99d22882cfe0c5bf54a642784deca75c2214909f20fa884e25fd0592714",
-  "runtimeFunctions": 1019,
-  "testFunctions": 237,
-  "modules": 48,
+  "sourceSha256": "153afecff6eb4cde38048c4789477425946f1190276c6da2320184ccb5b1bb2c",
+  "runtimeFunctions": 1026,
+  "testFunctions": 247,
+  "modules": 49,
   "subsystems": [
     {
       "name": "People",
@@ -192,6 +192,99 @@
       ]
     },
     {
+      "name": "Runtime and tools",
+      "runtimeFunctions": 69,
+      "testFunctions": 26,
+      "classes": [
+        {
+          "name": "car_camera.rs",
+          "runtimeFunctions": 6,
+          "testFunctions": 7,
+          "relatedClasses": [
+            "cFollowCarCam2"
+          ]
+        },
+        {
+          "name": "driving_audit.rs",
+          "runtimeFunctions": 1,
+          "testFunctions": 0,
+          "relatedClasses": []
+        },
+        {
+          "name": "gamepad.rs",
+          "runtimeFunctions": 12,
+          "testFunctions": 4,
+          "relatedClasses": []
+        },
+        {
+          "name": "iso.rs",
+          "runtimeFunctions": 8,
+          "testFunctions": 1,
+          "relatedClasses": []
+        },
+        {
+          "name": "locale.rs",
+          "runtimeFunctions": 4,
+          "testFunctions": 1,
+          "relatedClasses": []
+        },
+        {
+          "name": "main.rs",
+          "runtimeFunctions": 5,
+          "testFunctions": 0,
+          "relatedClasses": []
+        },
+        {
+          "name": "overlays.rs",
+          "runtimeFunctions": 8,
+          "testFunctions": 2,
+          "relatedClasses": []
+        },
+        {
+          "name": "pak.rs",
+          "runtimeFunctions": 4,
+          "testFunctions": 4,
+          "relatedClasses": []
+        },
+        {
+          "name": "play.rs",
+          "runtimeFunctions": 5,
+          "testFunctions": 1,
+          "relatedClasses": []
+        },
+        {
+          "name": "psp.rs",
+          "runtimeFunctions": 2,
+          "testFunctions": 2,
+          "relatedClasses": []
+        },
+        {
+          "name": "shaders.rs",
+          "runtimeFunctions": 3,
+          "testFunctions": 0,
+          "relatedClasses": []
+        },
+        {
+          "name": "test_support.rs",
+          "runtimeFunctions": 1,
+          "testFunctions": 0,
+          "relatedClasses": []
+        },
+        {
+          "name": "texture_pack.rs",
+          "runtimeFunctions": 5,
+          "testFunctions": 1,
+          "relatedClasses": []
+        },
+        {
+          "name": "wad.rs",
+          "runtimeFunctions": 5,
+          "testFunctions": 3,
+          "relatedClasses": []
+        }
+      ]
+    },
+    {
       "name": "Missions and activities",
       "runtimeFunctions": 167,
       "testFunctions": 42,
@@ -297,91 +390,6 @@
             "cSafehouseHandler",
             "cSafehouseSaleHandler"
           ]
-        }
-      ]
-    },
-    {
-      "name": "Runtime and tools",
-      "runtimeFunctions": 63,
-      "testFunctions": 19,
-      "classes": [
-        {
-          "name": "driving_audit.rs",
-          "runtimeFunctions": 1,
-          "testFunctions": 0,
-          "relatedClasses": []
-        },
-        {
-          "name": "gamepad.rs",
-          "runtimeFunctions": 12,
-          "testFunctions": 4,
-          "relatedClasses": []
-        },
-        {
-          "name": "iso.rs",
-          "runtimeFunctions": 8,
-          "testFunctions": 1,
-          "relatedClasses": []
-        },
-        {
-          "name": "locale.rs",
-          "runtimeFunctions": 4,
-          "testFunctions": 1,
-          "relatedClasses": []
-        },
-        {
-          "name": "main.rs",
-          "runtimeFunctions": 5,
-          "testFunctions": 0,
-          "relatedClasses": []
-        },
-        {
-          "name": "overlays.rs",
-          "runtimeFunctions": 8,
-          "testFunctions": 2,
-          "relatedClasses": []
-        },
-        {
-          "name": "pak.rs",
-          "runtimeFunctions": 4,
-          "testFunctions": 4,
-          "relatedClasses": []
-        },
-        {
-          "name": "play.rs",
-          "runtimeFunctions": 5,
-          "testFunctions": 1,
-          "relatedClasses": []
-        },
-        {
-          "name": "psp.rs",
-          "runtimeFunctions": 2,
-          "testFunctions": 2,
-          "relatedClasses": []
-        },
-        {
-          "name": "shaders.rs",
-          "runtimeFunctions": 3,
-          "testFunctions": 0,
-          "relatedClasses": []
-        },
-        {
-          "name": "test_support.rs",
-          "runtimeFunctions": 1,
-          "testFunctions": 0,
-          "relatedClasses": []
-        },
-        {
-          "name": "texture_pack.rs",
-          "runtimeFunctions": 5,
-          "testFunctions": 1,
-          "relatedClasses": []
-        },
-        {
-          "name": "wad.rs",
-          "runtimeFunctions": 5,
-          "testFunctions": 3,
-          "relatedClasses": []
         }
       ]
     },
@@ -528,13 +536,13 @@
     },
     {
       "name": "Vehicles",
-      "runtimeFunctions": 115,
-      "testFunctions": 23,
+      "runtimeFunctions": 116,
+      "testFunctions": 26,
       "classes": [
         {
           "name": "handling.rs",
-          "runtimeFunctions": 11,
-          "testFunctions": 1,
+          "runtimeFunctions": 12,
+          "testFunctions": 4,
           "relatedClasses": [
             "CEngine",
             "CTyre",
@@ -627,7 +635,7 @@
     }
   ],
   "lastLocalValidation": {
-    "passed": 213,
-    "date": "2026-10-27"
+    "passed": 221,
+    "date": "2026-10-28"
   }
 }

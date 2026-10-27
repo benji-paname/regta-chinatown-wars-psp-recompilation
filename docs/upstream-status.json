@@ -1,6 +1,6 @@
 {
-  "checked_at": "2026-10-27T18:20:35+00:00",
-  "task": "Recommend next driving features: steering assistance and PSP DS Android vehicle cameras",
+  "checked_at": "2026-10-27T23:09:14+00:00",
+  "task": "Resume original vehicle cameras and steering assistance",
   "repositories": [
     {
       "id": "ctw-native",
@@ -8,40 +8,40 @@
       "platform": "Android 4.4.243 / C++",
       "use": "Gameplay algorithms, class names and porting methodology; verify PSP Europe differences.",
       "status": "checked",
-      "revision": "95adc327ddd8357701ca3885c61fd6b4a40f193b",
+      "revision": "f7a45b3b7aac9bd9f4662d104d276d421c1fca52",
       "previous_revision": null,
       "changed_files": null,
       "local_changes_present": false,
       "recent_commits": [
         {
-          "sha": "95adc327ddd8357701ca3885c61fd6b4a40f193b",
-          "date": "2026-10-27T15:54:44+01:00",
-          "subject": "WIP"
+          "sha": "f7a45b3b7aac9bd9f4662d104d276d421c1fca52",
+          "date": "2026-10-27T20:15:15+01:00",
+          "subject": "Show other players' gunfire: puppets hold their weapon and shoot harmlessly"
         },
         {
-          "sha": "b0506abc786fea229101c56e0a64726aa8b4ac97",
-          "date": "2026-10-22T20:22:55+01:00",
-          "subject": "wip"
+          "sha": "4bba4c13c269119391ab13c116b9585eca8149ab",
+          "date": "2026-10-27T20:11:02+01:00",
+          "subject": "Name the ported cash meter and assigned-weapon routines so the progress map counts them"
         },
         {
-          "sha": "a31e94b4b56f7f9ce5ac3c2fa5571c03bcd14ad4",
-          "date": "2026-10-22T16:37:03+01:00",
-          "subject": "Release Porter 0.3.0"
+          "sha": "6e86eb0e77e6b29166cfe892d39b4056f35084cc",
+          "date": "2026-10-27T20:09:35+01:00",
+          "subject": "Describe money, pickups, the police response and multiplayer in STATUS and the README"
         },
         {
-          "sha": "48f20b5a04663f7a667601b36a048f6ab2b17990",
-          "date": "2026-10-22T16:26:08+01:00",
-          "subject": "Port the death app: the shattering screen, the Wasted jingle and WASTED! text"
+          "sha": "ba6061fd1f3c36d415a0f63e146ebefd4ceafcca",
+          "date": "2026-10-27T20:08:35+01:00",
+          "subject": "Fix an overflow in the protocol test; two rendering tests need no sound device"
         },
         {
-          "sha": "9642011785c49bd4ab23b98e154353e376ae3fd0",
-          "date": "2026-10-22T16:04:34+01:00",
-          "subject": "Add sirens: the toggle in siren vehicles and their looping sound"
+          "sha": "70ac8c6e4ffe7e60c56a27ac5a0c65d2c678341f",
+          "date": "2026-10-27T20:05:07+01:00",
+          "subject": "Add multiplayer: mod API v13 puppets and the Multiplayer mod"
         },
         {
-          "sha": "17e51d98d1cb1386fa700f3e6d2109f721daa617",
-          "date": "2026-10-22T15:52:45+01:00",
-          "subject": "Hold thrown peds' sprites until they land; add the landing thud and pain comments"
+          "sha": "166edcdc70e307ce9c2d640add95951466e760e4",
+          "date": "2026-10-27T19:38:44+01:00",
+          "subject": "Port money and pickups: the cash counter, map pickups and peds' dropped goodies"
         }
       ]
     },

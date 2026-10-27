@@ -7,6 +7,9 @@
 // Collision queries and other camera branches remain reconstructed.
 // Sphere/box contact uses our conservative Rust query rather than the original fixed-point sweep.
 use crate::collision::Collision;
+#[path = "car_camera.rs"]
+mod car_camera;
+pub use car_camera::VehicleView;
 fn sin(a: i32) -> i32 {
     ((a as f32 * 9.587378e-05).sin() * 4096.) as i32
 }
@@ -74,6 +77,7 @@ pub struct Camera {
     sprint_ticks: u8,
     previous_walk_angle: i16,
     free: Option<FreeCamera>,
+    vehicle: Option<car_camera::VehicleFollow>,
 }
 struct FreeCamera {
     eye: [f32; 3],
@@ -102,9 +106,14 @@ impl Camera {
             sprint_ticks: 0,
             previous_walk_angle: 0,
             free: None,
+            vehicle: None,
         }
     }
     pub fn set_profile(&mut self, profile: CameraProfile, p: [f32; 3]) {
+        if self.vehicle.is_some() {
+            self.profile = profile;
+            return;
+        }
         // Retain orientation and the free camera; never alter the player.
         let free = self.free.take();
         *self = Self::new(p, self.yaw, profile);
@@ -259,6 +268,14 @@ impl Camera {
     ) {
         if self.is_free() {
             return;
+        }
+        if self.vehicle.take().is_some() {
+            self.vel = [0; 3];
+            self.pitch_vel = 0;
+            self.recenter_mode = 0;
+            self.sprint_ticks = 0;
+            self.previous_walk_angle = 0;
+            self.target = fx(p);
         }
         let request = self.recenter_request(input);
         // Original Update clears a latched recenter when the normal player moves,
