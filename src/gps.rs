@@ -83,6 +83,38 @@ impl PartialOrd for Queue {
     }
 }
 impl Roads {
+    /// cTarget::ResolveBestNodeForLaneInfo: junction flags alone do not
+    /// describe a link. Prefer the non-junction endpoint, otherwise the narrower.
+    pub fn link_meta(&self, a: usize, b: usize) -> RoadMeta {
+        let ma = self.nodes[a].meta();
+        let mb = self.nodes[b].meta();
+        if !ma.flag5 && mb.flag5 { ma }
+        else if ma.flag5 && !mb.flag5 || mb.width < ma.width { mb }
+        else { ma }
+    }
+
+    /// AISpline::randomNode: choose from usable candidates AFTER filtering;
+    /// the old nth(index % unfiltered_count) frequently selected a U-turn.
+    pub fn next_node(&self, previous: usize, current: usize, lane: u8, seed: u32) -> Option<usize> {
+        let node = self.nodes.get(current)?;
+        let prev = self.nodes.get(previous)?;
+        let incoming = [node.p[0] - prev.p[0], node.p[1] - prev.p[1]];
+        let il = incoming[0].hypot(incoming[1]).max(0.001);
+        let meta = self.link_meta(previous, current);
+        let usable: Vec<_> = node.links.iter().copied().filter(|&n| {
+            self.nodes.get(n).is_some_and(|v| v.land() && v.flags & 3 == 0) && n != previous && n != current
+        }).collect();
+        let preferred: Vec<_> = usable.iter().copied().filter(|&n| {
+            let out = [self.nodes[n].p[0] - node.p[0], self.nodes[n].p[1] - node.p[1]];
+            let ol = out[0].hypot(out[1]).max(0.001);
+            let dot = (incoming[0] * out[0] + incoming[1] * out[1]) / (il * ol);
+            let right = (out[0] * incoming[1] - out[1] * incoming[0]) / (il * ol);
+            dot > -0.707 && (meta.lanes <= 1 || meta.flag5 || if lane == 0 { right > -0.2 } else { right.abs() < 0.2 })
+        }).collect();
+        let candidates = if preferred.is_empty() { &usable } else { &preferred };
+        // Dead ends stop; do not manufacture a sharp U-turn on the same lane.
+        (!candidates.is_empty()).then(|| candidates[seed as usize % candidates.len()])
+    }
     pub fn parse(d: &[u8]) -> Result<Self> {
         let nl = u32le(d, 0)? as usize;
         let nn = u32le(d, 4)? as usize;
@@ -214,15 +246,7 @@ impl Roads {
         let Some(en) = self.nodes.get(b) else {
             return sn.p;
         };
-        let mut m = sn.meta();
-        // If link (a -> b) also has a reverse link (b -> a), enforce two-way lane offset even if
-        // a synthetic test node omitted flag5/two-lane bits.
-        if en.links.contains(&a) && m.lanes < 2 {
-            m.lanes = 2;
-            m.lanes_minus_1 = 1;
-            m.flag5 = true;
-            m.width = m.lanes as f32 * m.half_width;
-        }
+        let m = self.link_meta(a, b);
         let mut o = [
             sn.p[0] + (en.p[0] - sn.p[0]) * t,
             sn.p[1] + (en.p[1] - sn.p[1]) * t,
@@ -256,9 +280,9 @@ impl Roads {
         let Some(sn) = self.nodes.get(a) else {
             return (0, 0.);
         };
-        let m = sn.meta();
-        let bidirectional = self.nodes.get(b).is_some_and(|en| en.links.contains(&a));
-        let lane = if m.lanes <= 1 || m.flag5 || bidirectional {
+        let _ = sn;
+        let m = self.link_meta(a, b);
+        let lane = if m.lanes <= 1 || m.flag5 {
             0
         } else {
             (seed & 1) as u8
@@ -275,10 +299,10 @@ impl Roads {
         let Some(en) = self.nodes.get(b) else {
             return (0, 0.);
         };
-        let m0 = sn.meta();
-        let m1 = en.meta();
-        let bidir1 = self.nodes.get(c).is_some_and(|cn| cn.links.contains(&b));
-        let next_lane = if m1.lanes <= 1 || m1.flag5 || bidir1 {
+        let _ = (sn, en);
+        let m0 = self.link_meta(a, b);
+        let m1 = self.link_meta(b, c);
+        let next_lane = if m1.lanes <= 1 || m1.flag5 {
             0
         } else if !m0.flag5 && m0.lanes > 1 {
             lane.min(m1.lanes - 1)
@@ -289,120 +313,77 @@ impl Roads {
         (next_lane, w_raw * m1.wobble)
     }
 
-    /// AISpline::fixUpTuplet + curvePoint (aispline.cpp): evaluates position and heading along
-    /// link (a -> b) with a quadratic Bezier corner transition into outgoing link (b -> c).
+    /// Grounded adaptation of AISpline::fixUpTuplet / ComputeIntercept.
+    /// Distance is measured along the curve, not assumed to be 1.65 * setback.
     pub fn rail_pose(
-        &self,
-        a: usize,
-        b: usize,
-        c: usize,
-        dist_along: f32,
-        lane_ab: u8,
-        wobble_ab: f32,
-        lane_bc: u8,
-        wobble_bc: f32,
+        &self, a: usize, b: usize, c: usize, dist_along: f32,
+        lane_ab: u8, wobble_ab: f32, lane_bc: u8, wobble_bc: f32,
     ) -> ([f32; 3], f32, f32, bool) {
-        let p0 = self.lane_world_pos(a, b, 0.0, lane_ab, wobble_ab);
-        let p1 = self.lane_world_pos(a, b, 1.0, lane_ab, wobble_ab);
-        let seg_dx = p1[0] - p0[0];
-        let seg_dy = p1[1] - p0[1];
-        let seg_len = seg_dx.hypot(seg_dy).max(0.1);
-        let dir0 = [seg_dx / seg_len, seg_dy / seg_len];
-
-        let q0 = self.lane_world_pos(b, c, 0.0, lane_bc, wobble_bc);
-        let q1 = self.lane_world_pos(b, c, 1.0, lane_bc, wobble_bc);
-        let next_dx = q1[0] - q0[0];
-        let next_dy = q1[1] - q0[1];
-        let next_len = next_dx.hypot(next_dy).max(0.1);
-        let dir1 = [next_dx / next_len, next_dy / next_len];
-
-        let dot = dir0[0] * dir1[0] + dir0[1] * dir1[1];
-        let turning = b != c && dot < 0.96 && seg_len > 10.0 && next_len > 10.0;
-        let setback = if turning {
-            (5.5 * (1.0 - dot).clamp(0.35, 1.35)).min(seg_len * 0.35).min(next_len * 0.35)
-        } else {
-            0.0
-        };
-        let straight_len = (seg_len - setback).max(0.1);
-        let curve_len = if turning { setback * 1.65 } else { 0.0 };
-        let total_len = straight_len + curve_len;
-        let s = dist_along.clamp(0.0, total_len);
-
-        if !turning || s <= straight_len {
-            let t = (s / seg_len).clamp(0.0, 1.0);
-            let pos = [
-                p0[0] + (p1[0] - p0[0]) * t,
-                p0[1] + (p1[1] - p0[1]) * t,
-                p0[2] + (p1[2] - p0[2]) * t,
-            ];
-            let angle = -dir0[0].atan2(dir0[1]);
-            (pos, angle, total_len, false)
-        } else {
-            let u = ((s - straight_len) / curve_len.max(0.1)).clamp(0.0, 1.0);
-            let t_exit = (straight_len / seg_len).clamp(0.0, 1.0);
-            let t_entry = (setback / next_len).clamp(0.0, 1.0);
-            let c_start = [
-                p0[0] + (p1[0] - p0[0]) * t_exit,
-                p0[1] + (p1[1] - p0[1]) * t_exit,
-                p0[2] + (p1[2] - p0[2]) * t_exit,
-            ];
-            let c_end = [
-                q0[0] + (q1[0] - q0[0]) * t_entry,
-                q0[1] + (q1[1] - q0[1]) * t_entry,
-                q0[2] + (q1[2] - q0[2]) * t_entry,
-            ];
-            let det = dir0[0] * dir1[1] - dir0[1] * dir1[0];
-            let ctrl = if det.abs() > 0.12 {
-                let rx = q0[0] - p0[0];
-                let ry = q0[1] - p0[1];
-                let ta = (rx * dir1[1] - ry * dir1[0]) / det;
-                let ta = ta.clamp(straight_len * 0.85, seg_len + 8.0);
-                [
-                    p0[0] + dir0[0] * ta,
-                    p0[1] + dir0[1] * ta,
-                    (c_start[2] + c_end[2]) * 0.5,
-                ]
-            } else {
-                [
-                    (p1[0] + q0[0]) * 0.5,
-                    (p1[1] + q0[1]) * 0.5,
-                    (c_start[2] + c_end[2]) * 0.5,
-                ]
-            };
-            let om = 1.0 - u;
-            let pos = [
-                om * om * c_start[0] + 2.0 * om * u * ctrl[0] + u * u * c_end[0],
-                om * om * c_start[1] + 2.0 * om * u * ctrl[1] + u * u * c_end[1],
-                om * om * c_start[2] + 2.0 * om * u * ctrl[2] + u * u * c_end[2],
-            ];
-            let tx = 2.0 * om * (ctrl[0] - c_start[0]) + 2.0 * u * (c_end[0] - ctrl[0]);
-            let ty = 2.0 * om * (ctrl[1] - c_start[1]) + 2.0 * u * (c_end[1] - ctrl[1]);
-            let angle = if tx.hypot(ty) > 1e-4 {
-                -tx.atan2(ty)
-            } else {
-                -dir1[0].atan2(dir1[1])
-            };
-            (pos, angle, total_len, true)
+        if a >= self.nodes.len() || b >= self.nodes.len() || c >= self.nodes.len() {
+            return ([0.; 3], 0., 0., false);
         }
-    }
-
-    /// Entry offset along link (b -> c) after completing a corner turn from (a -> b).
-    pub fn turn_entry_offset(&self, a: usize, b: usize, c: usize, lane_ab: u8, lane_bc: u8) -> f32 {
-        let p0 = self.lane_world_pos(a, b, 0.0, lane_ab, 0.0);
-        let p1 = self.lane_world_pos(a, b, 1.0, lane_ab, 0.0);
-        let q0 = self.lane_world_pos(b, c, 0.0, lane_bc, 0.0);
-        let q1 = self.lane_world_pos(b, c, 1.0, lane_bc, 0.0);
-        let l0 = (p1[0] - p0[0]).hypot(p1[1] - p0[1]).max(0.1);
-        let l1 = (q1[0] - q0[0]).hypot(q1[1] - q0[1]).max(0.1);
-        let d0 = [(p1[0] - p0[0]) / l0, (p1[1] - p0[1]) / l0];
-        let d1 = [(q1[0] - q0[0]) / l1, (q1[1] - q0[1]) / l1];
+        let p0 = self.lane_world_pos(a, b, 0., lane_ab, wobble_ab);
+        let p1 = self.lane_world_pos(a, b, 1., lane_ab, wobble_ab);
+        let q0 = self.lane_world_pos(b, c, 0., lane_bc, wobble_bc);
+        let q1 = self.lane_world_pos(b, c, 1., lane_bc, wobble_bc);
+        let len0 = distance(p0, p1).max(0.001);
+        let len1 = distance(q0, q1).max(0.001);
+        let d0 = std::array::from_fn::<_, 3, _>(|k| (p1[k] - p0[k]) / len0);
+        if b == c {
+            let pos = std::array::from_fn(|k| p0[k] + d0[k] * dist_along.clamp(0., len0));
+            return (pos, -d0[0].atan2(d0[1]), len0, false);
+        }
+        let d1 = std::array::from_fn::<_, 3, _>(|k| (q1[k] - q0[k]) / len1);
+        let width = (self.nodes[b].meta().width.floor()).max(8.);
+        let exit = if b == c { 0. } else { width.min(len0 * 0.5) };
+        let entry = if b == c { 0. } else { width.min(len1 * (2047. / 4096.)) };
+        let straight = len0 - exit;
+        let start = std::array::from_fn::<_, 3, _>(|k| p1[k] - d0[k] * exit);
+        let end = std::array::from_fn::<_, 3, _>(|k| q0[k] + d1[k] * entry);
+        let det = d0[0] * d1[1] - d0[1] * d1[0];
         let dot = d0[0] * d1[0] + d0[1] * d1[1];
-        if b != c && dot < 0.96 && l0 > 10.0 && l1 > 10.0 {
-            (5.5 * (1.0 - dot).clamp(0.35, 1.35)).min(l0 * 0.35).min(l1 * 0.35)
-        } else {
-            0.0
+        // Use the tangent intersection for a quadratic corner. Collinear lanes
+        // with different widths need a smooth bridge too, not a lateral snap.
+        let control: [f32; 3] = if det.abs() > 0.001 {
+            let t = ((end[0] - start[0]) * d1[1] - (end[1] - start[1]) * d1[0]) / det;
+            std::array::from_fn(|k| start[k] + d0[k] * t)
+        } else { std::array::from_fn(|k| (start[k] + end[k]) * 0.5) };
+        let handle = distance(start, end) / 3.;
+        let c1: [f32; 3] = if det.abs() > 0.001 { std::array::from_fn(|k| start[k] + (control[k] - start[k]) * (2. / 3.)) }
+            else { std::array::from_fn(|k| start[k] + d0[k] * handle) };
+        let c2: [f32; 3] = if det.abs() > 0.001 { std::array::from_fn(|k| end[k] + (control[k] - end[k]) * (2. / 3.)) }
+            else { std::array::from_fn(|k| end[k] - d1[k] * handle) };
+        let curve = |t: f32| -> [f32; 3] {
+            let u = 1. - t;
+            std::array::from_fn(|k| u*u*u*start[k] + 3.*u*u*t*c1[k] + 3.*u*t*t*c2[k] + t*t*t*end[k])
+        };
+        let mut lengths = [0.; 33];
+        let mut last = start;
+        for (i, length) in lengths.iter_mut().enumerate().skip(1) {
+            let p = curve(i as f32 / 32.);
+            *length = distance(last, p);
+            last = p;
         }
+        for i in 1..33 { lengths[i] += lengths[i - 1]; }
+        let total = straight + lengths[32];
+        if dist_along <= straight || b == c {
+            let pos = std::array::from_fn(|k| p0[k] + d0[k] * dist_along.clamp(0., straight));
+            return (pos, -d0[0].atan2(d0[1]), total, false);
+        }
+        let arc = (dist_along - straight).clamp(0., lengths[32]);
+        let i = (1..33).find(|&i| lengths[i] >= arc).unwrap_or(32);
+        let t = ((i - 1) as f32 + (arc - lengths[i - 1]) / (lengths[i] - lengths[i - 1]).max(0.00001)) / 32.;
+        let u = 1. - t;
+        let tangent: [f32; 3] = std::array::from_fn(|k| 3.*u*u*(c1[k]-start[k]) + 6.*u*t*(c2[k]-c1[k]) + 3.*t*t*(end[k]-c2[k]));
+        let angle = if tangent[0].hypot(tangent[1]) > 0.0001 { -tangent[0].atan2(tangent[1]) } else { -d1[0].atan2(d1[1]) };
+        (curve(t), angle, total, dot < 0.999)
     }
+
+    pub fn turn_entry_offset(&self, _a: usize, b: usize, c: usize, _lane_ab: u8, _lane_bc: u8) -> f32 {
+        if b == c || b >= self.nodes.len() || c >= self.nodes.len() { return 0.; }
+        self.nodes[b].meta().width.floor().max(8.).min(distance(self.nodes[b].p, self.nodes[c].p) * (2047. / 4096.))
+    }
+
 }
 
 pub struct Gps {

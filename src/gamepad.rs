@@ -38,6 +38,8 @@ pub struct Input {
     pub movement: [f32; 2],
     pub look: [f32; 2],
     pub lift: f32,
+    pub accelerator: f32,
+    pub foot_brake: f32,
     pub held: u16,
     pub pressed: u16,
 }
@@ -106,6 +108,8 @@ impl Edges {
             movement: stick(pad.lx, pad.ly),
             look: stick_deadzone(pad.rx, pad.ry, 8689.),
             lift: trigger(pad.rt) - trigger(pad.lt),
+            accelerator: trigger(pad.rt),
+            foot_brake: trigger(pad.lt),
             held: buttons,
             pressed,
         }

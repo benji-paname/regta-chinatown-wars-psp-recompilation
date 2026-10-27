@@ -8,7 +8,7 @@
 **by Benji Paname**
 
 [![Version](https://img.shields.io/badge/milestone-0.1.4--alpha-orange)](CHANGELOG.md)
-[![Tests](https://img.shields.io/badge/local_tests-163_passed-brightgreen)](docs/STATUS.md)
+[![Tests](https://img.shields.io/badge/local_tests-213_passed-brightgreen)](docs/STATUS.md)
 [![Warnings](https://img.shields.io/badge/compiler_warnings-0-brightgreen)](docs/STATUS.md)
 [![Platform](https://img.shields.io/badge/platform-Windows_x64-blue)](#build-and-run)
 [![Language](https://img.shields.io/badge/runtime-Rust-dea584)](#repository-layout)
@@ -29,11 +29,13 @@ Support helps sustain Benji Paname's reverse engineering, native development and
 <!-- BEGIN STATUS SECTION -->
 ## Status
 
-[![original code ported](docs/assets/badge-overall.svg)](docs/progress.html) [![routines](docs/assets/badge-routines.svg)](docs/progress.html)
+[![PSP fidelity](docs/assets/badge-overall.svg)](docs/progress.html) [![Rust runtime functions](docs/assets/badge-routines.svg)](docs/progress.html)
 
-[![progress map](docs/assets/progress.svg)](docs/progress.html)
+[![Native Rust inventory](docs/assets/progress.svg)](docs/progress.html)
 
-<sub>Share of the original game's code, by size, implemented in native Rust (`src/`). Green is the ported part of each class. 100% measured from our Rust codebase. Updated on every push to main; see [how it is measured](docs/progress.html).</sub>
+Green counts runtime function definitions in src/**/*.rs; grey counts test and test-helper definitions. Area represents function count, not original binary size. No C++ code or Android routine totals enter these measurements. These source counts do not prove gameplay fidelity or a percentage of the PSP game completed. Related class names are research navigation hints, not verified routine matches.
+
+[Driving and traffic validation](docs/DRIVING_TRAFFIC_REPAIR.md).
 <!-- END STATUS SECTION -->
 
 ## Next milestones
@@ -54,7 +56,7 @@ From the repository root, in PowerShell:
 .\outputs\CTW-Rust\CTW-Rust.exe --iso "D:\Games\Chinatown-Wars-PSP.iso" --slice
 ```
 
-The compiler runs with warnings treated as errors, tests the workspace, and updates the executable only after success. Unit tests use generated synthetic fixtures and do not require an ISO or extracted game tables. Local validation on **25 October 2026: 163 passed, 0 failed, 0 ignored, 0 compiler warnings**. This is a local result, not a hosted CI badge.
+The compiler runs with warnings treated as errors, tests the workspace, and updates the executable only after success. Unit tests use generated synthetic fixtures and do not require an ISO or extracted game tables. Local validation on **2026-10-27: 213 passed, 0 failed, 0 ignored, 0 compiler warnings**. This is a local result, not a hosted CI badge.
 
 For desktop launchers, set `CTW_ISO` in the launching environment or pass `--iso` to a launcher:
 
@@ -88,7 +90,7 @@ The three camera profiles, French/English interface, keyboard/XInput controls an
 
 | Metric | Measured Value | Verification Method |
 |---|---|---|
-| **Passing Unit Tests** | **163 tests / 0 failures** | `Compiler.ps1 -Test` (100% deterministic synthetic fixtures) |
+| **Passing Unit Tests** | **213 tests / 0 failures** | `Compiler.ps1 -Test` (100% deterministic synthetic fixtures) |
 | **Compiler Warnings** | **0 warnings** | Enforced via `-D warnings` in Cargo build profile |
 | **Active Rust Modules** | **45 modules** (25,018 lines) | Pure native Rust x86_64 in `src/` |
 | **PSP Code Overlays Indexed** | **166 overlays** | Verified against `OVERLAYS.PAK` directory table |

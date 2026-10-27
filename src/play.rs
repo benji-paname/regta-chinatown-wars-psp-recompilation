@@ -1207,18 +1207,17 @@ pub fn run(
                     // Gas: W / Up, Right Trigger (RT), or gamepad A (Cross on PlayStation)
                     // Brake / Reverse: S / Down, Left Trigger (LT), or gamepad X (Square on PlayStation)
                     // Handbrake / Drift: Space, Right Bumper (RB / R1), or gamepad B (Circle on PlayStation)
-                    let pad_gas = if pad.held(crate::gamepad::A) { 1.0 } else { 0.0 };
-                    let pad_brake = if pad.held(crate::gamepad::X) { 1.0 } else { 0.0 };
-                    let total_throttle = if target_frames.is_some() {
-                        direction[1]
+                    let input = if target_frames.is_some() {
+                        crate::actors::DriveInput { throttle: direction[1], steer: direction[0], brake: is_handbrake, burnout: false }
                     } else {
-                        (dy + pad.lift + pad.movement[1] + pad_gas - pad_brake).clamp(-1., 1.)
-                    };
-
-                    let input = crate::actors::DriveInput {
-                        throttle: total_throttle,
-                        steer: direction[0],
-                        brake: is_handbrake,
+                        // Left stick steers only. Its vertical axis must not cancel A/RT
+                        // or apply the brakes while the player turns with the stick.
+                        let gas = held(&[Key::W, Key::Z, Key::Up])
+                            .max(pad.accelerator).max(if pad.held(crate::gamepad::A) { 1. } else { 0. });
+                        let foot_brake = held(&[Key::S, Key::Down])
+                            .max(pad.foot_brake).max(if pad.held(crate::gamepad::X) { 1. } else { 0. });
+                        let steer = if dx != 0. { dx } else { pad.movement[0] };
+                        crate::actors::DriveInput::controls(gas, foot_brake, steer, is_handbrake)
                     };
                     let was_driving = s.driving;
                     let bike_info = was_driving.and_then(|idx| {
@@ -1229,6 +1228,7 @@ pub fn run(
                             None
                         }
                     });
+                    s.traffic_view = Some(camera.matrix());
                     if let Some(p) = s.tick(&collision, &gps.roads, &ped, player.p, 1. / 30., input)
                     {
                         if let Some(driving_idx) = s.driving {
@@ -1540,7 +1540,7 @@ pub fn run(
         "peds_end":s.peds.iter().map(|p|serde_json::json!({"p":p.p,"health":p.health,"appearance":p.appearance,"male":crate::ped::npc_is_male(p.appearance),"jogger":crate::ped::npc_is_jogger(p.appearance),"upper_animation":p.pose.upper,"evading":p.evading,"pedestrian_area":s.pedestrian_areas.contains(p.p),"on_pavement":p.on_pavement()})).collect::<Vec<_>>(),
         "peds_on_pavement":s.peds.iter().filter(|p|p.health>0.&&p.on_pavement()).count(),
         "pavement_nodes":s.pavement.nodes.len(),
-        "physics":"Arcade reconstruction for presentation; not original vehicle or population parity"
+        "physics":"Grounded Q12 engine/tyre adaptation from CTW-Native with PSP PAK29 handling parameters; host collision, suspension, police tactics and full PSP parity remain unverified"
     })).unwrap_or(serde_json::Value::Null);
     if slice_enabled {
         report["test_car"] = serde_json::Value::Null;

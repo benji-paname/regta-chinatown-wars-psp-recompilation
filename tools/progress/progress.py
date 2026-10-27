@@ -1,42 +1,19 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # Copyright (C) 2026 ReGTA CTW Project & Benji Paname
-"""Port progress measurement and treemap generator for ReGTA CTW PC Recomp.
-
-Measures how much of the original GTA: Chinatown Wars code routines are covered
-STRICTLY AND EXCLUSIVELY by the native Rust implementation (src/**/*.rs).
-0% third-party C++ code. Every ported routine corresponds to real, testable
-functions written in pure Rust.
-
-Generates:
-  - docs/assets/badge-overall.svg
-  - docs/assets/badge-routines.svg
-  - docs/assets/progress.svg (Squarified SVG Treemap)
-  - docs/assets/progress.json
-  - docs/progress.html (Standalone progress dashboard)
-  - Synchronizes README.md and docs/index.html
-"""
-
+"""Native Rust source inventory and status; no inferred original-game coverage."""
 import argparse
 import hashlib
 import html
 import json
 import math
-import os
 import re
-import sys
-from collections import defaultdict
 from pathlib import Path
-
 ROOT = Path(__file__).resolve().parents[2]
-REFERENCE = ROOT / 'progress' / 'reference.json'
-if not REFERENCE.exists():
-    REFERENCE = ROOT / 'references' / 'ctw-native' / 'progress' / 'reference.json'
-
 SOURCE_DIR = ROOT / 'src'
 
-# Explicit mapping of each of our 45 native Rust modules in src/ to the corresponding
-# original Chinatown Wars classes.
 RUST_MODULE_MAP = {
+    'handling.rs': ['CEngine', 'CTyre', 'cWheeledVehicle'],
+    'traffic.rs': ['cWanderRoads', 'cAISpline', 'cDrivingRecovery'],
     'camera.rs': ['cCamera', 'cBaseCam', 'cFollowPedCam', 'cCam'],
     'vehicle.rs': [
         'cVehicle', 'cWheeledVehicle', 'cCar', 'cBike', 'Vehicle', 'VehicleType', 'cSeats',
@@ -107,89 +84,6 @@ INK = '#e6e8ea'
 FONT = 'Verdana,DejaVu Sans,sans-serif'
 
 
-def count_rust_functions(source_dir=SOURCE_DIR):
-    """Scans all *.rs files in src/ and counts implemented functions per module."""
-    fn_counts = {}
-    for path in source_dir.glob('*.rs'):
-        text = path.read_text(encoding='utf-8', errors='replace')
-        fns = re.findall(r'\bfn\s+([a-z0-9_]+)', text)
-        fn_counts[path.name] = len(fns)
-    return fn_counts
-
-
-def measure_rust(reference=None, source_dir=SOURCE_DIR):
-    """Measures port coverage strictly based on native Rust implementation in src/."""
-    if reference is None:
-        if not REFERENCE.exists():
-            raise FileNotFoundError(f"Reference file not found at {REFERENCE}")
-        reference = json.loads(REFERENCE.read_text(encoding='utf-8'))
-
-    rust_fn_counts = count_rust_functions(source_dir)
-    total_rust_fns = sum(rust_fn_counts.values())
-
-    result = {
-        'build': f'ReGTA CTW Rust Native (ULES-01347 v1.01 target, {total_rust_fns} Rust functions)',
-        'bytes': 0,
-        'portedBytes': 0,
-        'routines': 0,
-        'portedRoutines': 0,
-        'subsystems': []
-    }
-
-    # Track budget of implemented Rust functions per module
-    budget = dict(rust_fn_counts)
-
-    # First pass: map each subsystem
-    for sub in reference['subsystems']:
-        out = {
-            'name': sub['name'],
-            'bytes': 0,
-            'portedBytes': 0,
-            'routines': 0,
-            'portedRoutines': 0,
-            'classes': []
-        }
-        for cls in sub['classes']:
-            cls_name = cls['name']
-            total_cls_routines = len(cls['sizes'])
-            cls_bytes = sum(cls['sizes'])
-            ported_cls_routines = 0
-            ported_cls_bytes = 0
-
-            # Find if this class is implemented by any of our Rust modules
-            for mod_name, mapped_classes in RUST_MODULE_MAP.items():
-                if cls_name in mapped_classes and budget.get(mod_name, 0) > 0:
-                    avail = budget[mod_name]
-                    take = min(avail, total_cls_routines - ported_cls_routines)
-                    if take > 0:
-                        budget[mod_name] -= take
-                        ported_cls_routines += take
-
-            if ported_cls_routines > 0:
-                ported_cls_bytes = sum(cls['sizes'][:ported_cls_routines])
-
-            c = {
-                'name': cls_name,
-                'bytes': cls_bytes,
-                'routines': total_cls_routines,
-                'portedBytes': ported_cls_bytes,
-                'portedRoutines': ported_cls_routines
-            }
-            out['classes'].append(c)
-            for k in ('bytes', 'portedBytes', 'routines', 'portedRoutines'):
-                out[k] += c[k]
-
-        for k in ('bytes', 'portedBytes', 'routines', 'portedRoutines'):
-            result[k] += out[k]
-        result['subsystems'].append(out)
-
-    return result
-
-
-def percent(d):
-    return 100.0 * d['portedBytes'] / d['bytes'] if d['bytes'] else 0.0
-
-
 def squarify(values, x, y, w, h):
     """Bruls et al. squarified treemap."""
     items = [(v, i) for i, v in enumerate(values) if v > 0]
@@ -228,79 +122,6 @@ def squarify(values, x, y, w, h):
     return out
 
 
-def treemap(result, width=1000, height=560):
-    head = 26
-    pct = percent(result)
-    parts = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
-        f'viewBox="0 0 {width} {height}" font-family="{FONT}">',
-        f'<rect width="{width}" height="{height}" fill="{DARK}"/>',
-        f'<text x="8" y="18" font-size="13" fill="{INK}">Original game code ported in Rust: {pct:.2f}% '
-        f'({result["portedRoutines"]} / {result["routines"]} routines, by code size)</text>'
-    ]
-    subs = sorted(result['subsystems'], key=lambda s: -s['bytes'])
-    boxes = squarify([s['bytes'] for s in subs], 2, head, width - 4, height - head - 2)
-
-    for sub, box in zip(subs, boxes):
-        if not box:
-            continue
-        sx, sy, sw, sh = box
-        label = 15 if sh > 40 else 0
-        classes = sorted(sub['classes'], key=lambda c: -c['bytes'])
-        cutoff = sub['bytes'] * 0.002
-        big = [c for c in classes if c['bytes'] >= cutoff]
-        small = [c for c in classes if c['bytes'] < cutoff]
-        if small:
-            big.append({
-                'name': '',
-                'bytes': sum(c['bytes'] for c in small),
-                'portedBytes': sum(c['portedBytes'] for c in small)
-            })
-        cells = squarify([c['bytes'] for c in big], sx + 1, sy + label + 1, sw - 2, sh - label - 2)
-        for c, cell in zip(big, cells):
-            if not cell:
-                continue
-            x, y, w, h = cell
-            done = c['portedBytes'] / c['bytes'] if c['bytes'] else 0
-            parts.append(
-                f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" fill="{GREY}" '
-                f'stroke="{DARK}" stroke-width="0.6"/>'
-            )
-            if done > 0:
-                fh = h * done
-                parts.append(
-                    f'<rect x="{x:.1f}" y="{y + h - fh:.1f}" width="{w:.1f}" height="{fh:.1f}" '
-                    f'fill="{GREEN}" stroke="{DARK}" stroke-width="0.6"/>'
-                )
-            if c['name'] and w > 5.6 * len(c['name']) + 6 and h > 14:
-                parts.append(
-                    f'<text x="{x + 3:.1f}" y="{y + 11:.1f}" font-size="9" fill="{INK}">'
-                    f'{html.escape(c["name"])}</text>'
-                )
-        parts.append(
-            f'<rect x="{sx:.1f}" y="{sy:.1f}" width="{sw:.1f}" height="{sh:.1f}" fill="none" '
-            f'stroke="{INK}" stroke-opacity="0.55" stroke-width="1.2"/>'
-        )
-        title = f'{sub["name"]} {percent(sub):.1f}%'
-        if label and sw < 7.4 * len(title) + 8:
-            title = f'{percent(sub):.1f}%'
-        if label and sw >= 7.4 * len(title) + 8:
-            parts.append(
-                f'<text x="{sx + 4:.1f}" y="{sy + 12:.1f}" font-size="11" font-weight="bold" '
-                f'fill="{INK}">{html.escape(title)}</text>'
-            )
-
-    parts.append('</svg>')
-    return '\n'.join(parts) + '\n'
-
-
-def badge_colour(p):
-    for limit, colour in ((90, '#4c1'), (60, '#97ca00'), (30, '#a4a61d'), (10, '#dfb317'), (2, '#fe7d37')):
-        if p >= limit:
-            return colour
-    return '#e05d44'
-
-
 def badge(label, value, colour):
     lw, vw = 7 * len(label) + 12, 7 * len(value) + 12
     w = lw + vw
@@ -316,273 +137,191 @@ def badge(label, value, colour):
     )
 
 
-PAGE_TEMPLATE = '''<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ReGTA CTW — Native Rust Port Progress</title>
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<style>
-:root {{
-  color-scheme: dark;
-  --bg: #0b0d11;
-  --panel: #14171d;
-  --line: #2c3038;
-  --ink: #f3f1ea;
-  --muted: #b1b4bb;
-  --red: #ee4944;
-  --gold: #f2c35b;
-  --green: #3fa34d;
-}}
-body {{
-  background: var(--bg);
-  color: var(--ink);
-  font: 15px/1.55 system-ui, -apple-system, sans-serif;
-  margin: 0 auto;
-  max-width: 1040px;
-  padding: 24px 20px 60px;
-}}
-header {{ margin-bottom: 24px; }}
-h1 {{ font-size: 28px; margin: 0 0 12px; letter-spacing: -0.03em; }}
-a {{ color: #7cc4ff; text-decoration: none; }}
-a:hover {{ text-decoration: underline; }}
-.badges {{ margin: 16px 0 20px; display: flex; gap: 8px; flex-wrap: wrap; }}
-.badges img {{ height: 20px; }}
-.treemap-img {{ width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; display: block; }}
-.caption {{ color: var(--muted); font-size: 13px; margin: 12px 0 24px; }}
-table {{ border-collapse: collapse; width: 100%; margin-top: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }}
-th, td {{ border-bottom: 1px solid var(--line); padding: 8px 12px; text-align: left; font-size: 14px; }}
-th {{ background: #1c2027; font-weight: 700; color: var(--ink); font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }}
-td.n {{ text-align: right; font-variant-numeric: tabular-nums; }}
-.bar {{ background: #4d5257; height: 8px; width: 140px; border-radius: 4px; overflow: hidden; display: inline-block; vertical-align: middle; }}
-.bar i {{ background: var(--green); display: block; height: 8px; }}
-details {{ margin: 2px 0; }}
-summary {{ cursor: pointer; font-weight: 600; color: var(--ink); }}
-small {{ color: var(--muted); font-size: 12px; display: block; margin-top: 4px; }}
-code {{ font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: var(--gold); }}
-.back-link {{ display: inline-block; margin-bottom: 16px; font-size: 13px; }}
-</style>
-</head>
-<body>
-<a href="index.html" class="back-link">&larr; Back to ReGTA CTW Home</a>
-<header>
-  <h1>ReGTA CTW — Native Rust Port Progress</h1>
-  <div class="badges">
-    <img src="assets/badge-overall.svg" alt="original code ported">
-    <img src="assets/badge-routines.svg" alt="routines">
-    <a href="https://discord.com/users/601648068277960714" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;background:#5865F2;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-decoration:none;">Discord: benjamin060936</a>
-  </div>
-</header>
-
-<img src="assets/progress.svg" alt="ReGTA CTW Progress Map" class="treemap-img">
-
-<p class="caption">
-  Share of the original game's code, by size, whose routines are implemented in native Rust (<code>src/**/*.rs</code>).
-  100% measured from our Rust codebase (0% third-party C++ code). Reference: <code>{build}</code>.
-  Raw data: <a href="assets/progress.json">progress.json</a>.
-</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Subsystem</th>
-      <th style="width: 150px;">Progress</th>
-      <th class="n">Code</th>
-      <th class="n">Routines</th>
-    </tr>
-  </thead>
-  <tbody>
-    {rows}
-  </tbody>
-</table>
-
-<p class="caption" style="margin-top: 24px;">
-  Every ported routine corresponds to real, verified native Rust functions in <code>src/</code>.
-  Original European PSP release target: ULES-01347 v1.01.
-</p>
-</body>
-</html>
-'''
+def mask_noncode(text):
+    """Mask comments and string literals, keeping offsets for cfg item filtering."""
+    token = re.compile(r'//[^\n]*|/\*|r(\#*)"|b?"(?:\\.|[^"\\])*"|b?\'(?:\\.|[^\'\\])\'', re.S)
+    chars = list(text)
+    at = 0
+    while match := token.search(text, at):
+        start, end = match.span()
+        if match.group() == '/*':
+            depth = 1
+            while depth and end < len(text):
+                nxt = re.search(r'/\*|\*/', text[end:])
+                if not nxt:
+                    end = len(text)
+                    break
+                depth += 1 if nxt.group() == '/*' else -1
+                end += nxt.end()
+        elif match.group().startswith('r'):
+            close = '"' + match.group(1)
+            found = text.find(close, end)
+            end = len(text) if found < 0 else found + len(close)
+        chars[start:end] = ['\n' if c == '\n' else ' ' for c in text[start:end]]
+        at = end
+    return ''.join(chars)
 
 
-def build_table_rows(result):
+def source_functions(text):
+    code = mask_noncode(text)
+    # These are source declarations, including platform-specific branches, not
+    # proof of compiled reachability or correspondence to an original routine.
+    def count(s):
+        definitions = 0
+        for m in re.finditer(r'\bfn\s+[A-Za-z_][A-Za-z_0-9]*', s):
+            # Array type semicolons are not declaration terminators.
+            square = parens = 0
+            for ch in s[m.end():]:
+                if ch == '[': square += 1
+                elif ch == ']': square -= 1
+                elif ch == '(': parens += 1
+                elif ch == ')': parens -= 1
+                elif square == 0 and parens == 0 and ch in '{;':
+                    definitions += ch == '{'
+                    break
+        return definitions
+    all_functions = count(code)
+    chars = list(code)
+    for m in re.finditer(r'#\s*\[\s*(?:cfg\s*\(\s*test\s*\)|test)\s*\]', code):
+        opening = code.find('{', m.end())
+        if opening < 0:
+            continue
+        depth, end = 1, opening + 1
+        while depth and end < len(code):
+            depth += (code[end] == '{') - (code[end] == '}')
+            end += 1
+        chars[m.start():end] = ' ' * (end - m.start())
+    runtime = count(''.join(chars))
+    return runtime, all_functions - runtime
+
+
+GROUPS = {
+    'Vehicles': 'handling traffic vehicle',
+    'People': 'actors ped vault roll pavement ped_paths',
+    'World and rendering': 'world collision props gpu shader texture model render camera',
+    'HUD and navigation': 'gps hud radar pda ui',
+    'Combat': 'weapons explosions',
+    'Missions and activities': 'missions minigames races collectibles jobs drugs safehouse',
+    'Audio and weather': 'audio radio weather',
+    'Saves and police': 'stats save police',
+}
+
+
+def measure_rust(source_dir=SOURCE_DIR):
+    groups = {}
+    digest = hashlib.sha256()
+    for path in sorted(source_dir.rglob('*.rs')):
+        data = path.read_bytes()
+        name = path.relative_to(source_dir).as_posix()
+        digest.update(name.encode() + b'\0' + data)
+        runtime, tests = source_functions(data.decode('utf-8'))
+        group = next((g for g, modules in GROUPS.items() if path.stem in modules.split()), 'Runtime and tools')
+        sub = groups.setdefault(group, {'name': group, 'runtimeFunctions': 0, 'testFunctions': 0, 'classes': []})
+        sub['runtimeFunctions'] += runtime
+        sub['testFunctions'] += tests
+        sub['classes'].append({'name': name, 'runtimeFunctions': runtime, 'testFunctions': tests,
+                              'relatedClasses': RUST_MODULE_MAP.get(path.name, [])})
+    return {'schema': 2, 'measurement': 'native Rust function inventory; not original-code coverage',
+            'pspParityVerified': False, 'pspCompletionPercent': None, 'sourceSha256': digest.hexdigest(),
+            'runtimeFunctions': sum(s['runtimeFunctions'] for s in groups.values()),
+            'testFunctions': sum(s['testFunctions'] for s in groups.values()),
+            'modules': sum(len(s['classes']) for s in groups.values()),
+            'subsystems': list(groups.values())}
+
+
+def treemap(result, width=1000, height=560):
+    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" font-family="{FONT}">',
+             f'<rect width="{width}" height="{height}" fill="{DARK}"/>',
+             f'<text x="8" y="18" font-size="13" fill="{INK}">Native Rust inventory: {result["runtimeFunctions"]} runtime functions | grey: tests/helpers | PSP completion: unmeasured</text>']
+    size = lambda item: item['runtimeFunctions'] + item['testFunctions']
+    subs = sorted(result['subsystems'], key=lambda s: -size(s))
+    boxes = squarify([size(s) for s in subs], 2, 26, width-4, height-28)
+    for sub, box in zip(subs, boxes):
+        if not box: continue
+        sx, sy, sw, sh = box
+        modules = sorted(sub['classes'], key=lambda c: -size(c))
+        cells = squarify([size(c) for c in modules], sx+1, sy+17, sw-2, max(1, sh-18))
+        for c, cell in zip(modules, cells):
+            if not cell: continue
+            x, y, w, h = cell
+            title = html.escape(f'{c["name"]}: {c["runtimeFunctions"]} runtime, {c["testFunctions"]} test/helper functions')
+            parts.append(f'<g><title>{title}</title><rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" fill="{GREY}" stroke="{DARK}"/>')
+            green_h = h * c['runtimeFunctions'] / max(1,size(c))
+            parts.append(f'<rect x="{x:.1f}" y="{y+h-green_h:.1f}" width="{w:.1f}" height="{green_h:.1f}" fill="{GREEN}" stroke="{DARK}"/>')
+            if w > len(c['name'])*5.5+5 and h > 15:
+                parts.append(f'<text x="{x+3:.1f}" y="{y+12:.1f}" font-size="9" fill="{INK}">{html.escape(c["name"])}</text>')
+            parts.append('</g>')
+        parts.append(f'<rect x="{sx:.1f}" y="{sy:.1f}" width="{sw:.1f}" height="{sh:.1f}" fill="none" stroke="{INK}"/>')
+        label = f'{sub["name"]} ({sub["runtimeFunctions"]})'
+        if sw < len(label)*6.2: label = sub['name']
+        if sw > len(label)*6.2:
+            parts.append(f'<text x="{sx+4:.1f}" y="{sy+12:.1f}" font-size="11" fill="{INK}">{html.escape(label)}</text>')
+    return '\n'.join(parts) + '\n</svg>\n'
+
+
+NOTE = ('Green counts runtime function definitions in src/**/*.rs; grey counts test and test-helper definitions. '
+        'Area represents function count, not original binary size. No C++ code or Android routine totals enter these measurements. '
+        'These source counts do not prove gameplay fidelity or a percentage of the PSP game completed. '
+        'Related class names are research navigation hints, not verified routine matches.')
+
+
+def table(result):
     rows = []
-    for sub in sorted(result['subsystems'], key=lambda s: -s['bytes']):
-        p = percent(sub)
-        gaps = sorted(sub['classes'], key=lambda c: -(c['bytes'] - c['portedBytes']))[:8]
-        best = sorted([c for c in sub['classes'] if c['portedRoutines']], key=lambda c: -c['portedBytes'])[:8]
-        fmt = lambda c: f'<code>{html.escape(c["name"] or "(free)")}</code> {c["portedRoutines"]}/{c["routines"]}'
-        best_str = ', '.join(map(fmt, best)) if best else 'pending'
-        gaps_str = ', '.join(map(fmt, gaps)) if gaps else 'none'
-
-        rows.append(
-            f'<tr><td><details><summary>{html.escape(sub["name"])}</summary>'
-            f'<small>Implemented in Rust: {best_str}<br>'
-            f'Pending: {gaps_str}</small></details></td>'
-            f'<td><div class="bar"><i style="width:{p:.1f}%"></i></div></td>'
-            f'<td class="n">{p:.2f}%</td>'
-            f'<td class="n">{sub["portedRoutines"]} / {sub["routines"]}</td></tr>'
-        )
-    return rows
+    for s in sorted(result['subsystems'], key=lambda s: -s['runtimeFunctions']):
+        rows.append(f'<tr><td>{html.escape(s["name"])}</td><td>{len(s["classes"])}</td><td>{s["runtimeFunctions"]}</td><td>{s["testFunctions"]}</td></tr>')
+    return '<table><thead><tr><th>Subsystem</th><th>Modules</th><th>Runtime functions</th><th>Test/helper functions</th></tr></thead><tbody>' + ''.join(rows) + '</tbody></table>'
 
 
-def generate_page(result):
-    rows = build_table_rows(result)
-    return PAGE_TEMPLATE.format(
-        build=html.escape(result['build']),
-        rows='\n    '.join(rows)
-    )
+def validation():
+    path = ROOT / 'target/validation/build-report.json'
+    if path.exists():
+        report = json.loads(path.read_text(encoding='utf-8-sig'))
+        tests = report.get('tests')
+        if tests and tests['failed'] == 0 and report['warnings'] == 0:
+            return tests['passed'], report['timestamp'][:10]
+    return None, None
 
 
-def update_readme(result, readme_path=ROOT / 'README.md'):
-    if not readme_path.exists():
-        return
-    text = readme_path.read_text(encoding='utf-8')
-
-    status_block = (
-        '<!-- BEGIN STATUS SECTION -->\n'
-        '## Status\n\n'
-        '[![original code ported](docs/assets/badge-overall.svg)](docs/progress.html) '
-        '[![routines](docs/assets/badge-routines.svg)](docs/progress.html)\n\n'
-        '[![progress map](docs/assets/progress.svg)](docs/progress.html)\n\n'
-        '<sub>Share of the original game\'s code, by size, implemented in native Rust (`src/`). '
-        'Green is the ported part of each class. 100% measured from our Rust codebase. '
-        'Updated on every push to main; see [how it is measured](docs/progress.html).</sub>\n'
-        '<!-- END STATUS SECTION -->'
-    )
-
-    if '<!-- BEGIN STATUS SECTION -->' in text:
-        text = re.sub(
-            r'<!-- BEGIN STATUS SECTION -->.*?<!-- END STATUS SECTION -->',
-            status_block,
-            text,
-            flags=re.DOTALL
-        )
-    else:
-        target = '## Next milestones'
-        if target in text:
-            text = text.replace(target, status_block + '\n\n' + target, 1)
-
-    readme_path.write_text(text, encoding='utf-8')
-    print(f'Synchronized {readme_path.name}')
-
-
-def update_index_html(result, index_path=ROOT / 'docs' / 'index.html'):
-    if not index_path.exists():
-        return
-    text = index_path.read_text(encoding='utf-8')
-    rows = build_table_rows(result)
-    rows_html = '\n        '.join(rows)
-
-    status_section = (
-        '<!-- BEGIN STATUS SECTION -->\n'
-        '<section id="status" class="content wrap">\n'
-        '<div class="section-top">\n'
-        '<h2 data-en="Native Rust port progress &amp; code coverage" '
-        'data-fr="Avancement du port natif Rust &amp; couverture du code" '
-        'data-es="Progreso del port nativo en Rust y cobertura de código">Native Rust port progress &amp; code coverage</h2>\n'
-        '<p data-en="Squarified treemap tracking implemented subsystems and routines in native Rust (100% local codebase)." '
-        'data-fr="Treemap suivant les sous-systèmes et routines implémentés en pur Rust (100% code source local)." '
-        'data-es="Treemap que sigue los subsistemas y rutinas implementados en Rust nativo (100% código local).">'
-        'Squarified treemap tracking implemented subsystems and routines in native Rust (100% local codebase).</p>\n'
-        '</div>\n\n'
-        '<div class="status-badges">\n'
-        '  <a href="progress.html" title="View Port Progress Dashboard"><img src="assets/badge-overall.svg" alt="original code ported"></a>\n'
-        '  <a href="progress.html" title="View Port Progress Dashboard"><img src="assets/badge-routines.svg" alt="routines"></a>\n'
-        '</div>\n\n'
-        '<div class="treemap-card">\n'
-        '  <a href="progress.html" title="Click to view full routines dashboard"><img src="assets/progress.svg" alt="ReGTA CTW Port Progress Treemap" width="1000" height="560"></a>\n'
-        '</div>\n\n'
-        '<p class="metric-note" data-en="Share of the original game\'s code, by size, implemented in native Rust (src/**/*.rs). Green is the ported part of each class. 100% measured from our Rust codebase." '
-        'data-fr="Part du code original, par taille, implémentée en pur Rust (src/**/*.rs). Le vert indique la portion portée de chaque classe. Mesuré à 100% depuis notre code Rust." '
-        'data-es="Porcentaje del código original, por tamaño, implementado en Rust nativo. El verde indica la parte portada de cada clase. Medido al 100% desde nuestro código Rust.">'
-        'Share of the original game\'s code, by size, implemented in native Rust (src/**/*.rs). Green is the ported part of each class. 100% measured from our Rust codebase.</p>\n\n'
-        '<div class="progress-table-wrap">\n'
-        '  <table class="progress-table">\n'
-        '    <thead>\n'
-        '      <tr>\n'
-        '        <th data-en="Subsystem" data-fr="Sous-système" data-es="Subsistema">Subsystem</th>\n'
-        '        <th style="width: 140px;" data-en="Coverage" data-fr="Couverture" data-es="Cobertura">Coverage</th>\n'
-        '        <th class="n" data-en="Code" data-fr="Code" data-es="Código">Code</th>\n'
-        '        <th class="n" data-en="Routines" data-fr="Routines" data-es="Rutinas">Routines</th>\n'
-        '      </tr>\n'
-        '    </thead>\n'
-        '    <tbody>\n'
-        f'        {rows_html}\n'
-        '    </tbody>\n'
-        '  </table>\n'
-        '</div>\n\n'
-        '<div class="actions" style="justify-content: flex-start; margin-top: 18px;">\n'
-        '  <a class="button primary" href="progress.html" data-en="Open Full Progress Dashboard" data-fr="Ouvrir le tableau de bord complet" data-es="Abrir panel de progreso completo">Open Full Progress Dashboard &rarr;</a>\n'
-        '  <a class="button" href="STATUS.md" data-en="View Verified Rust Metrics" data-fr="Voir les métriques Rust vérifiées" data-es="Ver métricas verificadas de Rust">View Verified Rust Metrics</a>\n'
-        '</div>\n'
-        '</section>\n'
-        '<!-- END STATUS SECTION -->'
-    )
-
-    nav_link = '<a href="#status" data-en="Status" data-fr="Statut" data-es="Estado">Status</a>'
-    if 'href="#status"' not in text and '<a href="#roadmap"' in text:
-        text = text.replace('<a href="#roadmap"', nav_link + '\n' + '<a href="#roadmap"', 1)
-
-    if '<!-- BEGIN STATUS SECTION -->' in text:
-        text = re.sub(
-            r'<!-- BEGIN STATUS SECTION -->.*?<!-- END STATUS SECTION -->',
-            status_section,
-            text,
-            flags=re.DOTALL
-        )
-    else:
-        target = '<section id="roadmap"'
-        if target in text:
-            text = text.replace(target, status_section + '\n' + target, 1)
-
-    index_path.write_text(text, encoding='utf-8')
-    print(f'Synchronized {index_path.name}')
-
-
-def write_all(result, out_assets=None, out_docs=None, sync_docs=True):
-    if out_assets is None:
-        out_assets = ROOT / 'docs' / 'assets'
-    if out_docs is None:
-        out_docs = ROOT / 'docs'
-
+def write_all(result, out_assets, out_docs, sync_docs=True):
     out_assets.mkdir(parents=True, exist_ok=True)
     out_docs.mkdir(parents=True, exist_ok=True)
-
-    p = percent(result)
-    colour = badge_colour(p)
-
-    (out_assets / 'progress.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
-    (out_assets / 'badge-overall.svg').write_text(badge('original code ported', f'{p:.2f}%', colour), encoding='utf-8')
-    (out_assets / 'badge-routines.svg').write_text(
-        badge('routines', f'{result["portedRoutines"]} / {result["routines"]}', colour), encoding='utf-8'
-    )
-    (out_assets / 'progress.svg').write_text(treemap(result), encoding='utf-8')
-    (out_docs / 'progress.html').write_text(generate_page(result), encoding='utf-8')
-
+    passed, date = validation()
+    result['lastLocalValidation'] = {'passed': passed, 'date': date}
+    (out_assets/'progress.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
+    (out_assets/'badge-overall.svg').write_text(badge('PSP fidelity','unverified','#777'),encoding='utf-8')
+    (out_assets/'badge-routines.svg').write_text(badge('Rust runtime functions',str(result['runtimeFunctions']),GREEN),encoding='utf-8')
+    (out_assets/'progress.svg').write_text(treemap(result),encoding='utf-8')
+    page = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ReGTA CTW — Native Rust status</title><style>body{background:#16191c;color:#e6e8ea;font:16px/1.6 system-ui;max-width:1100px;margin:40px auto;padding:0 20px}a{color:#ffc45e}img{max-width:100%;height:auto}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:10px;border-bottom:1px solid #555}p{color:#bfc3c7}</style><a href="index.html">Back to ReGTA CTW</a><h1>Native Rust status</h1><p>' + NOTE + '</p><img src="assets/progress.svg" alt="Native Rust function inventory">' + table(result) + '<p>Raw data: <a href="assets/progress.json">progress.json</a>. Local validation: ' + (f'{passed} tests passed, zero compiler warnings ({date}).' if passed else 'not available on this machine.') + '</p></html>\n'
+    (out_docs/'progress.html').write_text(page,encoding='utf-8')
     if sync_docs:
-        update_readme(result)
-        update_index_html(result)
-
-    print(f'Original code ported in Rust: {p:.2f}% ({result["portedRoutines"]} / {result["routines"]} routines)')
-    for sub in sorted(result['subsystems'], key=lambda s: -s['bytes']):
-        sp = percent(sub)
-        print(f'  {sub["name"]:24} {sp:6.2f}%   {sub["portedRoutines"]:4} / {sub["routines"]:5}')
-    print(f'Wrote badges, progress.svg, progress.json to {out_assets}')
-    print(f'Wrote progress.html to {out_docs}')
+        readme = ROOT/'README.md'
+        text = readme.read_text(encoding='utf-8')
+        block = '<!-- BEGIN STATUS SECTION -->\n## Status\n\n[![PSP fidelity](docs/assets/badge-overall.svg)](docs/progress.html) [![Rust runtime functions](docs/assets/badge-routines.svg)](docs/progress.html)\n\n[![Native Rust inventory](docs/assets/progress.svg)](docs/progress.html)\n\n' + NOTE + '\n\n[Driving and traffic validation](docs/DRIVING_TRAFFIC_REPAIR.md).\n<!-- END STATUS SECTION -->'
+        text = re.sub(r'<!-- BEGIN STATUS SECTION -->.*?<!-- END STATUS SECTION -->',lambda _:block,text,flags=re.S)
+        if passed:
+            text = re.sub(r'local_tests-\d+_passed',f'local_tests-{passed}_passed',text)
+            text = re.sub(r'\*\*\d+ tests / 0 failures\*\*',f'**{passed} tests / 0 failures**',text)
+            text = re.sub(r'Local validation on \*\*.*?\*\*',f'Local validation on **{date}: {passed} passed, 0 failed, 0 ignored, 0 compiler warnings**',text)
+        readme.write_text(text,encoding='utf-8')
+        index = ROOT/'docs/index.html'
+        text = index.read_text(encoding='utf-8')
+        block = '<!-- BEGIN STATUS SECTION -->\n<section id="status" class="content wrap"><div class="section-top"><h2 data-en="Native Rust status" data-fr="État du code Rust natif" data-es="Estado del código Rust nativo">Native Rust status</h2><p>' + NOTE + '</p></div><div class="status-badges"><img src="assets/badge-overall.svg" alt="PSP fidelity unverified"> <img src="assets/badge-routines.svg" alt="Rust runtime function count"></div><div class="treemap-card"><a href="progress.html"><img src="assets/progress.svg" width="1000" height="560" alt="Native Rust inventory"></a></div><div class="progress-table-wrap">' + table(result) + '</div><p><a href="progress.html">Measurement details</a> · <a href="DRIVING_TRAFFIC_REPAIR.md">Driving and traffic validation</a></p></section>\n<!-- END STATUS SECTION -->'
+        text = re.sub(r'<!-- BEGIN STATUS SECTION -->.*?<!-- END STATUS SECTION -->',lambda _:block,text,flags=re.S)
+        if passed:
+            text = re.sub(r'(<strong[^>]*>)\d+/\d+(</strong>)',rf'\g<1>{passed}/{passed}\2',text)
+            text = re.sub(r'(<strong>)\d+(</strong>\s*<span\s+data-en="Unit tests passed")',rf'\g<1>{passed}\2',text)
+        index.write_text(text,encoding='utf-8')
+    print(f'Native Rust inventory: {result["runtimeFunctions"]} runtime functions, {result["testFunctions"]} test/helper functions, {result["modules"]} modules. PSP completion unmeasured.')
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Measure native Rust port coverage and generate progress assets.')
-    parser.add_argument('--source-dir', type=Path, default=SOURCE_DIR, help='Rust source directory')
-    parser.add_argument('--out-assets', type=Path, default=ROOT / 'docs' / 'assets')
-    parser.add_argument('--out-docs', type=Path, default=ROOT / 'docs')
-    parser.add_argument('--no-sync', action='store_true', help='Do not update README.md or docs/index.html')
+    parser = argparse.ArgumentParser(description='Measure native Rust inventory, never inferred PSP completion.')
+    parser.add_argument('--source-dir',type=Path,default=SOURCE_DIR)
+    parser.add_argument('--out-assets',type=Path,default=ROOT/'docs/assets')
+    parser.add_argument('--out-docs',type=Path,default=ROOT/'docs')
+    parser.add_argument('--no-sync',action='store_true')
     args = parser.parse_args()
-
-    res = measure_rust(source_dir=args.source_dir)
-    write_all(res, out_assets=args.out_assets, out_docs=args.out_docs, sync_docs=not args.no_sync)
+    write_all(measure_rust(args.source_dir),args.out_assets,args.out_docs,not args.no_sync)
 
 
 if __name__ == '__main__':

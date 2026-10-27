@@ -1,3 +1,55 @@
+# ACTIVE HANDOFF - driving and traffic repair
+
+Updated: 2026-10-27 19:00 Europe/Paris. Repair implemented and validated locally. Read this before historical sections below.
+
+## Resume in 10 seconds
+
+```powershell
+Get-Content outputs/CTW-Rust/AI_HANDOFF_GUIDE.md -TotalCount 65
+git log -3 --oneline
+Get-Content target/validation/build-report.json
+```
+Then read `docs/DRIVING_TRAFFIC_REPAIR.md` and `docs/GEMINI_DRIVING_NEXT.md`.
+
+## Exact verified state
+
+- Repair follows baseline commit `0323f03`. Commit messages for this checkpoint describe grounded driving and traffic repair plus native-only status measurement. No GitHub push performed.
+- `Compiler.ps1 -Test`: **213 passed, 0 failed, 0 ignored, 0 warnings**, build report at 2026-10-27T03:28:51.5337912+01:00. Full log: `target/driving-final.log`. Three Python inventory-integrity tests also pass.
+- Delivered executable: `outputs/CTW-Rust/CTW-Rust.exe`, SHA-256 `73d673793121451d562f51f9e9e2b9027b5eedf0de528084029041ac6fb8c8ac`. Its hash matches `target/release/ctw-rust.exe` and the build report.
+- Final real-ISO audit: 92 land vehicles, 166 sampled map routes, zero non-finite/excessive trajectories or route jumps over one unit. Largest route step 0.529 units. **Three routes request world-obstruction recovery**, not yet validated past that request: starting links 197->142, 443->428, 626->1439. Their exact ending nodes/positions are in `target/driving-audit/driving-audit.json`.
+- Native OpenGL smoke captures inspected: `target/driving-frame180.bmp`, `target/driving-turn.bmp`, `target/traffic-20seconds.bmp`. Three-second steering run travelled 65.0 units with no player collision events; straight run hit a solid planter and stopped. No physical XInput controller was connected; no full PSP comparison/playthrough is claimed.
+- Both upstreams rechecked at the evening resume, 27 October 19:01 Europe/Paris: CTW-Native `95adc327ddd8357701ca3885c61fd6b4a40f193b`; highcmd `6562163b6f504a1db93e1be5ce580d8cd6f024a7`. New startup/bike-entry/arrest/optional-prop changes were reviewed; grounded drivetrain/traffic files are unchanged. Repair provenance stays pinned to `b0506abc786fea229101c56e0a64726aa8b4ac97`. See `docs/UPSTREAM_REVIEW.md`.
+
+## Implementation and provenance
+
+- `handling.rs`: grounded Q12 engine/tyre adaptation from GPL-3.0-only Kryo.to vehicle.cpp; per-vehicle handling loaded from user's PSP PAK29. Separate wheel spin, load/drive/brake splits, torque feedback, gearbox, steering reduction, service brake/reverse and explicit gas+brake burnout.
+- `actors.rs`: fixed 30Hz updates, preserve world momentum while body turns, resync wheels after impact; disabled engine cannot accelerate/release burnout. `gamepad.rs` / `play.rs`: independent accelerator/brake, vertical stick does not control throttle.
+- `traffic.rs` / `gps.rs`: directed lanes, correct endpoint metadata, filtered junction choices, continuous curves/residual travel, collision rollback, normal queues/lights never reverse, original reference light phases, road-dependent speed, actual spline spawn clearance/reservations and viewport guard. Rail reattachment only aligned, offscreen and straight.
+- `police.rs`: pursuit supplies controls to shared physics, removing the second direct position/angle/speed update. Existing tactical target heuristic remains unverified original behaviour.
+- CLI `--driving-audit`: real ISO handling traces and map routes, writes ignored JSON; `tools/research/inspect_vehicle_handling.py` inspects private records. No proprietary game files were added to Git.
+- `tools/progress/progress.py`: corrected status integrity. Previous code allocated Rust function counts over Android binary routine sizes and called it original-code coverage. Current chart reads ONLY src/**/*.rs, green runtime definitions / grey test-helper definitions; no inferred PSP completion percentage. Includes 3 Python regression tests. Related-class mapping is research navigation, not verified routine correspondence.
+
+## Known remaining limits / Gemini next task
+
+Read `docs/GEMINI_DRIVING_NEXT.md`: reproduce three obstruction routes at their ENDING coordinates, identify actual obstacle, test physical recovery and multi-car intersections. Do not weaken collision checks or enable underwater boat nodes to hide failure.
+
+PSP equivalence of Android gear ratios remains unverified (exact sequence search in private PSP ELF was inconclusive). Vertical suspension, slopes/airborne behaviour, original full collision response, surface grip, police tactics and bike lean/body sway are not fully ported. The world sweep still uses a simplified mostly Admiral-sized footprint. Q12 force arithmetic uses quantized float trigonometry, not bit-exact MIPS.
+
+Gemini's earlier `docs/GEMINI_TRAFFIC_AUDIT.md` is preserved with review corrections in the repair report: z=-7 nodes are boats, directed reciprocal links already support opposing traffic, 0x4CE/4096 at 30Hz is ~9 units/s2. Its distant-car braking finding was valid and fixed. The earlier audit prompt is completed; use GEMINI_DRIVING_NEXT for continuation.
+
+## Reproduction
+
+```powershell
+python tools/maintenance/check_upstreams.py --task "Investigate remaining traffic obstruction recovery"
+powershell -ExecutionPolicy Bypass -File ./Compiler.ps1 -Test
+python -m unittest discover -s tools/progress -p test_progress.py -v
+& ./target/release/ctw-rust.exe --iso "work/Chinatown-Wars-PSP.iso" --driving-audit --output target/driving-audit
+```
+
+Use the original F: ISO path if the private local copy is absent. Preserve original data, current logos/film and existing research. Public language is English; branding ReGTA CTW PC Recomp. No C++/emulated CPU dependency in runtime. Recheck both upstreams before new tasks, review relevant evidence, regenerate status after significant work and record exact results here.
+
+---
+
 # ReGTA CTW PC Recomp — media and naming checkpoint
 
 Updated: 2026-10-25, Europe/Paris. Current media work was published to GitHub and GitHub Pages in commit 4dbbc6c. No YouTube upload was performed.

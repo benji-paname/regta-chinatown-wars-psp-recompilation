@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-//! Small native slice simulation: arcade cars, civilians and melee reactions.
+//! Native slice simulation: vehicles, civilians and melee reactions.
 //! Placement uses PSP roads/collisions; behaviour is reconstructed, not PSP parity.
 //! Civilians wander and flee on the PSP pavement network (see pavement.rs);
 //! the radar-colour areas remain only for civilians without a nearby node.
@@ -53,7 +53,6 @@ impl PedestrianAreas {
     }
 }
 
-pub const CAR_HALF_WIDTH: f32 = 1.21582;
 const CAR_HEIGHT: f32 = 1.9854;
 
 #[derive(Default, Clone, Copy)]
@@ -63,6 +62,19 @@ pub struct DriveInput {
     /// Positive turns right, negative turns left.
     pub steer: f32,
     pub brake: bool,
+    /// Separate accelerator + foot-brake chord; never inferred from reverse.
+    pub burnout: bool,
+}
+
+impl DriveInput {
+    pub fn controls(gas: f32, foot_brake: f32, steer: f32, handbrake: bool) -> Self {
+        Self {
+            throttle: if gas > 0. && foot_brake > 0. { -foot_brake } else { gas - foot_brake }.clamp(-1., 1.),
+            steer: steer.clamp(-1., 1.),
+            brake: handbrake,
+            burnout: gas > 0. && foot_brake > 0.,
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -107,7 +119,7 @@ pub struct Car {
     pub lat_vel: f32,
     /// Angular yaw rate (rad/s).
     pub yaw_rate: f32,
-    /// Normalized steering wheel angle.
+    /// Front wheel angle in radians.
     pub steer_angle: f32,
     /// Transmission gear (-1 = reverse, 0 = neutral, 1..=num_gears = forward).
     pub gear: i8,
@@ -161,6 +173,8 @@ pub struct Car {
     pub panicked: bool,
     pub panic_timer: f32,
     pub burnout: bool,
+    pub handling: crate::handling::State,
+    pub drive_accumulator: f32,
 }
 impl Car {
     pub fn spec(&self) -> &'static crate::vehicle::Spec {
@@ -296,6 +310,8 @@ pub struct Scene {
     pub sniper_scope: crate::weapons::SniperScope,
     pub traffic_lights: crate::vehicle::TrafficLightManager,
     pub traffic_manager: crate::vehicle::TrafficManager,
+    /// Current rendered view, used to prevent visible traffic replacement.
+    pub traffic_view: Option<[f32; 16]>,
     pub pay_n_spray: crate::vehicle::PayNSprayManager,
     pub police: crate::police::PoliceManager,
     pub explosions: crate::explosions::ExplosionManager,
@@ -366,7 +382,7 @@ fn car_position(c: &Collision, p: [f32; 3], angle: f32) -> Option<[f32; 3]> {
     car_position_for(c, p, angle, 0)
 }
 
-fn car_position_for(
+pub(crate) fn car_position_for(
     c: &Collision,
     mut p: [f32; 3],
     angle: f32,
@@ -482,7 +498,7 @@ pub(crate) fn make_vehicle(
         lat_vel: 0.,
         yaw_rate: 0.,
         steer_angle: 0.,
-        gear: 0,
+        gear: 1,
         rpm: 0.22,
         roll: 0.,
         pitch: 0.,
@@ -530,6 +546,8 @@ pub(crate) fn make_vehicle(
         panicked: false,
         panic_timer: 0.0,
         burnout: false,
+        handling: crate::handling::State::default(),
+        drive_accumulator: 0.,
     }
 }
 
@@ -581,7 +599,7 @@ impl Scene {
                 traffic_lights.lights.push(crate::vehicle::TrafficLight {
                     node_id: idx,
                     pos: node.p,
-                    cycle_offset: (idx as f32 * 3.7) % crate::vehicle::TrafficLightManager::CYCLE_TIME,
+                    cycle_offset: 0.,
                 });
             }
         }
@@ -602,6 +620,7 @@ impl Scene {
             sniper_scope: crate::weapons::SniperScope::new(),
             traffic_lights,
             traffic_manager: crate::vehicle::TrafficManager::new(),
+            traffic_view: None,
             pay_n_spray: crate::vehicle::PayNSprayManager::new(),
             police: crate::police::PoliceManager::new(),
             explosions: crate::explosions::ExplosionManager::new(),
@@ -758,7 +777,8 @@ impl Scene {
                 let p_to = roads.nodes[to].p;
                 let seg_len = (p_to[0] - p_from[0]).hypot(p_to[1] - p_from[1]).max(0.1);
                 let (lane, wobble) = roads.select_lane(from, to, car_rng.below(0xffff_ffff));
-                let t = 0.5;
+                let t = (((p[0] - p_from[0]) * (p_to[0] - p_from[0])
+                    + (p[1] - p_from[1]) * (p_to[1] - p_from[1])) / (seg_len * seg_len)).clamp(0., 1.);
                 let p_lane = roads.lane_world_pos(from, to, t, lane, wobble);
                 let a_lane = heading(p_from, p_to);
                 let info_id = crate::vehicle::choose_traffic_vehicle(p_lane, &mut car_rng);
@@ -767,24 +787,12 @@ impl Scene {
                     let mut veh = make_vehicle(valid_p, a_lane, to, from, info_id, paint, false, false);
                     veh.lane = lane;
                     veh.wobble = wobble;
-                    veh.rail_dist = seg_len * t;
-                    veh.on_rail = true;
-                    if let Some(to_node) = roads.nodes.get(to) {
-                        let next_cand = to_node
-                            .links
-                            .iter()
-                            .copied()
-                            .filter(|&n| roads.nodes[n].land() && n != from)
-                            .nth(scene.cars.len() % to_node.links.len().max(1))
-                            .or_else(|| to_node.links.iter().copied().find(|&n| roads.nodes[n].land()));
-                        if let Some(nt) = next_cand {
-                            veh.next_target = nt;
-                            let (nl, nw) = roads.convert_lane(from, to, nt, lane, car_rng.below(0xffff_ffff));
-                            veh.next_lane = nl;
-                            veh.next_wobble = nw;
-                        }
+                    if crate::traffic::initialize_rail(&mut veh, roads, c, seg_len * t, car_rng.below(u32::MAX))
+                        && distance(veh.p, player) > 28.
+                        && scene.cars.iter().all(|other| distance(other.p, veh.p) > 12.)
+                        && scene.peds.iter().all(|ped| distance(ped.p, veh.p) > 4.5) {
+                        scene.cars.push(veh);
                     }
-                    scene.cars.push(veh);
                 }
             }
             if scene.cars.len() >= 9 && scene.peds.len() >= 20 {
@@ -1544,6 +1552,9 @@ impl Scene {
             }
         }
         let previous: Vec<_> = self.cars.iter().map(|car| (car.p, car.angle, car.h[0])).collect();
+        let traffic_bodies: Vec<_> = self.cars.iter().map(crate::traffic::Body::from).collect();
+        let pursuit_forward = self.driving.and_then(|i| self.cars.get(i)).map(|c| forward(c.angle)).unwrap_or([0., 1.]);
+        let pursuit_focus = self.driving.and_then(|i| self.cars.get(i)).map(|c| c.p).unwrap_or(player);
         for i in 0..self.cars.len() {
             if self.driving == Some(i) {
                 let control = if self.health > 0. {
@@ -1575,278 +1586,59 @@ impl Scene {
                 }
             } else if !self.cars[i].parked {
                 let car = &mut self.cars[i];
-                if car.on_rail {
-                    if car.start_delay > 0.0 {
-                        car.start_delay = (car.start_delay - dt).max(0.0);
-                        car.speed = 0.0;
-                    }
-                    let look_ahead = 5.0 + (car.speed.max(0.0) * 0.95);
-                    let cf = forward(car.angle);
-                    let mut obstacle = false;
-
-                    // Obstacle: player
-                    let p_dx = player[0] - car.p[0];
-                    let p_dy = player[1] - car.p[1];
-                    let p_dot = p_dx * cf[0] + p_dy * cf[1];
-                    if p_dot > 0.0 && p_dot < look_ahead + 2.0 {
-                        let p_lat = (p_dx * cf[1] - p_dy * cf[0]).abs();
-                        if p_lat < CAR_HALF_WIDTH + 1.2 {
-                            obstacle = true;
-                        }
-                    }
-
-                    // Obstacle: peds
-                    if !obstacle {
-                        for ped in &self.peds {
-                            if ped.health <= 0.0 {
-                                continue;
-                            }
-                            let dx = ped.p[0] - car.p[0];
-                            let dy = ped.p[1] - car.p[1];
-                            let dot = dx * cf[0] + dy * cf[1];
-                            if dot > 0.0 && dot < look_ahead {
-                                let lat = (dx * cf[1] - dy * cf[0]).abs();
-                                if lat < CAR_HALF_WIDTH + 0.95 {
-                                    obstacle = true;
-                                    if car.speed > 3.0 && car.blocked < 0.1 {
-                                        self.pending_impact_sounds.push((car.p, false));
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    // Obstacle: other cars
-                    if !obstacle {
-                        for (j, &(other_p, _, other_hx)) in previous.iter().enumerate() {
-                            if j == i {
-                                continue;
-                            }
-                            let dx = other_p[0] - car.p[0];
-                            let dy = other_p[1] - car.p[1];
-                            let dot = dx * cf[0] + dy * cf[1];
-                            if dot > 0.0 && dot < look_ahead + 2.5 {
-                                let lat = (dx * cf[1] - dy * cf[0]).abs();
-                                if lat < CAR_HALF_WIDTH + other_hx + 0.45 {
-                                    obstacle = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    // Obstacle: Chinatown Wars authentic Traffic Light at intersection approach
-                    if !obstacle {
-                        if let Some(target_node) = roads.nodes.get(car.target) {
-                            if target_node.meta().traffic_light {
-                                let (_, _, total_len, _) = roads.rail_pose(
-                                    car.previous,
-                                    car.target,
-                                    car.next_target,
-                                    car.rail_dist,
-                                    car.lane,
-                                    car.wobble,
-                                    car.next_lane,
-                                    car.next_wobble,
-                                );
-                                let dist_to_node = total_len - car.rail_dist;
-                                if dist_to_node > 0.8 && dist_to_node < 13.5 {
-                                    let signal = self.traffic_lights.signal_for_approach(
-                                        (car.target as f32 * 3.7) % crate::vehicle::TrafficLightManager::CYCLE_TIME,
-                                        car.angle,
-                                    );
-                                    if signal.is_stop() {
-                                        obstacle = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // Emergency Siren Yield behavior: civilian cars yield smoothly to approaching sirens
-                    let yield_siren = self.traffic_manager.should_yield_to_siren(car.p) && !car.is_emergency();
-                    if yield_siren && !obstacle {
-                        car.speed = move_towards(car.speed, 2.8, 8.0 * dt);
-                        car.wobble = move_towards(car.wobble, 0.40, 1.2 * dt);
-                    }
-
-                    if obstacle {
-                        car.blocked += dt;
-                        car.braking = true;
-                        car.speed = move_towards(car.speed, 0.0, 16.0 * dt);
-                        if car.speed.abs() < 0.25 {
-                            car.speed = 0.0;
-                            car.start_delay = 0.35;
-                        }
-                        if car.blocked > 1.2 {
-                            car.horn_timer -= dt;
-                            if car.horn_timer <= 0.0 {
-                                self.pending_impact_sounds.push((car.p, false));
-                                car.horn_timer = 2.4 + ((i * 13) % 15) as f32 * 0.1;
-                            }
-                        }
-                        if car.blocked > 2.4 {
-                            car.on_rail = false;
-                            car.recovery_active = true;
-                            car.recovery_timer = 1.25;
-                            car.recovery_steer = if (i + car.target) % 2 == 0 { -0.85 } else { 0.85 };
-                            car.blocked = 0.0;
-                        }
-                    } else if car.start_delay <= 0.0 {
-                        car.blocked = 0.0;
-                        car.braking = false;
-                        let cruise_speed = 9.0;
-                        car.speed = move_towards(car.speed, cruise_speed, 6.0 * dt);
-                        car.rail_dist += car.speed * dt;
-                        let (new_p, new_angle, total_len, _) = roads.rail_pose(
-                            car.previous,
-                            car.target,
-                            car.next_target,
-                            car.rail_dist,
-                            car.lane,
-                            car.wobble,
-                            car.next_lane,
-                            car.next_wobble,
-                        );
-                        if car.rail_dist >= total_len {
-                            let a = car.previous;
-                            let b = car.target;
-                            let c_target = car.next_target;
-                            if let Some(node) = roads.nodes.get(c_target) {
-                                let next_cand = node
-                                    .links
-                                    .iter()
-                                    .copied()
-                                    .filter(|&n| roads.nodes[n].land() && n != b)
-                                    .nth(i % node.links.len().max(1))
-                                    .or_else(|| {
-                                        node.links.iter().copied().find(|&n| roads.nodes[n].land())
-                                    });
-                                if let Some(nt) = next_cand {
-                                    let entry_off = roads.turn_entry_offset(
-                                        a,
-                                        b,
-                                        c_target,
-                                        car.lane,
-                                        car.next_lane,
-                                    );
-                                    car.previous = b;
-                                    car.target = c_target;
-                                    car.lane = car.next_lane;
-                                    car.wobble = car.next_wobble;
-                                    car.next_target = nt;
-                                    let (nl, nw) =
-                                        roads.convert_lane(b, c_target, nt, car.lane, (i as u32).wrapping_mul(0x9e37_79b9));
-                                    car.next_lane = nl;
-                                    car.next_wobble = nw;
-                                    car.rail_dist = entry_off;
-                                } else {
-                                    car.parked = true;
-                                    car.on_rail = false;
-                                }
-                            } else {
-                                car.parked = true;
-                                car.on_rail = false;
-                            }
-                        }
-                        if let Some(valid) = car_position_for(c, new_p, new_angle, car.info_id) {
-                            car.p = valid;
-                            car.angle = new_angle;
-                        }
-                    }
+                if car.disabled || car.health <= 0. {
+                    step_car(car, c, DriveInput { brake: true, ..DriveInput::default() }, dt);
+                } else if let Some(control) = self.police.pursuit_input(i, car, pursuit_focus, pursuit_forward) {
+                    car.on_rail = false;
+                    step_car(car, c, control, dt);
+                } else if car.on_rail {
+                    let gap = crate::traffic::clearance(car, i, &traffic_bodies, &self.peds, player);
+                    let yielding = self.traffic_manager.should_yield_to_siren(car.p) && !car.is_emergency();
+                    crate::traffic::step_rail(car, roads, c, &self.traffic_lights, gap, yielding, dt, self.rng.below(u32::MAX));
                 } else if car.recovery_active {
                     // cDrivingRecovery: reversing away from obstacle with counter-steering
                     car.recovery_timer -= dt;
                     let control = DriveInput {
                         throttle: -0.65,
                         steer: car.recovery_steer,
-                        brake: false,
-                    };
+                        brake: false, burnout: false };
                     step_car(car, c, control, dt);
                     if car.recovery_timer <= 0.0 {
                         car.recovery_active = false;
                         car.blocked = 0.0;
                         car.start_delay = 0.3;
                     }
-                } else if car.panicked {
-                    // cVehicle::HandleReaction(3): panicking driver drives away aggressively
-                    car.panic_timer -= dt;
-                    car.horn_timer -= dt;
-                    if car.horn_timer <= 0.0 {
-                        self.pending_impact_sounds.push((car.p, false));
-                        car.horn_timer = 0.5;
-                    }
-                    if let Some(target) = roads.nodes.get(car.target) {
-                        let diff = wrapped(heading(car.p, target.p) - car.angle);
-                        let steer = (-diff * 2.2).clamp(-1.0, 1.0);
-                        let throttle = if car.speed < 18.5 { 1.0 } else { 0.4 };
-                        step_car(car, c, DriveInput { throttle, steer, brake: diff.abs() > 2.0 }, dt);
-                        if distance(car.p, target.p) < 6.0 {
-                            let next = target
-                                .links
-                                .iter()
-                                .copied()
-                                .filter(|&n| roads.nodes[n].land() && n != car.previous)
-                                .nth(i % target.links.len().max(1))
-                                .or_else(|| {
-                                    target.links.iter().copied().find(|&n| roads.nodes[n].land())
-                                });
-                            if let Some(next) = next {
-                                car.previous = car.target;
-                                car.target = next;
-                            }
-                        }
-                    }
-                    if car.panic_timer <= 0.0 {
-                        car.panicked = false;
-                        car.speed = 0.0;
-                        car.lat_vel = 0.0;
-                        car.yaw_rate = 0.0;
-                        car.parked = true;
-                    }
                 } else {
-                    if let Some(node) = roads.nodes.get(car.target) {
-                        if distance(car.p, node.p) < 6.0 {
-                            let next = node
-                                .links
-                                .iter()
-                                .copied()
-                                .filter(|&n| roads.nodes[n].land() && n != car.previous)
-                                .nth(i % node.links.len().max(1))
-                                .or_else(|| {
-                                    node.links.iter().copied().find(|&n| roads.nodes[n].land())
-                                });
-                            if let Some(next) = next {
-                                car.previous = car.target;
-                                car.target = next;
-                            }
-                        }
+                    if car.panicked {
+                        car.panic_timer = (car.panic_timer - dt).max(0.);
+                        car.panicked = car.panic_timer > 0.;
                     }
-                    if let Some(target) = roads.nodes.get(car.target) {
-                        let diff = wrapped(heading(car.p, target.p) - car.angle);
-                        let steer = (-diff * 1.6).clamp(-1., 1.);
-                        let throttle = if car.speed < 8.5 { 0.55 } else { 0. };
-                        if step_car(
-                            car,
-                            c,
-                            DriveInput {
-                                throttle,
-                                steer,
-                                brake: diff.abs() > 1.7,
-                            },
-                            dt,
-                        ) {
-                            car.blocked += dt;
-                        } else {
-                            car.blocked = 0.;
+                    let allow_attach = !crate::traffic::visible(self.traffic_view.as_ref(), car.p, car.h[1] + 2.);
+                    if let Some(target) = crate::traffic::rejoin_target(car, roads, allow_attach) {
+                        if car.on_rail {
+                            let gap = crate::traffic::clearance(car, i, &traffic_bodies, &self.peds, player);
+                            crate::traffic::step_rail(car, roads, c, &self.traffic_lights, gap, false, dt, self.rng.below(u32::MAX));
+                            continue;
                         }
-                        if car.blocked > 1.8 {
+                        let diff = wrapped(heading(car.p, target) - car.angle);
+                        let steer = (-diff * 1.6).clamp(-1., 1.);
+                        let desired_speed = if car.panicked { 18.5 } else { 8.5 } * (1. - diff.abs().min(1.4) / 1.6);
+                        let gap = crate::traffic::clearance(car, i, &traffic_bodies, &self.peds, player);
+                        let desired_speed = desired_speed.min((gap.max(0.) * 4.).sqrt());
+                        let throttle = ((desired_speed - car.speed) * 0.3).clamp(-1., 1.);
+                        let before = car.p;
+                        let hit = step_car(car, c, DriveInput { throttle, steer, brake: false, burnout: false }, dt);
+                        if hit || (desired_speed > 1. && distance(before, car.p) < 0.01) {
+                            car.blocked += dt;
+                        } else { car.blocked = 0.; }
+                        if car.blocked > 1.8 && gap > 1. {
                             car.recovery_active = true;
                             car.recovery_timer = 1.2;
-                            car.recovery_steer = if (i + car.target) % 2 == 0 { -0.85 } else { 0.85 };
-                            car.blocked = 0.0;
+                            car.recovery_steer = -steer;
+                            car.blocked = 0.;
                         }
+                    } else {
+                        step_car(car, c, DriveInput { brake: true, ..DriveInput::default() }, dt);
                     }
                 }
             }
@@ -1977,6 +1769,8 @@ impl Scene {
                             self.cars[k].driver_appearance = None;
                         }
                     }
+                    self.cars[i].handling.reset_wheels();
+                    self.cars[j].handling.reset_wheels();
                     self.cars[i].on_rail = false;
                     self.cars[j].on_rail = false;
                 }
@@ -2545,24 +2339,28 @@ impl Scene {
         if self.stream_timer >= 1.0 {
             self.stream_timer = 0.0;
 
-            // 1. Recycle distant civilian cars (> 90m from focus, not driven by player)
-            let other_car_positions: Vec<[f32; 3]> = self.cars.iter().map(|c| c.p).collect();
+            // 1. Recycle distant civilian cars, outside the actual viewport.
+            let mut other_car_positions: Vec<[f32; 3]> = self.cars.iter().map(|c| c.p).collect();
             let other_ped_positions: Vec<[f32; 3]> = self.peds.iter().map(|p| p.p).collect();
             let all_edges: Vec<_> = roads.edges().collect();
             if !all_edges.is_empty() {
                 let n_edges = all_edges.len();
                 let mut edge_offset = self.rng.below(n_edges as u32) as usize;
                 for (i, car) in self.cars.iter_mut().enumerate() {
-                    if Some(i) != self.driving && !car.from_cargen && distance(car.p, focus) > 90.0 {
-                        // Find an off-screen road edge in the spawn band [58.0m, 75.0m] from focus
+                    if Some(i) != self.driving && !self.police.cop_car_indices.contains(&i)
+                        && !car.from_cargen && distance(car.p, focus) > 130.0
+                        && !crate::traffic::visible(self.traffic_view.as_ref(), car.p, car.h[1] + 2.) {
+                        // Find an off-screen road point in the 80..120 unit band.
                         for step in 0..n_edges {
                             let (a, b) = all_edges[(edge_offset + step) % n_edges];
                             let na = roads.nodes[a].p;
                             let nb = roads.nodes[b].p;
                             let (lane, wobble) = roads.select_lane(a, b, self.rng.below(0xffff_ffff));
-                            let p_lane = roads.lane_world_pos(a, b, 0.5, lane, wobble);
+                            let t = 0.1 + self.rng.below(1000) as f32 / 1000. * 0.8;
+                            let p_lane = roads.lane_world_pos(a, b, t, lane, wobble);
                             let d_lane = distance(p_lane, focus);
-                            if (58.0..=75.0).contains(&d_lane) {
+                            if (80.0..=120.0).contains(&d_lane)
+                                && !crate::traffic::visible(self.traffic_view.as_ref(), p_lane, 12.) {
                                 let a_lane = heading(na, nb);
                                 let info_id = crate::vehicle::choose_traffic_vehicle(p_lane, &mut self.rng);
                                 if let Some(valid_p) = car_position_for(c, p_lane, a_lane, info_id) {
@@ -2576,24 +2374,13 @@ impl Scene {
                                         let mut replacement = make_vehicle(valid_p, a_lane, b, a, info_id, paint, false, false);
                                         replacement.lane = lane;
                                         replacement.wobble = wobble;
-                                        replacement.rail_dist = seg_len * 0.5;
-                                        replacement.on_rail = true;
-                                        replacement.speed = 8.5; // Natural cruising flow into screen
-                                        if let Some(to_node) = roads.nodes.get(b) {
-                                            let next_cand = to_node
-                                                .links
-                                                .iter()
-                                                .copied()
-                                                .filter(|&n| roads.nodes[n].land() && n != a)
-                                                .nth(i % to_node.links.len().max(1))
-                                                .or_else(|| to_node.links.iter().copied().find(|&n| roads.nodes[n].land()));
-                                            if let Some(nt) = next_cand {
-                                                replacement.next_target = nt;
-                                                let (nl, nw) = roads.convert_lane(a, b, nt, lane, self.rng.below(0xffff_ffff));
-                                                replacement.next_lane = nl;
-                                                replacement.next_wobble = nw;
-                                            }
-                                        }
+                                        if !crate::traffic::initialize_rail(&mut replacement, roads, c, seg_len * t, self.rng.below(u32::MAX))
+                                            || !(80.0..=120.0).contains(&distance(replacement.p, focus))
+                                            || crate::traffic::visible(self.traffic_view.as_ref(), replacement.p, 12.)
+                                            || other_car_positions.iter().enumerate().any(|(j, &op)| j != i && distance(op, replacement.p) <= 11.)
+                                            || other_ped_positions.iter().any(|&pp| distance(pp, replacement.p) <= 5.) { continue; }
+                                        replacement.speed = crate::traffic::road_speed(&replacement, roads);
+                                        other_car_positions[i] = replacement.p;
                                         *car = replacement;
                                         break;
                                     }
@@ -3108,7 +2895,18 @@ fn point_in_car(car: &Car, p: [f32; 3], radius: f32) -> bool {
 /// movement from tunnelling through collision boxes between rendering frames.
 /// Uses per-vehicle PAK 29 parameters (cTransmission::DriveEngine,
 /// cWheeledVehicle::CalcHandling / UpdateSway, and cBike::UpdateModelMatrix).
-fn step_car(car: &mut Car, c: &Collision, input: DriveInput, dt: f32) -> bool {
+pub(crate) fn step_car(car: &mut Car, c: &Collision, input: DriveInput, dt: f32) -> bool {
+    if !dt.is_finite() || dt <= 0. { return false; }
+    car.drive_accumulator += dt.min(0.1);
+    let mut collided = false;
+    while car.drive_accumulator + 1e-7 >= crate::handling::STEP {
+        car.drive_accumulator = (car.drive_accumulator - crate::handling::STEP).max(0.);
+        collided |= step_car_tick(car, c, input, crate::handling::INTEGRATION_STEP);
+    }
+    collided
+}
+
+fn step_car_tick(car: &mut Car, c: &Collision, input: DriveInput, dt: f32) -> bool {
     if car.is_watercraft() {
         let is_jetski = car.spec().is_jetski();
         if let Some(engine) = &mut car.boat_engine {
@@ -3155,225 +2953,13 @@ fn step_car(car: &mut Car, c: &Collision, input: DriveInput, dt: f32) -> bool {
 
     let spec = car.spec();
     let mass = spec.mass();
-    let max_fwd = (spec.top_speed as f32 * 0.44).clamp(22.0, 72.0);
-    let max_rev = -(max_fwd * 0.35).clamp(10.0, 18.0);
+    let max_fwd = spec.top_speed as f32 / (3.6 * 4096. / 6590.);
     let throttle = input.throttle.clamp(-1., 1.);
     let steer_in = input.steer.clamp(-1., 1.);
-
-    // In GTA Chinatown Wars, foot braking applies when throttle opposes current driving direction
-    let foot_braking = (car.gear >= 1 && throttle < -0.05 && car.speed > 0.25)
-        || (car.gear < 0 && throttle > 0.05 && car.speed < -0.25);
-
-    let burnout_attempt = (input.brake || (car.gear >= 1 && throttle < -0.2)) && throttle.abs() > 0.25 && car.speed.abs() < 2.0;
-    let handbrake_turn = input.brake && (steer_in.abs() > 0.05 || car.lat_vel.abs() > 0.6) && car.speed.abs() >= 2.0;
-    car.braking = foot_braking || (input.brake && !burnout_attempt);
-
-    // Chinatown Wars authentic Launch Control / Burnout launch kick:
-    // releasing the brake while holding throttle bursts forward with wheelspin
-    let launch_boost = car.burnout && !input.brake && throttle > 0.35;
-    if launch_boost {
-        car.speed = (car.speed + 9.5).min(max_fwd);
-        car.wheel_spin = true;
-        car.rear_skidding = true;
-        car.rpm = 1.0;
-    }
-    car.burnout = burnout_attempt;
-
-    // ------------------------------------------------------------------------
-    // 1. Chinatown Wars Steering Rack (cWheeledVehicle::UpdateSteering)
-    // ------------------------------------------------------------------------
-    let steer_lock_rad = spec.steer_lock_deg().to_radians();
-    let steer_speed_red = spec.steer_speed_red();
-    let speed_kmh = car.speed.abs() * 3.6;
-    let speed_norm = (speed_kmh / 51.4).clamp(0.0, 1.0);
-    let lim = if car.gear < 0 {
-        0.96 // ~55 deg in reverse
-    } else {
-        ((steer_lock_rad * 0.5) - speed_norm * (steer_speed_red / 100.0) * steer_lock_rad * 1.6).max(0.12)
-    };
-
-    if steer_in.abs() < 0.03 {
-        car.steer_angle = 0.0;
-    } else {
-        let rate = if car.speed.abs() < 1.0 || burnout_attempt {
-            steer_lock_rad
-        } else {
-            (spec.steer_rate_deg().to_radians() * 2.8).clamp(8.0, 24.0) * steer_in.abs()
-        };
-        if steer_in < 0.0 {
-            car.steer_angle = (car.steer_angle.min(0.0) - rate * (dt * 30.0).max(1.0)).clamp(-lim, lim);
-        } else {
-            car.steer_angle = (car.steer_angle.max(0.0) + rate * (dt * 30.0).max(1.0)).clamp(-lim, lim);
-        }
-    }
-
-    // ------------------------------------------------------------------------
-    // 2. Drivetrain & CEngine Model (CEngine::Update & CEngine::HandleGearChange)
-    // ------------------------------------------------------------------------
-    let num_gears = (spec.num_gears.max(1) as usize).min(6);
-    const GEAR_RATIOS: [f32; 7] = [2.07, 2.97, 2.07, 1.43, 1.00, 0.84, 0.56];
-
-    if car.gear < 1 {
-        if throttle > 0.05 && car.speed >= -0.25 {
-            car.gear = 1;
-        } else if throttle < -0.05 && car.speed <= 0.25 {
-            car.gear = -1;
-        }
-    } else {
-        if throttle < -0.05 && car.speed <= 0.25 {
-            car.gear = -1; // Natural shift to reverse when stopped
-        } else {
-            let r_norm = car.rpm.clamp(0.2, 1.0);
-            if r_norm > 0.86 && (car.gear as usize) < num_gears {
-                car.gear += 1;
-            } else if r_norm < 0.45 && car.gear > 1 {
-                car.gear -= 1;
-            }
-        }
-    }
-
-    let cur_gear_idx = if car.gear < 0 { 0 } else { (car.gear as usize).clamp(1, num_gears) };
-    let gear_ratio = GEAR_RATIOS[cur_gear_idx];
-
-    let gear_band = 1.0 / num_gears as f32;
-    let gear_lo = ((car.gear.max(1) - 1) as f32) * gear_band;
-    let gear_hi = (car.gear.max(1) as f32) * gear_band;
-    let speed_frac = (car.speed.abs() / max_fwd).clamp(0.0, 1.0);
-
-    let target_rpm = if burnout_attempt {
-        (0.78 + throttle.abs() * 0.22).clamp(0.4, 1.0)
-    } else if throttle.abs() > 0.05 {
-        (0.28 + ((speed_frac - gear_lo) / (gear_hi - gear_lo).max(0.08)) * 0.72).clamp(0.28, 1.0)
-    } else {
-        move_towards(car.rpm, 0.22, 2.0 * dt)
-    };
-    car.rpm = target_rpm;
-
-    let r = car.rpm.clamp(0.0, 1.0);
-    let torque_curve = (((1.8 * r - 4.5) * r + 2.2) * r + 0.5).clamp(0.85, 1.35);
-    let damage_factor = if car.health < 290.0 { 0.25 } else if car.health < 790.0 { 0.55 } else { 1.0 };
-    let engine_torque = spec.max_torque() * torque_curve * gear_ratio * damage_factor;
-
-    // ------------------------------------------------------------------------
-    // 3. Two-Axle Tyre Friction Dynamics (cWheeledVehicle::UpdateTyres & CTyre::CalcForces)
-    // ------------------------------------------------------------------------
-    let y_f = (spec.front_axle_q12 as f32 / 4096.0).max(0.6);
-    let y_r = (spec.rear_axle_q12 as f32 / 4096.0).min(-0.6);
-    let wheelbase = y_f - y_r;
-    let weight_front = (-y_r / wheelbase).clamp(0.35, 0.65);
-    let weight_rear = 1.0 - weight_front;
-    let load_f = mass * 9.81 * weight_front;
-    let load_r = mass * 9.81 * weight_rear;
-
-    let grip_base = spec.grip();
-    let grip_f = grip_base;
-    let grip_r = if handbrake_turn {
-        grip_base * 0.30
-    } else {
-        grip_base
-    };
-
-    let v_f_x = car.lat_vel - car.yaw_rate * y_f;
-    let v_f_y = car.speed;
-    let v_r_x = car.lat_vel - car.yaw_rate * y_r;
-    let v_r_y = car.speed;
-
-    let cos_d = car.steer_angle.cos();
-    let sin_d = car.steer_angle.sin();
-    let _v_f_along = v_f_y * cos_d + v_f_x * sin_d;
-    let v_f_side = v_f_x * cos_d - v_f_y * sin_d;
-
-    let _v_r_along = v_r_y;
-    let v_r_side = v_r_x;
-
-    let gear_mul = match car.gear {
-        -1 => 1.00,
-        0 => 0.00,
-        1 => 1.15,
-        2 => 1.00,
-        _ => 0.88,
-    };
-    let torque_ratio = ((spec.max_torque() / 35.0) / mass.powf(0.55)).clamp(0.38, 2.25);
-    let drive_accel = 21.0 * torque_ratio * gear_mul * torque_curve * damage_factor;
-    let base_brake = (32.0 * (spec.brake_force() / 500.0).sqrt() / mass.powf(0.25)).max(36.0);
-
-    let acc_y = if burnout_attempt {
-        0.0
-    } else if foot_braking {
-        -base_brake * throttle.abs() * car.speed.signum()
-    } else if input.brake && !handbrake_turn {
-        -base_brake * 0.75 * car.speed.signum()
-    } else if handbrake_turn {
-        if (car.gear >= 1 && throttle > 0.05) || (car.gear < 0 && throttle < -0.05) {
-            drive_accel * throttle * 0.65
-        } else {
-            -base_brake * 0.35 * car.speed.signum()
-        }
-    } else if (car.gear >= 1 && throttle > 0.05) || (car.gear < 0 && throttle < -0.05) {
-        drive_accel * throttle
-    } else {
-        -(3.0 + (car.speed.abs() / max_fwd) * 2.0) * car.speed.signum()
-    };
-
-    let c_stiff_f = (spec.front_stiffness() * 16.0).clamp(40.0, 110.0);
-    let c_stiff_r = (spec.rear_stiffness() * 16.0).clamp(40.0, 110.0);
-
-    let max_lat_f = load_f * grip_f * 3.5;
-    let max_lat_r = load_r * grip_r * 3.5;
-
-    let f_f_side = (-v_f_side * c_stiff_f).clamp(-max_lat_f, max_lat_f);
-    let f_r_side = (-v_r_side * c_stiff_r).clamp(-max_lat_r, max_lat_r);
-
-    let f_f_body_x = f_f_side * cos_d;
-    let f_r_body_x = f_r_side;
-
-    let total_f_x = f_f_body_x + f_r_body_x - 0.025 * mass * car.lat_vel * car.lat_vel.abs() - car.lat_vel * 3.2;
-    let total_torque = -(y_f * f_f_body_x + y_r * f_r_body_x);
-
-    let h = spec.half_extents();
-    let i_zz = (1.0 / 12.0) * mass * (h[0] * h[0] + h[1] * h[1]) * 4.0;
-    let dyn_alpha = total_torque / i_zz.max(0.5);
-
-    let ackermann_yaw = -car.steer_angle.sin() * car.speed / wheelbase;
-    let beta = (car.speed.abs() / 4.0).clamp(0.0, 1.0);
-    let target_yaw_accel = (1.0 - beta) * (ackermann_yaw - car.yaw_rate) * 24.0 + beta * dyn_alpha;
-
-    let acc_x = total_f_x / mass;
-
-    if burnout_attempt {
-        car.speed = move_towards(car.speed, 0.0, 16.0 * dt);
-        car.lat_vel = 0.0;
-        if steer_in.abs() > 0.15 {
-            car.yaw_rate = -steer_in * 3.4;
-            car.angle = (car.angle + car.yaw_rate * dt).rem_euclid(std::f32::consts::TAU);
-        } else {
-            car.yaw_rate = 0.0;
-        }
-        car.wheel_spin = true;
-        car.rear_skidding = true;
-    } else {
-        car.speed = (car.speed + acc_y * dt).clamp(max_rev, max_fwd);
-        car.lat_vel = (car.lat_vel + acc_x * dt).clamp(-18.0, 18.0);
-        car.yaw_rate = (car.yaw_rate + target_yaw_accel * dt).clamp(-7.0, 7.0);
-
-        if (input.brake || foot_braking) && !handbrake_turn && car.speed.abs() < 1.0 {
-            car.speed = 0.0;
-            car.lat_vel = 0.0;
-            car.yaw_rate = 0.0;
-        } else if car.speed.abs() < 0.15 && throttle.abs() < 0.05 {
-            car.speed = 0.0;
-            car.lat_vel = 0.0;
-            car.yaw_rate = 0.0;
-        }
-
-        let handbrake_spin = handbrake_turn && throttle.abs() > 0.2;
-        car.rear_skidding = burnout_attempt || handbrake_turn || v_r_side.abs() > 2.2;
-        car.front_skidding = v_f_side.abs() > 3.4;
-        car.wheel_spin = burnout_attempt
-            || handbrake_spin
-            || launch_boost
-            || (car.speed.abs() < 6.0 && throttle > 0.8 && (spec.drive_split() < 0.25 || engine_torque > 100.0));
-    }
+    let parameters = crate::handling::parameters(car.info_id);
+    let mut dynamics = std::mem::take(&mut car.handling);
+    let acc_y = dynamics.step(&parameters, car, input);
+    car.handling = dynamics;
 
     // ------------------------------------------------------------------------
     // 4. Body Sway / Motorcycle Lean & Wheelie/Stoppie (cBike::bikeAct)
@@ -3410,14 +2996,26 @@ fn step_car(car: &mut Car, c: &Collision, input: DriveInput, dt: f32) -> bool {
         car.pitch = (car.pitch + car.pitch_vel * dt).clamp(-0.12, 0.12);
     }
 
-    let angle = car.angle + car.yaw_rate * dt;
+    // Forces produce a world velocity. Rotating the body must not rotate its
+    // momentum: reproject into the new body basis (the previous code omitted it).
+    let old_angle = car.angle;
+    let old_f = forward(old_angle);
+    let world_v = [old_f[0] * car.speed + old_f[1] * car.lat_vel,
+                   old_f[1] * car.speed - old_f[0] * car.lat_vel];
+    let angle = wrapped(old_angle + car.yaw_rate * dt);
     if car_position_for(c, car.p, angle, car.info_id).is_some() {
-        car.angle = wrapped(angle);
+        car.angle = angle;
+    } else {
+        car.yaw_rate = 0.;
     }
     let f = forward(car.angle);
     let side = [f[1], -f[0]];
-    let dx = (f[0] * car.speed + side[0] * car.lat_vel) * dt;
-    let dy = (f[1] * car.speed + side[1] * car.lat_vel) * dt;
+    car.speed = world_v[0] * f[0] + world_v[1] * f[1];
+    car.lat_vel = world_v[0] * side[0] + world_v[1] * side[1];
+    // p is the model origin; velocities are at the centre of gravity.
+    let cg = parameters.cg;
+    let dx = world_v[0] * dt + (old_f[1] - side[0]) * cg[0] + (old_f[0] - f[0]) * cg[1];
+    let dy = world_v[1] * dt + (-old_f[0] - side[1]) * cg[0] + (old_f[1] - f[1]) * cg[1];
     let distance = dx.hypot(dy);
     let count = (distance / 0.35).ceil().max(1.) as usize;
     let mut collided = false;
@@ -3445,6 +3043,7 @@ fn step_car(car: &mut Car, c: &Collision, input: DriveInput, dt: f32) -> bool {
             }
             car.speed = 0.;
             car.lat_vel = 0.;
+            car.handling.reset_wheels();
             car.pitch_vel -= 0.65 / mass.sqrt();
             return true;
         }
@@ -3510,6 +3109,61 @@ impl BodySearch {
 mod tests {
     use super::*;
     use crate::collision::{BoxShape, Cell};
+    #[test]
+    fn driving_turn_is_identical_at_30_60_and_144_fps() {
+        let c=flat();
+        let run = |fps: usize| {
+            let mut car=make_car([0.;3],0.,0,0,0);
+            for second in 0..6 {
+                let input=DriveInput::controls(if second<4 {1.} else {0.},0.,if second==3 {0.7} else {0.},false);
+                for _ in 0..fps { step_car(&mut car,&c,input,1./fps as f32); }
+            }
+            car
+        };
+        let a=run(30);
+        for b in [run(60),run(144)] {
+            assert!(distance(a.p,b.p)<0.01,"frame-dependent position");
+            assert!((a.speed-b.speed).abs()<0.01 && (a.angle-b.angle).abs()<0.001);
+        }
+        assert!(a.yaw_rate.abs()<0.15,"released steering must settle: {}",a.yaw_rate);
+    }
+    #[test]
+    fn disabled_vehicle_cannot_accelerate_or_release_burnout_impulse() {
+        let c=flat();
+        for disabled in [true,false] {
+            let mut car=make_car([0.;3],0.,0,0,0);
+            for _ in 0..30 { step_car(&mut car,&c,DriveInput::controls(1.,1.,0.,false),1./30.); }
+            car.disabled=disabled;
+            if !disabled {car.health=0.;}
+            car.speed=0.;car.lat_vel=0.;car.yaw_rate=0.;car.handling.reset_wheels();
+            let p=car.p;
+            for _ in 0..90 { step_car(&mut car,&c,DriveInput::controls(1.,0.,0.,false),1./30.); }
+            assert!(distance(car.p,p)<0.01 && car.speed.abs()<0.01 && !car.burnout);
+        }
+    }
+    #[test]
+    fn steering_lock_reduces_at_speed() {
+        let p=crate::handling::parameters(0);
+        let mut slow=make_car([0.;3],0.,0,0,0);
+        let mut fast=make_car([0.;3],0.,0,0,0);fast.speed=35.;
+        let mut s=crate::handling::State::default();let mut f=s.clone();
+        for _ in 0..12 {
+            s.step(&p,&mut slow,DriveInput::controls(0.,0.,1.,false));
+            f.step(&p,&mut fast,DriveInput::controls(0.,0.,1.,false));
+        }
+        assert!(slow.steer_angle.abs()>fast.steer_angle.abs()*1.5);
+    }
+    #[test]
+    fn handbrake_and_reverse_never_arm_burnout() {
+        let c=flat();
+        for input in [DriveInput::controls(1.,0.,0.,true),DriveInput::controls(0.,1.,0.,false)] {
+            let mut car=make_car([0.;3],0.,0,0,0);
+            for _ in 0..60 {
+                step_car(&mut car,&c,input,1./30.);
+                assert!(!car.burnout);
+            }
+        }
+    }
     #[test]
     fn pedestrian_areas_reject_road_and_water_accept_pavement_and_park() {
         let t = crate::texture::Texture {
@@ -3581,6 +3235,7 @@ mod tests {
             sniper_scope: crate::weapons::SniperScope::new(),
             traffic_lights: crate::vehicle::TrafficLightManager::new(),
             traffic_manager: crate::vehicle::TrafficManager::new(),
+            traffic_view: None,
             pay_n_spray: crate::vehicle::PayNSprayManager::new(),
             police: crate::police::PoliceManager::new(),
             explosions: crate::explosions::ExplosionManager::new(),
@@ -3655,18 +3310,12 @@ mod tests {
             ));
         }
         assert!(car.p[1] > 30. && car.speed > 30.);
-        for _ in 0..40 {
-            step_car(
-                &mut car,
-                &c,
-                DriveInput {
-                    brake: true,
-                    ..DriveInput::default()
-                },
-                1. / 30.,
-            );
+        // Service brake stops first, then the same held input selects reverse.
+        for _ in 0..120 {
+            step_car(&mut car, &c, DriveInput { throttle: -1., ..DriveInput::default() }, 1. / 30.);
+            if car.speed <= 0.1 { break; }
         }
-        assert_eq!(car.speed, 0.);
+        assert!(car.speed.abs() < 1., "service brake reaches a stop before reverse: {}", car.speed);
         let stopped = car.p;
         for _ in 0..30 {
             step_car(
@@ -4035,8 +3684,7 @@ mod tests {
                 DriveInput {
                     throttle: 1.,
                     steer: 1.,
-                    brake: false,
-                },
+                    brake: false, burnout: false },
                 1. / 30.,
             );
         }
@@ -4049,8 +3697,7 @@ mod tests {
                 DriveInput {
                     throttle: 0.,
                     steer: -1.,
-                    brake: true,
-                },
+                    brake: true, burnout: false },
                 1. / 30.,
             );
         }
@@ -4091,6 +3738,7 @@ mod tests {
 
         let mut dukes = make_vehicle([0., 0., 0.], 0., 0, 0, 2, 0, false, false); // DUKES RWD
         dukes.speed = 24.;
+        let mut peak_slip = 0f32;
         for _ in 0..18 {
             step_car(
                 &mut dukes,
@@ -4098,12 +3746,12 @@ mod tests {
                 DriveInput {
                     throttle: 0.8,
                     steer: 1.,
-                    brake: true,
-                },
+                    brake: true, burnout: false },
                 1. / 30.,
             );
+            peak_slip = peak_slip.max(dukes.lat_vel.abs());
         }
-        assert!(dukes.wheel_spin && dukes.lat_vel.abs() > 1.0, "handbrake turn induces lateral drift");
+        assert!(peak_slip > 1.0, "handbrake locks the rear wheels and produces lateral slip: peak slip={peak_slip} speed={} lateral={} yaw={}", dukes.speed, dukes.lat_vel, dukes.yaw_rate);
         assert!(dukes.roll < -0.02, "car body rolls outward in right turn: {}", dukes.roll);
 
         let mut s = empty();
@@ -4191,7 +3839,7 @@ mod tests {
             s.tick(&c, &roads, &assets, player_p, 1.0 / 30.0, DriveInput::default());
         }
         assert_eq!(s.cars[0].speed, 0.0, "traffic car stops completely when obstacle is ahead");
-        assert!(s.cars[0].start_delay > 0.0, "traffic car sets start_delay when stopped");
+        assert!(!s.cars[0].recovery_active, "normal waiting never reverses into the queue");
 
         // 5. Motorcycle NPC rider pose updates
         let mut s_bike = empty();
@@ -4253,6 +3901,7 @@ mod tests {
         let mut car_slow = make_vehicle([0.0, 0.0, 0.0], 0.0, 0, 0, 0, 0, false, false);
         car_slow.speed = 2.5;
         s_ped.cars.push(car_slow);
+        s_ped.driving = Some(0);
         s_ped.peds.push(make_ped([0.0, 1.2, 0.0], [0.0, 5.0, 0.0], 0));
         let ped_health_start = s_ped.peds[0].health;
         s_ped.tick(&c, &roads, &assets, [50.0, 50.0, 0.0], 1.0 / 30.0, DriveInput::default());
@@ -4265,6 +3914,7 @@ mod tests {
         let mut car_fast = make_vehicle([0.0, 0.0, 0.0], 0.0, 0, 0, 0, 0, false, false);
         car_fast.speed = 12.0;
         s_lethal.cars.push(car_fast);
+        s_lethal.driving = Some(0);
         s_lethal.peds.push(make_ped([0.0, 1.2, 0.0], [0.0, 5.0, 0.0], 0));
         s_lethal.tick(&c, &roads, &assets, [50.0, 50.0, 0.0], 1.0 / 30.0, DriveInput::default());
         assert_eq!(s_lethal.peds[0].health, 0.0, "high-speed hit is lethal knockdown");
@@ -4378,7 +4028,7 @@ mod tests {
         s.driving = Some(0);
 
         // Pilot boat with throttle input
-        let input = DriveInput { throttle: 1.0, steer: 0.5, brake: false };
+        let input = DriveInput { throttle: 1.0, steer: 0.5, brake: false, burnout: false };
         for _ in 0..10 {
             s.tick(&c, &roads, &assets, [500.0, -1000.0, -7.42], 1.0 / 30.0, input);
         }
@@ -4454,16 +4104,17 @@ mod tests {
         civ_car.previous = 0;
         civ_car.target = 1;
         civ_car.next_target = 1;
+        civ_car.rail_dist = 10.;
         civ_car.blocked = 2.45; // blocked above recovery threshold (2.4s)
         s.cars.push(civ_car);
 
-        let obs_car = make_vehicle([100.0, 105.0, 0.0], 0.0, 0, 0, 0, 0, false, false);
+        let obs_car = make_vehicle([100.0, 115.0, 0.0], 0.0, 0, 0, 0, 0, false, false);
         s.cars.push(obs_car);
 
         // Simulation tick triggers recovery mode (reversing out)
         s.tick(&c, &roads, &assets, [100.0, 100.0, 0.0], 1.0 / 30.0, DriveInput::default());
-        assert!(s.cars[0].recovery_active, "Blocked car initiates DrivingRecovery");
-        assert!(s.cars[0].recovery_timer > 0.0);
+        assert!(!s.cars[0].recovery_active, "ordinary queue does not initiate reverse recovery");
+        assert!(s.cars[0].on_rail);
 
         // 2. Collision with player car triggers panic flee mode
         let mut player_car = make_vehicle([100.0, 97.5, 0.0], 0.0, 0, 0, 0, 0, false, false);
@@ -4481,18 +4132,12 @@ mod tests {
         let c = flat();
         let mut car = make_vehicle([0.0, 0.0, 0.0], 0.0, 0, 0, 2, 0, false, false); // DUKES RWD
 
-        // 1. Standing burnout: brake + full throttle at 0 speed
-        let burnout_input = DriveInput {
-            throttle: 1.0,
-            steer: 0.8,
-            brake: true,
-        };
-        step_car(&mut car, &c, burnout_input, 1.0 / 30.0);
+        // Burnout is the separate accelerator + service-brake chord.
+        let burnout_input = DriveInput::controls(1., 1., 0.8, false);
+        for _ in 0..30 { step_car(&mut car, &c, burnout_input, 1. / 30.); }
         assert!(car.burnout, "Standing burnout active");
         assert!(car.wheel_spin, "Wheel spin active during burnout");
-        assert!(car.rear_skidding, "Rear tires skidding during burnout");
-        assert!(car.rpm > 0.70, "Engine revs up during burnout");
-        assert!(car.yaw_rate.abs() > 1.0, "Donut yaw rotation active under steer");
+        assert!(car.yaw_rate.abs() > 0.1, "rear force rotates the car during burnout");
 
         // 2. Handbrake drift at speed (speed = 16.0)
         let mut drift_car = make_vehicle([0.0, 0.0, 0.0], 0.0, 0, 0, 2, 0, false, false);
@@ -4500,8 +4145,7 @@ mod tests {
         let drift_input = DriveInput {
             throttle: 0.6,
             steer: 0.9,
-            brake: true,
-        };
+            brake: true, burnout: false };
         for _ in 0..10 {
             step_car(&mut drift_car, &c, drift_input, 1.0 / 30.0);
         }
@@ -4515,25 +4159,15 @@ mod tests {
         let c = flat();
         let mut car = make_vehicle([0.0, 0.0, 0.0], 0.0, 0, 0, 2, 0, false, false); // DUKES RWD
 
-        // 1. Enter burnout mode
-        let burnout_input = DriveInput {
-            throttle: 1.0,
-            steer: 0.0,
-            brake: true,
-        };
-        step_car(&mut car, &c, burnout_input, 1.0 / 30.0);
+        let burnout_input = DriveInput::controls(1., 1., 0., false);
+        for _ in 0..30 { step_car(&mut car, &c, burnout_input, 1. / 30.); }
         assert!(car.burnout, "Burnout charged");
-
-        // 2. Dump the brake with full throttle held: launch boost activates!
-        let launch_input = DriveInput {
-            throttle: 1.0,
-            steer: 0.0,
-            brake: false,
-        };
-        step_car(&mut car, &c, launch_input, 1.0 / 30.0);
-        assert!(!car.burnout, "Burnout discharged into launch");
-        assert!(car.speed >= 9.0, "Launch kick propels vehicle forward at >= 9.0 m/s");
-        assert!(car.wheel_spin, "Wheel spin on launch");
+        let launch_input = DriveInput::controls(1., 0., 0., false);
+        step_car(&mut car, &c, launch_input, 1. / 30.); // armed window
+        let armed_speed = car.speed;
+        step_car(&mut car, &c, launch_input, 1. / 30.); // source's 12-unit impulse
+        assert!(!car.burnout);
+        assert!(car.speed > armed_speed + 9., "launch impulse follows the release window: {} -> {}", armed_speed, car.speed);
 
         // 3. Off-screen streaming test: distant car (> 95m) is recycled strictly off-screen (>= 45m)
         let mut s = empty();

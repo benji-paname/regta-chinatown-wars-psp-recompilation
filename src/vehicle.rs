@@ -412,6 +412,7 @@ impl TestCar {
                 return Err("PSP vehicle table entry mismatch".into());
             }
         }
+        crate::handling::load_table(&info)?;
         let mut textures = HashMap::new();
         // PAK 1 lists the 27 PSP vehicle paint swatch textures (PAK 2..=28).
         let paint_dir = pak.read(disc, 1)?.0;
@@ -518,48 +519,21 @@ impl Default for TrafficLightManager {
 }
 
 impl TrafficLightManager {
-    pub const CYCLE_TIME: f32 = 28.0;
-    pub const GREEN_TIME: f32 = 11.5;
-    pub const AMBER_TIME: f32 = 2.5;
-
+    // cTrafficLightManager::IsTrafficBeingHeld: 1024 ticks, shared by all junctions.
+    pub const CYCLE_TIME: f32 = 1024. / 30.;
     pub fn new() -> Self {
-        Self {
-            timer: 0.0,
-            cycle_duration: Self::CYCLE_TIME,
-            lights: Vec::new(),
-        }
+        Self { timer: 0., cycle_duration: Self::CYCLE_TIME, lights: Vec::new() }
     }
-
     pub fn update(&mut self, dt: f32) {
-        self.timer = (self.timer + dt) % self.cycle_duration;
+        self.timer = (self.timer + dt).rem_euclid(Self::CYCLE_TIME);
+    }
+    pub fn signal_for_approach(&self, _cycle_offset: f32, approach_angle: f32) -> TrafficLightState {
+        let frame = ((self.timer * 30. + 0.001).floor() as u32) & 1023;
+        let east_west = approach_angle.sin().abs() >= approach_angle.cos().abs();
+        let open = if east_west { (512..896).contains(&frame) } else { frame < 384 };
+        if open { TrafficLightState::Green } else { TrafficLightState::Red }
     }
 
-    /// Evaluates signal state for approach direction (angle in radians).
-    /// Phase 0 (North-South): Green 0..11.5s, Amber 11.5..14s, Red 14..28s.
-    /// Phase 1 (East-West): Red 0..14s, Green 14..25.5s, Amber 25.5..28s.
-    pub fn signal_for_approach(&self, cycle_offset: f32, approach_angle: f32) -> TrafficLightState {
-        let t = (self.timer + cycle_offset) % self.cycle_duration;
-        let is_east_west = (approach_angle.sin().abs()) > (approach_angle.cos().abs());
-
-        if !is_east_west {
-            if t < Self::GREEN_TIME {
-                TrafficLightState::Green
-            } else if t < Self::GREEN_TIME + Self::AMBER_TIME {
-                TrafficLightState::Amber
-            } else {
-                TrafficLightState::Red
-            }
-        } else {
-            let p1_start = Self::GREEN_TIME + Self::AMBER_TIME;
-            if t < p1_start {
-                TrafficLightState::Red
-            } else if t < p1_start + Self::GREEN_TIME {
-                TrafficLightState::Green
-            } else {
-                TrafficLightState::Amber
-            }
-        }
-    }
 }
 
 // ============================================================================
@@ -1652,14 +1626,14 @@ mod tests {
         assert_eq!(ew_signal, TrafficLightState::Red);
         assert!(ew_signal.is_stop());
 
-        // Step to t=12.0s: North-South turns Amber, East-West remains Red
-        tlm.update(12.0);
+        // Frame 384: all-red safety interval, as in IsTrafficBeingHeld.
+        tlm.update(384. / 30.);
         let ns_amber = tlm.signal_for_approach(0.0, 0.0);
-        assert_eq!(ns_amber, TrafficLightState::Amber);
+        assert_eq!(ns_amber, TrafficLightState::Red);
         assert!(ns_amber.is_stop());
 
-        // Step to t=16.0s (12+4): North-South turns Red, East-West turns Green!
-        tlm.update(4.0);
+        // Frame 512: East-West is released.
+        tlm.update(128. / 30.);
         let ns_red = tlm.signal_for_approach(0.0, 0.0);
         let ew_green = tlm.signal_for_approach(0.0, std::f32::consts::FRAC_PI_2);
         assert_eq!(ns_red, TrafficLightState::Red);

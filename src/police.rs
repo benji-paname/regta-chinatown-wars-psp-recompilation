@@ -570,55 +570,37 @@ impl PoliceManager {
             self.on_cop_takedown();
         }
 
-        // Update pursuing cop car AI (Chinatown Wars policedriving.cpp: pursuitTarget, intercept lead & PIT ramming)
-        let player_right = [player_forward[1], -player_forward[0]];
-        for (order, &idx) in self.cop_car_indices.iter().enumerate() {
-            if idx >= cars.len() {
-                continue;
-            }
-            let cop = &mut cars[idx];
-            if cop.disabled {
-                continue;
-            }
-            let dx = player_p[0] - cop.p[0];
-            let dy = player_p[1] - cop.p[1];
-            let dist = dx.hypot(dy);
-
-            // Pursue player with siren lights
-            cop.headlights = true;
-            cop.siren_active = true;
-
-            if dist > 2.5 && dist < 140.0 {
-                // Course selection: alternate Left Flank (-3.4m) and Right Flank (+3.4m)
-                let flank_sign = if order % 2 == 0 { -1.0 } else { 1.0 };
-                let lead_time = (dist / 22.0).clamp(0.2, 1.1);
-                let lead_dist = 6.0 * lead_time;
-                let flank_dist = if dist < 8.0 {
-                    0.0 // Close in for PIT maneuver ramming!
-                } else {
-                    flank_sign * 3.4
-                };
-
-                let target_x = player_p[0] + player_forward[0] * lead_dist + player_right[0] * flank_dist;
-                let target_y = player_p[1] + player_forward[1] * lead_dist + player_right[1] * flank_dist;
-
-                let aim_dx = target_x - cop.p[0];
-                let aim_dy = target_y - cop.p[1];
-                let target_angle = -aim_dx.atan2(aim_dy);
-                let diff = (target_angle - cop.angle + std::f32::consts::PI)
-                    .rem_euclid(std::f32::consts::TAU)
-                    - std::f32::consts::PI;
-                let steer = (-diff * 2.2).clamp(-1.0, 1.0);
-                cop.angle += steer * 2.5 * dt;
-
-                let target_speed = if dist < 7.0 { 15.5 } else { 13.0 };
-                cop.speed = (cop.speed + 12.0 * dt).min(target_speed);
-                let f = [-cop.angle.sin(), cop.angle.cos()];
-                cop.p[0] += f[0] * cop.speed * dt;
-                cop.p[1] += f[1] * cop.speed * dt;
+        // Movement is integrated exactly once by Scene through step_car.
+        for &idx in &self.cop_car_indices {
+            if let Some(cop) = cars.get_mut(idx).filter(|c| !c.disabled) {
+                cop.headlights = true;
+                cop.siren_active = true;
             }
         }
     }
+
+    /// Existing pursuit target selection, routed through the shared drivetrain.
+    /// The tactical target heuristic is not a verified PSP algorithm.
+    pub fn pursuit_input(&self, idx: usize, car: &crate::actors::Car, player: [f32; 3],
+        forward: [f32; 2]) -> Option<crate::actors::DriveInput> {
+        if self.stars == 0 || car.disabled { return None; }
+        let order = self.cop_car_indices.iter().position(|&i| i == idx)?;
+        let dist = (player[0] - car.p[0]).hypot(player[1] - car.p[1]);
+        if !(2.5..140.).contains(&dist) { return Some(crate::actors::DriveInput { brake: true, ..Default::default() }); }
+        let flank = if dist < 8. { 0. } else if order % 2 == 0 { -3.4 } else { 3.4 };
+        let lead = 6. * (dist / 22.).clamp(0.2, 1.1);
+        let dx = player[0] + forward[0] * lead + forward[1] * flank - car.p[0];
+        let dy = player[1] + forward[1] * lead - forward[0] * flank - car.p[1];
+        let target = -dx.atan2(dy);
+        let diff = (target - car.angle).sin().atan2((target - car.angle).cos());
+        let speed = if dist < 7. { 15.5 } else { 13. };
+        Some(crate::actors::DriveInput {
+            steer: (-diff * 2.2).clamp(-1., 1.),
+            throttle: ((speed - car.speed) * 0.3).clamp(-1., 1.),
+            brake: false, burnout: false,
+        })
+    }
+
 }
 
 #[cfg(test)]
@@ -757,8 +739,12 @@ mod tests {
 
         assert!(cars[0].siren_active, "Cop car sirens activated during pursuit");
         assert!(cars[1].siren_active);
-        assert!(cars[0].speed > 0.0, "Cop 1 accelerates towards left flank");
-        assert!(cars[1].speed > 0.0, "Cop 2 accelerates towards right flank");
+        assert_eq!(cars[0].p, [95., 80., 0.], "Police bookkeeping must not move the car twice");
+        assert_eq!(cars[1].p, [105., 80., 0.]);
+        let left = police.pursuit_input(0, &cars[0], player_p, player_fwd).unwrap();
+        let right = police.pursuit_input(1, &cars[1], player_p, player_fwd).unwrap();
+        assert!(left.throttle > 0. && right.throttle > 0.);
+        assert!(left.steer > 0. && right.steer < 0., "Each cop steers toward its flank");
 
         // Cop 0 target x is left of player (< 100.0), Cop 1 target x is right (> 100.0)
         assert!(cars[0].p[0] < cars[1].p[0], "Cops maintain dual-flank tactical positioning");

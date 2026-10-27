@@ -39,6 +39,9 @@ mod texture_pack;
 mod ui;
 mod vault;
 mod vehicle;
+mod handling;
+mod traffic;
+mod driving_audit;
 mod wad;
 mod weapons;
 mod weather;
@@ -85,6 +88,7 @@ fn run() -> Result<()> {
     let mut output = base.join("data");
     let mut verify = false;
     let mut pavement_audit = false;
+    let mut driving_audit = false;
     let mut full_hash = false;
     let mut capture = None;
     let mut headless = false;
@@ -173,6 +177,7 @@ fn run() -> Result<()> {
                 })
             }
             "--slice" => play_options.slice = true,
+            "--driving-audit" => driving_audit = true,
             "--armour" | "--health" => {
                 let value: u8 = args.next().ok_or("Missing vital value (0..127)")?.parse()?;
                 if value > radar::MAX_VITAL {
@@ -293,6 +298,9 @@ fn run() -> Result<()> {
         return Ok(());
     }
     let pak = pak::Pak::open(&mut disc, pak::GAME)?;
+    if driving_audit {
+        return crate::driving_audit::run(&mut disc, &pak, &wad, &output);
+    }
     let overlay = pak::Pak::open(&mut disc, pak::OVERLAY)?;
     if map && !verify {
         play_options.headless = headless;
