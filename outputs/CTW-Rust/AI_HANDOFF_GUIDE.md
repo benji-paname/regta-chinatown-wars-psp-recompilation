@@ -29,6 +29,10 @@ Then read `docs/DRIVING_TRAFFIC_REPAIR.md` and `docs/GEMINI_DRIVING_NEXT.md`.
 - CLI `--driving-audit`: real ISO handling traces and map routes, writes ignored JSON; `tools/research/inspect_vehicle_handling.py` inspects private records. No proprietary game files were added to Git.
 - `tools/progress/progress.py`: corrected status integrity. Previous code allocated Rust function counts over Android binary routine sizes and called it original-code coverage. Current chart reads ONLY src/**/*.rs, green runtime definitions / grey test-helper definitions; no inferred PSP completion percentage. Includes 3 Python regression tests. Related-class mapping is research navigation, not verified routine correspondence.
 
+## Latest user feedback and suggested next feature batch
+
+Benjamin tested the repaired driving and reports it feels very similar to the original. He proposes steering assistance, automatic reverse camera, and authentic PSP/DS/Android vehicle-camera behaviour. Advisory review confirms the current runtime still uses the on-foot camera with forced recenter while driving. Recommended order: dedicated PSP vehicle camera including reverse/entry/exit transitions, evidence-based steering assistance, then distinct validated DS/Android vehicle profiles. Android carcam.cpp is a useful reference; PSP/DS constants and steering-assistance logic must be independently established. This feature batch is **not implemented yet**; existing 213-test validation applies only to the committed driving repair. Retain the obstruction-recovery assignment below as a separate follow-up.
+
 ## Known remaining limits / Gemini next task
 
 Read `docs/GEMINI_DRIVING_NEXT.md`: reproduce three obstruction routes at their ENDING coordinates, identify actual obstacle, test physical recovery and multi-car intersections. Do not weaken collision checks or enable underwater boat nodes to hide failure.
