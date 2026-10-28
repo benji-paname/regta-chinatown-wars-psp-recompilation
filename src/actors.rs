@@ -912,6 +912,7 @@ impl Scene {
                     .iter()
                     .all(|car| distance(car.p, valid) > 3.2 && !cars_overlap(car, &candidate))
                     && scene.peds.iter().all(|ped| distance(ped.p, valid) > 4.0)
+                    && !point_in_car(&candidate, player, 1.5)
                 {
                     scene.cars.push(candidate);
                     cargen_spawned += 1;
@@ -951,6 +952,17 @@ impl Scene {
             collision.cells[index].boxes.truncate(len);
         }
         result
+    }
+
+    /// Alerts nearby ambient vehicles to gunfire or blast (cVehicle::HandleReaction 3 / driveAway).
+    pub fn alert_gunfire(&mut self, origin: [f32; 3], radius: f32) {
+        for car in &mut self.cars {
+            if distance(car.p, origin) < radius {
+                car.panicked = true;
+                car.panic_timer = 5.0;
+                car.on_rail = false;
+            }
+        }
     }
 
     pub fn nearest_car(&self, player: [f32; 3]) -> Option<usize> {
@@ -1172,6 +1184,7 @@ impl Scene {
                     kind: 2,
                 });
                 self.police.heli_manager.check_projectile_hit(target_pos, damage);
+                self.alert_gunfire(player, 22.0);
                 if let Some(idx) = hit_idx {
                     let ped = &mut self.peds[idx];
                     ped.health = (ped.health - damage).max(0.0);
@@ -1245,6 +1258,7 @@ impl Scene {
                 kind: 0,
             });
             self.police.heli_manager.check_projectile_hit(target_pos, damage);
+            self.alert_gunfire(player, 22.0);
 
             if self.particles.len() < 160 {
                 self.particles.push(Particle {
@@ -1663,17 +1677,26 @@ impl Scene {
                         car.panicked = car.panic_timer > 0.;
                     }
                     let allow_attach = !crate::traffic::visible(self.traffic_view.as_ref(), car.p, car.h[1] + 2.);
-                    if let Some(target) = crate::traffic::rejoin_target(car, roads, allow_attach) {
+                    if let Some(mut target) = crate::traffic::rejoin_target(car, roads, allow_attach) {
                         if car.on_rail {
                             let gap = crate::traffic::clearance(car, i, &traffic_bodies, &self.peds, player);
                             crate::traffic::step_rail(car, roads, c, &self.traffic_lights, gap, false, dt, self.rng.below(u32::MAX));
                             continue;
                         }
+                        let gap = crate::traffic::clearance(car, i, &traffic_bodies, &self.peds, player);
+                        // Intelligent obstacle avoidance / overtaking (trafficavoidance.cpp:276-291)
+                        if gap < 8.0 {
+                            let f = forward(car.angle);
+                            let side = [-f[1], f[0]];
+                            let left_clear = c.rail_body_clear([car.p[0] + side[0] * 2.8, car.p[1] + side[1] * 2.8, car.p[2]], 0.8, CAR_HEIGHT);
+                            let bypass_dir = if left_clear { 2.8 } else { -2.8 };
+                            target[0] += side[0] * bypass_dir;
+                            target[1] += side[1] * bypass_dir;
+                        }
                         let diff = wrapped(heading(car.p, target) - car.angle);
                         let steer = (-diff * 1.6).clamp(-1., 1.);
                         let desired_speed = if car.panicked { 18.5 } else { 8.5 } * (1. - diff.abs().min(1.4) / 1.6);
-                        let gap = crate::traffic::clearance(car, i, &traffic_bodies, &self.peds, player);
-                        let desired_speed = desired_speed.min((gap.max(0.) * 4.).sqrt());
+                        let desired_speed = desired_speed.min((gap.max(0.5) * 4.).sqrt());
                         let throttle = ((desired_speed - car.speed) * 0.3).clamp(-1., 1.);
                         let before = car.p;
                         let hit = step_car(car, c, DriveInput { throttle, steer, brake: false, burnout: false }, dt);
@@ -2542,6 +2565,9 @@ impl Scene {
                 if impulse != [0.0; 3] {
                     car.speed += (impulse[0] * impulse[0] + impulse[1] * impulse[1]).sqrt() * 0.45;
                     car.pitch_vel += impulse[2] * 0.25;
+                    car.panicked = true;
+                    car.panic_timer = 6.0;
+                    car.on_rail = false;
                     if dmg > 120.0 {
                         car.parked = true;
                     }
@@ -3007,7 +3033,7 @@ fn step_car_tick(car: &mut Car, c: &Collision, input: DriveInput, dt: f32) -> bo
     let steer_in = input.steer.clamp(-1., 1.);
     let parameters = crate::handling::parameters(car.info_id);
     let mut dynamics = std::mem::take(&mut car.handling);
-    let acc_y = dynamics.step(&parameters, car, input);
+    let _acc_y = dynamics.step(&parameters, car, input);
     car.handling = dynamics;
 
     // ------------------------------------------------------------------------
@@ -3036,13 +3062,8 @@ fn step_car_tick(car: &mut Car, c: &Collision, input: DriveInput, dt: f32) -> bo
         let pitch_rate = if target_pitch > car.pitch { 18.0 } else { 12.0 };
         car.pitch += (target_pitch - car.pitch) * (pitch_rate * dt).min(1.0);
     } else {
-        let target_roll = (car.yaw_rate * car.speed * 0.008).clamp(-0.16, 0.16);
-        let target_pitch = (acc_y * 0.006).clamp(-0.12, 0.12);
-        let damping = (spec.sway_damping() * 32.0).clamp(10.0, 45.0);
-        car.roll_vel += (target_roll - car.roll) * 42.0 * dt - car.roll_vel * damping * dt;
-        car.roll = (car.roll + car.roll_vel * dt).clamp(-0.16, 0.16);
-        car.pitch_vel += (target_pitch - car.pitch) * 42.0 * dt - car.pitch_vel * damping * dt;
-        car.pitch = (car.pitch + car.pitch_vel * dt).clamp(-0.12, 0.12);
+        car.roll_vel = (car.handling.sway_roll_v as f32) / 4096.0 * 30.0;
+        car.pitch_vel = (car.handling.sway_pitch_v as f32) / 4096.0 * 30.0;
     }
 
     // Forces produce a world velocity. Rotating the body must not rotate its
@@ -4174,6 +4195,40 @@ mod tests {
         s.tick(&c, &roads, &assets, [100.0, 100.0, 0.0], 1.0 / 30.0, DriveInput::default());
         assert!(s.cars[0].panicked, "Civilian car rammed by player triggers panic reaction");
         assert!(s.cars[0].panic_timer > 0.0);
+    }
+
+    #[test]
+    fn vehicle_traffic_ai_obstacle_avoidance_overtaking_and_gunfire_alert() {
+        let mut s = empty();
+        let c = flat();
+        let roads = Roads {
+            nodes: vec![
+                crate::gps::Node { p: [100.0, 50.0, 0.0], flags: 0, links: vec![1] },
+                crate::gps::Node { p: [100.0, 150.0, 0.0], flags: 0, links: vec![0] },
+            ],
+        };
+        let assets = assets();
+
+        // 1. Off-rail car facing an obstacle ahead steers around it with a lateral offset
+        let mut car = make_vehicle([102.0, 80.0, 0.0], 0.0, 1, 0, 0, 0, false, false);
+        car.on_rail = false;
+        car.speed = 6.0;
+        s.cars.push(car);
+
+        let obs = make_vehicle([100.0, 85.0, 0.0], 0.0, 1, 0, 0, 0, false, false);
+        s.cars.push(obs);
+
+        // Simulation tick: obstacle avoidance guides steering around obstacle
+        s.tick(&c, &roads, &assets, [50.0, 50.0, 0.0], 1.0 / 30.0, DriveInput::default());
+        assert!(s.cars[0].steer_angle.abs() > 0.002 || s.cars[0].lat_vel.abs() > 0.002 || s.cars[0].p[0] != 102.0,
+            "obstacle triggers lateral avoidance steering");
+
+        // 2. Gunfire alerts ambient cars into panic mode
+        let mut calm_car = make_vehicle([55.0, 50.0, 0.0], 0.0, 1, 0, 0, 0, false, false);
+        calm_car.on_rail = true;
+        s.cars.push(calm_car);
+        s.alert_gunfire([50.0, 50.0, 0.0], 22.0);
+        assert!(s.cars[2].panicked, "gunfire alerts nearby vehicle into panic reaction");
     }
 
     #[test]

@@ -1,6 +1,6 @@
 {
-  "checked_at": "2026-10-28T00:05:46+00:00",
-  "task": "Fix traffic deadlocks on paths 197->142, 443->428, 626->1439 based on original ctw-native and psp-recomp sources",
+  "checked_at": "2026-10-28T01:45:00+00:00",
+  "task": "Option B (suspension Q12 sway & pitch dynamics), Option C (traffic avoidance, overtaking & panic reaction), Option A (frustum streaming & safe lane transitions)",
   "repositories": [
     {
       "id": "ctw-native",

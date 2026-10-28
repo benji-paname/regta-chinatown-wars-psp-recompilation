@@ -1330,6 +1330,15 @@ pub fn run(
                     for (pos, lethal) in s.drain_pending_impact_sounds() {
                         sound.play_ped_impact(pos, lethal, player.p, [-player.heading.sin(), player.heading.cos()]);
                     }
+                    for car in &mut s.cars {
+                        if car.horn_timer > 0.0 {
+                            let prev = car.horn_timer;
+                            car.horn_timer = (car.horn_timer - dt).max(0.0);
+                            if prev > 0.0 && car.horn_timer <= 0.0 {
+                                sound.play_car_horn(car.p, player.p, [-player.heading.sin(), player.heading.cos()]);
+                            }
+                        }
+                    }
                 }
                 let driving = scene.as_ref().is_some_and(|s| s.driving.is_some());
                 let alive = scene.as_ref().is_none_or(|s| s.health > 0.);

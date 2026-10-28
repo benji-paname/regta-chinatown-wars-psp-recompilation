@@ -95,3 +95,37 @@ Validation:
 - `Compiler.ps1 -Test`: **224 passed, 0 failed, 0 warnings**. 1028 native Rust runtime functions, 250 test/helper functions, 49 modules.
 - Three Python inventory-integrity tests pass.
 - `--driving-audit` on `work/Chinatown-Wars-PSP.iso`: 92 vehicles, 166 real-map routes, **zero world obstructions across all 166 routes** (previously 3). Max step: 0.529 units. Route `197->142` travelled 447.1 units, `443->428` travelled 347.7 units (0 stopped ticks), `626->1439` travelled 546.3 units. No push performed.
+
+## 28 October 2026 - Vehicle Body Suspension (Option B), Traffic Avoidance (Option C), and Frustum / Pop-in Guards (Option A)
+
+Preflight and upstream review verified against CTW-Native `f7a45b3b7aac9bd9f4662d104d276d421c1fca52` and highcmd `6562163b6f504a1db93e1be5ce580d8cd6f024a7`.
+
+Implementation summary:
+1. **Option B — Suspension Sway & Pitch Dynamics (`src/handling.rs`)**:
+   - Upstream reference: `references/ctw-native/port/game/vehicle.cpp:90-140` (`swayK_` parsed from PAK 29 record at offset 0x74 + 4*i), `1395-1485` (`cWheeledVehicle::UpdateSuspension`), and `567-576` (`damageWobble`).
+   - Added `sway_k: [i32; 6]` to `handling::Parameters`.
+   - Dynamic body roll (`sway_roll`, `sway_roll_v`) in Q12 ($4096 = 1.0\text{ rad}$) responding to lateral centrifugal acceleration ($r = dv_x - \text{centripetal}$) with spring/damper decay ($k_1, k_0$). Cars lean realistically into turns and evasive swerves.
+   - Dynamic body pitch (`sway_pitch`, `sway_pitch_v`) diving nose-down under heavy braking ($ax > 0$) and squatting under hard launch ($ax < 0$) using parameters $k_3, k_2$.
+   - Authentic damage rattle / wheel wobble kick (`damageWobble`) when vehicle health drops below threshold, and launch burnout tilt ($k_5, k_4$).
+   - Synchronized on-rail traffic roll/pitch calculation in `src/traffic.rs` so ambient cars exhibit authentic body dynamics while navigating curves and junctions.
+   - Unit tests: `body_suspension_sway_reacts_to_turning_acceleration_and_braking`, `rail_traffic_updates_body_roll_in_curves_and_pitch_during_braking`.
+
+2. **Option C — Intelligent Traffic Avoidance, Horn Alerting & Panic Flee Reaction (`src/actors.rs`, `src/traffic.rs`, `src/play.rs`)**:
+   - Upstream reference: `references/ctw-native/port/game/trafficavoidance.cpp:1-292` (`TrafficAvoidance::compute`), `traffic.cpp:330-415` (`wander`, horn countdown), `550-670` (`rejoin`, `driveAway`).
+   - Ambient off-rail bypass steering: when encountering blocked traffic, cars assess side clearance via `rail_body_clear` and steer smoothly around obstructions rather than stopping dead or jumping tracks.
+   - Proximity horn alerting: ambient vehicles queued behind stopped cars sound their horns with authentic countdown timers before attempting avoidance maneuvers (`sound.play_car_horn` hooked in `src/play.rs`).
+   - Gunfire & explosion panic reaction (`Scene::alert_gunfire`): vehicles within earshot of shooting or explosions trigger panic flee reaction (`driveAway`), accelerating away with evasive steering.
+   - Unit tests: `vehicle_traffic_ai_obstacle_avoidance_overtaking_and_gunfire_alert`, `vehicle_traffic_ai_recovery_horn_and_panic_reaction`.
+
+3. **Option A — Frustum Streaming Guards, Safe Spawning & Continuous Lane Transitions (`src/traffic.rs`, `src/actors.rs`)**:
+   - Expanded frustum visibility margins in `traffic.rs:visible` from $1.15$ to $1.22$ horizontally and vertically, preventing vehicles and pedestrians from popping into view or despawning right at the viewport boundaries.
+   - Safe spawn placement: cargen parking vehicles and ambient traffic enforce safety clearance perimeters around the player ($> 18.0\text{m}$ for cargen, never inside vehicle hull) preventing cars from spawning on top of the player or in direct line of sight.
+   - Continuous lane transitions: `rejoin_target` strictly preserves the vehicle's assigned lane (`car.lane`) instead of randomly selecting arbitrary lanes on the link, completely eliminating unnatural mid-route lane teleportation.
+   - Queue preservation: cars in normal queues (`gap == 0.0`) remain strictly on rail without false un-railing or backward reversing into oncoming traffic.
+
+Validation:
+- `Compiler.ps1 -Test`: **227 passed, 0 failed, 0 warnings** under `-D warnings`.
+- Treemap, site, README and SVG badges synchronized: **1030 runtime functions, 253 test/helper functions, 49 modules**.
+- Three Python progress-inventory tests pass cleanly.
+- ISO driving audit on `work/Chinatown-Wars-PSP.iso`: **0 failures across all 166 real-map routes**.
+- Delivered to `outputs/CTW-Rust/CTW-Rust.exe`.

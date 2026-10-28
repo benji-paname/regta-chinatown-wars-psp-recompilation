@@ -77,6 +77,7 @@ pub struct Parameters {
     final_drive: i32,
     can_burnout: bool,
     half_length: i32,
+    pub sway_k: [i32; 6],
 }
 
 impl Parameters {
@@ -112,6 +113,7 @@ impl Parameters {
         let d = (c * 0x399900000) & !0xffff_ffff;
         let u = ((d as i128 * 0x4f8ee0d84c734c1) >> 64) as i64;
         let e = (((u >> 7) - (u >> 63)) & 0xffffffff00000) << 12;
+        let sway_k = [word(0x74)?, word(0x78)?, word(0x7c)?, word(0x80)?, word(0x84)?, word(0x88)?];
         Ok(Self {
             mass, inv_mass: ((Q as i64 * Q as i64) / mass as i64) as i32,
             inv_yaw_inertia: if inv_yaw_inertia > 0x2000 { 0x1fd7 } else { inv_yaw_inertia },
@@ -124,6 +126,7 @@ impl Parameters {
             torque: word(0x6c)?, max_rpm, engine_braking: short(0x4a)?, gears,
             final_drive: ((e / top_speed as i64) >> 20) as i32,
             can_burnout: u16le(record, 0x8e)? & 0x200 != 0, half_length: hy,
+            sway_k,
         })
     }
 }
@@ -159,6 +162,14 @@ pub struct State {
     burnout_state: u8,
     burnout_power: i32,
     burnout_window: i32,
+    pub sway_roll: i32,
+    pub sway_roll_v: i32,
+    pub sway_pitch: i32,
+    pub sway_pitch_v: i32,
+    pub wobble: i32,
+    pub wobble_v: i32,
+    pub tilt: i32,
+    pub tilt_v: i32,
 }
 
 impl State {
@@ -252,6 +263,7 @@ impl State {
             }
         }
 
+        let old_vx = vx;
         let old_vy = vy;
         let mut forces = [0i32; 2];
         let mut moment = 0i32;
@@ -339,7 +351,72 @@ impl State {
         // friction saturation threshold used by CTyre::CalcForces.
         car.rear_skidding = sliding[1] || (input.brake && speed > 2 * Q);
         car.wheel_spin = spinning[0] || spinning[1]; car.burnout = self.burnout_state == 1;
+        self.update_suspension(p, car, vx - old_vx, vy - old_vy, yaw);
         f(vy - old_vy) / INTEGRATION_STEP
+    }
+
+    /// Authentic body suspension sway & rattle (cWheeledVehicle::UpdateSuspension).
+    pub fn update_suspension(
+        &mut self,
+        p: &Parameters,
+        car: &mut crate::actors::Car,
+        dv_x: i32,
+        dv_y: i32,
+        yaw: i32,
+    ) {
+        if car.is_bike() {
+            return;
+        }
+        // Centrifugal force acting on the body is opposite to centripetal acceleration
+        let centripetal = mul(mul(yaw, q(car.speed)), 136);
+        let r = dv_x - centripetal;
+        let f_acc = dv_y;
+
+        let in_roll = self.sway_roll_v + mul(r, 0xccc);
+        let in_pitch = self.sway_pitch_v + mul(f_acc, 0xccc);
+
+        let w = self.wobble;
+        let acc = self.wobble_v as i64 - ((((p.inv_mass as i64 * 3) >> 3) * w as i64) >> 12);
+        let k0 = if p.sway_k[0] != 0 { p.sway_k[0] } else { 3252 };
+        let k2 = if p.sway_k[2] != 0 { p.sway_k[2] } else { 1941 };
+        self.sway_roll_v = mul(k2 >> 1, in_roll - mul(mul(k0, self.sway_roll), 0x999));
+        self.sway_roll += self.sway_roll_v;
+
+        let mut damp = mul(w, 0xcc);
+        if (((acc * 0xe6600000) >> 32) as i32 as i64 * w as i64) < 1 {
+            damp = 0;
+        }
+
+        let k1 = if p.sway_k[1] != 0 { p.sway_k[1] } else { 1024 };
+        let k3 = if p.sway_k[3] != 0 { p.sway_k[3] } else { 1060 };
+        self.sway_pitch_v = mul(in_pitch - mul(mul(k1, self.sway_pitch), 0x999), k3 >> 1);
+        self.sway_pitch += self.sway_pitch_v;
+
+        self.wobble_v = ((acc * 0xe66) >> 12) as i32 - damp;
+        self.wobble = w + self.wobble_v;
+        self.tilt_v = (self.tilt_v - mul(self.tilt, 0x2cc)) >> 1;
+        self.tilt += self.tilt_v;
+
+        if self.burnout_state == 3 {
+            self.tilt_v -= 0xa3;
+        }
+
+        // Damage rattle kick (cWheeledVehicle::DamageWobble)
+        if car.health <= 250.0 {
+            let amount = ((250.0 - car.health) * 0.4) as i32;
+            if amount >= 1 {
+                let kick = ((car.info_id as i32 * 31 + self.wobble) % (2 * amount + 1)) - amount;
+                self.wobble_v += kick * 3;
+            }
+        }
+
+        let k4 = if p.sway_k[4] != 0 { p.sway_k[4] } else { 180 };
+        let k5 = if p.sway_k[5] != 0 { p.sway_k[5] } else { 57 };
+        let ay = (((self.wobble as i64 * 0x1000) - (self.sway_roll as i64 * k4 as i64)) >> 12) as i32;
+        let ax = (((self.tilt as i64 * 0x1000) - (self.sway_pitch as i64 * k5 as i64)) >> 12) as i32;
+
+        car.roll = f(ay).clamp(-0.25, 0.25);
+        car.pitch = f(ax).clamp(-0.20, 0.20);
     }
 }
 
@@ -357,6 +434,9 @@ fn test_parameters(id: usize) -> Parameters {
     for (off, value) in [(0x50, s.mass_q12), (0x54, s.brake_force_q12), (0x58, s.front_k18_q12),
         (0x5c, s.rear_k18_q12), (0x60, s.steer_lock_q12), (0x64, s.steer_rate_q12), (0x68, s.steer_red_q12),
         (0x6c, s.max_torque_q12), (0x70, 6000 * Q)] { r[off..off + 4].copy_from_slice(&value.to_le_bytes()); }
+    for (i, val) in [3252i32, 1024, 1941, 1060, 180, 57].iter().enumerate() {
+        r[0x74 + i * 4..0x78 + i * 4].copy_from_slice(&val.to_le_bytes());
+    }
     r[0x4c] = s.num_gears;
     Parameters::parse(&r).unwrap()
 }
@@ -412,5 +492,31 @@ mod assist_tests {
         State::default().step(&p, &mut manual, input);
         assert_eq!((assisted.steer_angle, assisted.speed, assisted.yaw_rate),
             (manual.steer_angle, manual.speed, manual.yaw_rate));
+    }
+
+    #[test]
+    fn body_suspension_sway_reacts_to_turning_acceleration_and_braking() {
+        let mut car = make_car([0.; 3], 0., 0, 0, 0);
+        let p = test_parameters(0);
+        let mut state = State::default();
+        // 1. Acceleration from rest squats the rear (pitch changes under forward acceleration)
+        for _ in 0..10 {
+            state.step(&p, &mut car, DriveInput::controls(1., 0., 0., false));
+        }
+        assert!(car.pitch < -0.005, "car squats under forward acceleration: pitch = {}", car.pitch);
+
+        // 2. High-speed turn rolls the body outward
+        for _ in 0..15 {
+            state.step(&p, &mut car, DriveInput::controls(1., 0., 0.8, false));
+        }
+        assert!(car.roll.abs() > 0.01, "car exhibits body roll during turn: roll = {}", car.roll);
+
+        // 3. Hard braking dives the nose down
+        let mut dived = false;
+        for _ in 0..20 {
+            state.step(&p, &mut car, DriveInput::controls(0., 1., 0., false));
+            if car.pitch > 0.002 { dived = true; }
+        }
+        assert!(dived, "car dives nose-down under braking");
     }
 }

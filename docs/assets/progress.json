@@ -3,20 +3,20 @@
   "measurement": "native Rust function inventory; not original-code coverage",
   "pspParityVerified": false,
   "pspCompletionPercent": null,
-  "sourceSha256": "d9b97a97f30fd489495d8c8376a49bb3dbdc03e43cb3a03c65fb601f355f0e70",
-  "runtimeFunctions": 1028,
-  "testFunctions": 250,
+  "sourceSha256": "d9448f01a9f1a58f0634920804f8db29a78f532900c3ee6ccb3419cd13e4ad17",
+  "runtimeFunctions": 1030,
+  "testFunctions": 253,
   "modules": 49,
   "subsystems": [
     {
       "name": "People",
-      "runtimeFunctions": 94,
-      "testFunctions": 69,
+      "runtimeFunctions": 95,
+      "testFunctions": 70,
       "classes": [
         {
           "name": "actors.rs",
-          "runtimeFunctions": 45,
-          "testFunctions": 35,
+          "runtimeFunctions": 46,
+          "testFunctions": 36,
           "relatedClasses": [
             "cAIGang",
             "cAITaskHub",
@@ -536,13 +536,13 @@
     },
     {
       "name": "Vehicles",
-      "runtimeFunctions": 116,
-      "testFunctions": 28,
+      "runtimeFunctions": 117,
+      "testFunctions": 30,
       "classes": [
         {
           "name": "handling.rs",
-          "runtimeFunctions": 12,
-          "testFunctions": 4,
+          "runtimeFunctions": 13,
+          "testFunctions": 5,
           "relatedClasses": [
             "CEngine",
             "CTyre",
@@ -552,7 +552,7 @@
         {
           "name": "traffic.rs",
           "runtimeFunctions": 10,
-          "testFunctions": 15,
+          "testFunctions": 16,
           "relatedClasses": [
             "cWanderRoads",
             "cAISpline",
@@ -635,7 +635,7 @@
     }
   ],
   "lastLocalValidation": {
-    "passed": 224,
+    "passed": 227,
     "date": "2026-10-28"
   }
 }

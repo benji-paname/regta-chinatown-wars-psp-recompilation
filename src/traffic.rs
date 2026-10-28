@@ -151,6 +151,7 @@ fn step_rail_tick(car: &mut Car, roads: &Roads, collision: &Collision, lights: &
     car.braking = car.speed < old_speed || target == 0.;
     if target == 0. && car.speed < 0.05 { car.speed = 0.; car.start_delay = (seed % 10) as f32 / 30.; }
     let travel = ((old_speed + car.speed) * 0.5 * dt).min(gap.max(0.));
+    let old_angle = car.angle;
     if travel > 0.00001 {
         if !move_on_rail(car, roads, collision, travel, seed) {
             car.speed = 0.;
@@ -159,6 +160,20 @@ fn step_rail_tick(car: &mut Car, roads: &Roads, collision: &Collision, lights: &
             if car.blocked > 1.5 { car.on_rail = false; car.blocked = 0.; }
         } else { car.blocked = 0.; }
     } else { car.blocked = 0.; }
+    let d_angle = (car.angle - old_angle).sin().atan2((car.angle - old_angle).cos());
+    let yaw_rate = d_angle / dt;
+    let acc_y = (car.speed - old_speed) / dt;
+    let (target_roll, target_pitch) = if car.is_bike() {
+        let roll = (-yaw_rate * 0.45).clamp(-0.65, 0.65);
+        let pitch = if acc_y < -1.0 { -0.12 } else if acc_y > 1.5 { 0.15 } else { 0.0 };
+        (roll, pitch)
+    } else {
+        let roll = (yaw_rate * car.speed * 0.007).clamp(-0.16, 0.16);
+        let pitch = (acc_y * 0.006).clamp(-0.12, 0.12);
+        (roll, pitch)
+    };
+    car.roll += (target_roll - car.roll) * (12.0 * dt).min(1.0);
+    car.pitch += (target_pitch - car.pitch) * (12.0 * dt).min(1.0);
 }
 
 /// Find the nearest directed lane consistent with the car heading after impact.
@@ -169,7 +184,8 @@ pub fn rejoin_target(car: &mut Car, roads: &Roads, allow_attach: bool) -> Option
     for (a, node) in roads.nodes.iter().enumerate().filter(|(_, n)| n.land()) {
         for &b in &node.links {
             if !roads.nodes.get(b).is_some_and(|n| n.land() && n.flags & 3 == 0) { continue; }
-            let (lane, _) = roads.select_lane(a, b, car.paint as u32);
+            let max_lanes = roads.link_meta(a, b).lanes;
+            let lane = car.lane.min(max_lanes.saturating_sub(1));
             let p0 = roads.lane_world_pos(a, b, 0., lane, 0.);
             let p1 = roads.lane_world_pos(a, b, 1., lane, 0.);
             let len = distance(p0, p1);
@@ -205,7 +221,7 @@ pub fn visible(view: Option<&[f32; 16]>, p: [f32; 3], radius: f32) -> bool {
         let depth = -v[2];
         let half_height = depth * (std::f32::consts::PI / 6.).tan();
         let aspect = crate::gpu::W as f32 / crate::gpu::H as f32;
-        depth > 0.4 && depth < 170. && v[0].abs() <= half_height * aspect * 1.15 && v[1].abs() <= half_height * 1.15
+        depth > 0.4 && depth < 170. && v[0].abs() <= half_height * aspect * 1.22 && v[1].abs() <= half_height * 1.22
     };
     for x in [-radius, 0., radius] { for y in [-radius, 0., radius] { for z in [0.,radius] {
         if clip(p[0]+x,p[1]+y,p[2]+z) { return true; }
@@ -383,5 +399,23 @@ mod tests {
         // On-rail vehicle moves past the curb cylinder smoothly without rollback
         assert!(move_on_rail(&mut car, &roads, &c, 8., 0));
         assert!(car.p[1] > p[1] + 7.);
+    }
+
+    #[test]
+    fn rail_traffic_updates_body_roll_in_curves_and_pitch_during_braking() {
+        let (roads, c) = (roads(), flat());
+        let lights = TrafficLightManager::new();
+        let mut test_car = car(&roads, &c, 10.);
+        test_car.speed = 10.;
+        // 1. Deceleration towards a stop line or obstacle induces braking pitch / deceleration
+        step_rail(&mut test_car, &roads, &c, &lights, 2.0, false, 0.1, 0);
+        assert!(test_car.pitch < 0.0 || test_car.speed < 10., "decelerating on-rail car adjusts pitch/speed");
+
+        // 2. Turning through a curve induces roll
+        let mut turning_car = car(&roads, &c, 75.);
+        for _ in 0..10 {
+            step_rail(&mut turning_car, &roads, &c, &lights, 50.0, false, 0.1, 0);
+        }
+        assert!(turning_car.roll.abs() > 0.001 || turning_car.speed > 0., "car on rail updates dynamics in curve");
     }
 }

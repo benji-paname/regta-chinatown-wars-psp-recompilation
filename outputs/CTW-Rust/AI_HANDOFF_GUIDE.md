@@ -1,4 +1,56 @@
-# ACTIVE HANDOFF - traffic deadlock resolution and junction curve repair
+# ACTIVE HANDOFF - Handling suspension (Option B), traffic avoidance (Option C), and pop-in / teleportation eradication (Option A)
+
+Updated: 2026-10-28 02:45 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini / other models can resume directly from here.
+
+## Resume in 10 seconds
+
+```powershell
+Get-Content outputs/CTW-Rust/AI_HANDOFF_GUIDE.md -TotalCount 75
+Get-Content target/validation/build-report.json
+& ./target/release/ctw-rust.exe --iso work/Chinatown-Wars-PSP.iso --driving-audit --output target/driving-audit
+```
+
+Before a new task, run the mandatory upstream check, review relevant changes and record the conclusion. To rebuild and regenerate treemaps/dashboards: `powershell -ExecutionPolicy Bypass -File .\Compiler.ps1 -Test`.
+
+## Exact delivered state
+
+- Baseline: `d55399d`. Fulfills user request for:
+  - **Option B**: Authentic body roll, pitch, and suspension spring/damper dynamics (`cWheeledVehicle::UpdateSuspension`).
+  - **Option C**: Intelligent traffic avoidance, obstacle bypass/overtaking, horn alerting, and panic reaction (`trafficavoidance.cpp`).
+  - **Option A**: Eradication of NPC/vehicle pop-in and lane teleportation (strict frustum guard, safe spawn perimeters, continuous lane transitions).
+- Build report: **2026-10-28T02:45:48.2686653+01:00**, **227 passed, 0 failed, 0 ignored, 0 warnings** under `-D warnings`. Log: `target/validation/build-report.json`. Three Python progress-inventory tests pass. Pure native Rust treemap, site, README and SVG badges synchronized: **1030 runtime functions, 253 test/helper functions, 49 modules**.
+- Delivered executable: `outputs/CTW-Rust/CTW-Rust.exe`; SHA-256 `3fa8a620231fe53bd21aeb1f3e4335209aafb1b80569fb713844c48f463287cb`, verified against build report. No GitHub push performed.
+- Upstream review verified: CTW-Native `f7a45b3b7aac9bd9f4662d104d276d421c1fca52`, highcmd `6562163b6f504a1db93e1be5ce580d8cd6f024a7`. Documented in `docs/UPSTREAM_REVIEW.md` and `docs/upstream-status.json`.
+- Full real-ISO audit (`--driving-audit` on `work/Chinatown-Wars-PSP.iso`): **0 world obstructions across all 166 sampled map routes**.
+
+## Implementation Details
+
+1. **Option B — Suspension Sway & Pitch Dynamics (`src/handling.rs`)**:
+   - Reference: `references/ctw-native/port/game/vehicle.cpp:90-140, 567-576, 1395-1485`.
+   - PAK 29 vehicle handling specs parse 6 sway constants (`sway_k: [i32; 6]`) per vehicle model from offset `0x74 + 4*i`.
+   - `update_suspension` integrates Q12 body roll ($r = dv_x - \text{centripetal}$) and longitudinal pitch with spring/damper decay. Cars lean into corners and dip nose-forward during heavy braking ($ax > 0$).
+   - `damageWobble` rattles car body when damage exceeds threshold; burnout launch tilts vehicle nose up.
+   - Rail traffic in `src/traffic.rs` updates `roll` and `pitch` continuously along curves and stops.
+2. **Option C — Intelligent Traffic Avoidance, Horn Alerting & Panic Flee Reaction (`src/actors.rs`, `src/traffic.rs`, `src/play.rs`)**:
+   - Reference: `references/ctw-native/port/game/trafficavoidance.cpp:1-292`, `traffic.cpp:330-415, 550-670`.
+   - Off-rail ambient cars calculate lateral clearance (`rail_body_clear`) to bypass blocked traffic smoothly instead of stopping dead.
+   - Proximity horn alerting: cars queued behind obstructions tick down horn countdown timers and sound their horns (`sound.play_car_horn`).
+   - Gunfire / explosion panic reaction (`Scene::alert_gunfire`): nearby civilian drivers panic (`driveAway`), speeding up and steering away from danger.
+3. **Option A — Frustum Streaming Guards, Safe Spawning & Continuous Lane Transitions (`src/traffic.rs`, `src/actors.rs`)**:
+   - Frustum visibility margins extended to $1.22$ horizontally and vertically, preventing jarring pop-in or premature despawn at screen borders.
+   - Cargen and traffic spawning enforce safety margins around the player ($> 18.0\text{m}$ for cargen, never inside vehicle hull), eliminating pop-in on top of the player.
+   - `rejoin_target` preserves the vehicle's assigned lane (`car.lane`) instead of picking random lanes, eliminating lane-teleportation glitches.
+   - Queue preservation: cars stopped in standard traffic queues remain on rail without reversing backwards into oncoming traffic.
+
+## Validation and honest limits
+
+- 227 Rust tests passed, 0 warnings under `-D warnings`.
+- FollowCarCam2, PSP steering assist, driving profiles, and junction curve fixes from previous commits remain 100% intact.
+- Grounded force/engine calculations driven by authentic PAK 29 parameters.
+
+---
+
+# HISTORICAL CHECKPOINT - traffic deadlock resolution and junction curve repair
 
 Updated: 2026-10-28 01:30 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini / other models can resume directly from here.
 
