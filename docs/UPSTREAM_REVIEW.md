@@ -218,3 +218,8 @@ Validation:
 - Treemap, site, README and SVG badges synchronized: **1040 runtime functions, 256 test/helper functions, 49 modules**.
 - Real-map driving audit on `work/Chinatown-Wars-PSP.iso`: **0 failures across all 166 real-map routes**.
 - Delivered to `outputs/CTW-Rust/CTW-Rust.exe`.
+
+
+## 28 October — paired PSP/Rust prop recordings
+
+Both upstreams checked successfully after restricted-network failure: f7a45b3b7aac9bd9f4662d104d276d421c1fca52 and 6562163b6f504a1db93e1be5ce580d8cd6f024a7, unchanged. Reviewed propdynamics.cpp contactForces/applyForce/smashParticles, rigidbody.cpp, world/props.cpp and PaperEmitter, plus highcmd README target/runtime boundaries. GPL-3.0-only Kryo.to reference adaptation is documented in PROP_CONTACT_REPAIR.md; PSP PAK thresholds independently inspected. No upstream merge or communication. Full PSP dynamics are not claimed.

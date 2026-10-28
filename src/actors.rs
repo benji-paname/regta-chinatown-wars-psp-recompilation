@@ -2051,6 +2051,12 @@ impl Scene {
             p.p[0] += p.v[0] * dt;
             p.p[1] += p.v[1] * dt;
             p.p[2] += p.v[2] * dt;
+            if matches!(p.kind, 4 | 8) {
+                // PaperEmitter: -0x51 per 30 Hz tick, terminal -0x199;
+                // original particle velocities are displacements per tick.
+                p.v[2] = (p.v[2] - (0x51 as f32 / 4096.) * 900. * dt)
+                    .max(-(0x199 as f32 / 4096.) * 30.);
+            }
             p.v[0] *= (1.0 - 2.5 * dt).max(0.0);
             p.v[1] *= (1.0 - 2.5 * dt).max(0.0);
             p.size += p.grow * dt;

@@ -250,6 +250,9 @@ pub struct ActiveProp {
     pub tilt_speed: f32,
     pub tilt_axis: [f32; 2],
     pub state: PropState,
+    pub smashed: bool,
+    pub half: [f32; 3],
+    pub centre: [f32; 3],
     pub collidable: bool,
     pub fountain: bool,
     pub fire_timer: f32,
@@ -264,6 +267,35 @@ pub struct ActiveProp {
     pub inflammable: bool,
     pub base_z: f32,
     pub sleep: bool,
+}
+
+// Bounds from the user's PSP PAK 1866, not a shared guessed prop radius.
+fn prop_bounds(def: &PropDef) -> ([f32; 3], [f32; 3]) {
+    // PropLibrary::physics uses the FIRST primitive. Box/cylinder offsets
+    // identify the bottom, not the centre; sphere radius is a full box size.
+    match def.shapes.first() {
+        Some(PropShape::Box { offset, half }) =>
+            ([offset[0], offset[1], offset[2]+half[2]], *half),
+        Some(PropShape::Cylinder { offset, radius, height }) =>
+            ([offset[0], offset[1], offset[2]+height*0.5], [*radius,*radius,height*0.5]),
+        Some(PropShape::Sphere { offset, radius }) => (*offset, [radius*0.5;3]),
+        None => ([0.;3], [0.;3]),
+    }
+}
+
+impl ActiveProp {
+    /// Vertical extent after the same centre-based rotation used by the renderer.
+    fn support_height(&self) -> f32 {
+        let [x, y, z] = self.tumble_axis;
+        let n = (x*x+y*y+z*z).sqrt();
+        if n < 1e-6 { return self.half[2]; }
+        let (x,y,z) = (x/n,y/n,z/n);
+        let (s,c) = self.roll_angle.sin_cos();
+        let row = [z*x*(1.-c)-y*s, z*y*(1.-c)+x*s, c+z*z*(1.-c)];
+        let (sa,ca) = self.angle.sin_cos();
+        (row[0]*ca+row[1]*sa).abs()*self.half[0]
+            + (-row[0]*sa+row[1]*ca).abs()*self.half[1] + row[2].abs()*self.half[2]
+    }
 }
 
 pub struct PropsManager {
@@ -380,6 +412,9 @@ impl PropsManager {
                         tilt_speed: 0.0,
                         tilt_axis: [0.0, 0.0],
                         state: PropState::Standing,
+                        smashed: false,
+                        half: prop_bounds(def).1,
+                        centre: prop_bounds(def).0,
                         collidable: true,
                         fountain: false,
                         fire_timer: 0.0,
@@ -428,54 +463,52 @@ impl PropsManager {
         particles: &mut Vec<Particle>,
         pickups: &mut Option<&mut crate::weapons::PickupManager>,
     ) {
-        let speed = car.speed.abs();
-        if speed < 1.2 {
-            return;
-        }
         let cf = forward(car.angle);
-        let cside = [cf[1], -cf[0]];
-        let mass = car.spec().mass();
-        let force = speed * mass * 0.11;
-
-        let mut smash_trigger = None;
+        let side = [cf[1], -cf[0]];
+        let mass = car.spec().mass().max(0.001);
         for i in 0..self.active.len() {
-            let prop = &mut self.active[i];
-            if !prop.collidable && prop.state != PropState::Standing {
-                continue;
-            }
+            let prop = &self.active[i];
+            if !prop.collidable { continue; }
             let dx = prop.p[0] - car.p[0];
             let dy = prop.p[1] - car.p[1];
-            let long_dist = dx * cf[0] + dy * cf[1];
-            let lat_dist = (dx * cside[0] + dy * cside[1]).abs();
-
-            if long_dist.abs() < car.h[1] + 0.65 && lat_dist < car.h[0] + 0.55 {
-                let impact_dir = [cf[0] * car.speed.signum(), cf[1] * car.speed.signum()];
-                let damage = (force / (prop.mass * 0.5 + 0.5)).clamp(1.0, 50.0) as u8;
-                prop.health = prop.health.saturating_sub(damage);
-
-                let breakable = prop.smash_force >= 0.0 || prop.uproot_force >= 0.0;
-                if !breakable {
-                    // Indestructible prop (solid street pole, tree trunk, concrete pillar)
-                    car.speed *= 0.55;
-                    continue;
-                }
-
-                let can_uproot = prop.uproot_force >= 0.0 && (force >= prop.uproot_force || speed >= 2.2);
-                let can_smash = prop.smash_force >= 0.0 && (force >= prop.smash_force || speed >= 2.2);
-
-                if can_uproot || can_smash || prop.health == 0 || prop.smash_eff > 0 {
-                    let prop_mass = prop.mass;
-                    smash_trigger = Some((i, impact_dir, prop_mass));
-                    break;
-                }
+            let along = dx * cf[0] + dy * cf[1];
+            let across = dx * side[0] + dy * side[1];
+            let reach = prop.half[0].hypot(prop.half[1]);
+            if along.abs() > car.h[1] + reach || across.abs() > car.h[0] + reach
+                || (prop.p[2] + prop.centre[2] - car.p[2]).abs() > car.h[2] + prop.half[2] { continue; }
+            let dir = if along >= 0. { cf } else { [-cf[0], -cf[1]] };
+            let closing = (car.speed * cf[0] + car.lat_vel * side[0] - prop.v[0]) * dir[0]
+                + (car.speed * cf[1] + car.lat_vel * side[1] - prop.v[1]) * dir[1];
+            if closing <= 0. { continue; }
+            // Translational part of CalcImpactCar (GPL-3.0-only Kryo.to,
+            // f7a45b3). Full contact-point/inertia terms remain unported.
+            let rebound = 0x1fd7 as f32 / 4096.
+                - (closing - 1.).clamp(0., 14.) / 14. * (0xe90 as f32 / 4096.);
+            let pm = prop.mass.max(0.001);
+            let impulse = closing * rebound / (1. / mass + 1. / pm);
+            let strength = impulse * 30. * (0x111 as f32 / 4096.);
+            let uproot = prop.uproot_force >= 0. && strength >= prop.uproot_force;
+            let smash = prop.smash_force >= 0. && strength >= prop.smash_force;
+            let already_loose = prop.state == PropState::Loose;
+            if smash && !prop.smashed { self.apply_smash(i, dir, closing, particles, pickups); }
+            let prop = &mut self.active[i];
+            if uproot || already_loose {
+                prop.state = PropState::Loose;
+                prop.collidable = prop.broken_model_id != 0xfffe || !prop.smashed;
+                prop.sleep = false;
+                prop.v[0] += dir[0] * impulse / pm;
+                prop.v[1] += dir[1] * impulse / pm;
+                // Horizontal contact supplies no invented vertical launch.
+                // Torque comes from the bumper's height relative to the centre.
+                let lever = car.h[2] - prop.centre[2];
+                let inertia = pm / 6. * (4. * (prop.half[0].powi(2) + prop.half[2].powi(2)));
+                prop.tumble_axis = [-dir[1], dir[0], 0.];
+                prop.angular_v += -lever * impulse * (1. / inertia.max(0.001)).min(0x1fd7 as f32 / 4096.);
+                if prop.planar { prop.angular_v = 0.; }
+                self.pending_disables.push((prop.cell_x, prop.cell_y, prop.prop_idx));
             }
-        }
-        if let Some((i, impact_dir, prop_mass)) = smash_trigger {
-            self.apply_smash(i, impact_dir, speed, particles, pickups);
-            car.speed *= (1.0 - 0.06 * prop_mass.min(2.5)).max(0.72);
-            if prop_mass > 1.5 && speed > 10.0 {
-                car.health = (car.health - 2.0).max(0.0);
-            }
+            // Reciprocal impulse, including sub-threshold impacts.
+            car.speed -= impulse / mass * (dir[0] * cf[0] + dir[1] * cf[1]);
         }
     }
 
@@ -489,9 +522,10 @@ impl PropsManager {
         pickups: &mut Option<&mut crate::weapons::PickupManager>,
     ) {
         let prop = &mut self.active[idx];
-        if prop.state == PropState::Broken {
+        if prop.smashed {
             return;
         }
+        prop.smashed = true;
         self.pending_smashes.push((prop.p, prop.smash_eff as usize));
         self.pending_disables.push((prop.cell_x, prop.cell_y, prop.prop_idx));
 
@@ -739,16 +773,9 @@ impl PropsManager {
             }
             35 => {
                 // Trash can / Dumpster: becomes Loose physical body!
-                prop.state = PropState::Loose;
+                prop.state = PropState::Broken;
                 prop.collidable = false;
-                prop.sleep = false;
-                prop.v = [
-                    impact_dir[0] * (impact_speed * 0.65 + 1.5),
-                    impact_dir[1] * (impact_speed * 0.65 + 1.5),
-                    3.2 + (impact_speed * 0.15).min(2.5),
-                ];
-                prop.tumble_axis = [-impact_dir[1], impact_dir[0], 0.3];
-                prop.angular_v = impact_speed * 0.8 + 3.0;
+                prop.sleep = true;
                 // Emit garbage debris
                 for i in 0..8 {
                     if particles.len() < 160 {
@@ -792,65 +819,51 @@ impl PropsManager {
                 }
             }
             14 => {
-                // USPS Mailbox (blue street postbox): authentic Chinatown Wars loose physical body!
-                // Launches forward, tumbles in 3D, bounces along pavement and comes to rest on its side.
-                prop.state = PropState::Loose;
+                // USPS Mailbox (blue street postbox): movable PSP prop; collision supplies momentum separately.
+                // Smashing emits once; it does not itself inject a launch velocity.
+                prop.state = PropState::Broken;
                 prop.collidable = false;
-                prop.sleep = false;
-                prop.v = [
-                    impact_dir[0] * (impact_speed * 0.65 + 1.8),
-                    impact_dir[1] * (impact_speed * 0.65 + 1.8),
-                    2.8 + (impact_speed * 0.12).min(2.2),
-                ];
-                prop.tumble_axis = [-impact_dir[1], impact_dir[0], 0.25];
-                prop.angular_v = impact_speed * 0.8 + 4.0;
+                prop.sleep = true;
                 // Emit letters and mail envelopes: alternating blue USPS mail (kind 8) and white envelopes (kind 4)
-                for i in 0..12 {
+                for i in 0..7 {
                     if particles.len() < 160 {
                         let k = if i % 2 == 0 { 8 } else { 4 };
                         particles.push(Particle {
                             p: [prop.p[0], prop.p[1], prop.p[2] + 0.6],
                             v: [
-                                impact_dir[0] * 2.2 + ((i * 31) % 7) as f32 * 0.4 - 1.2,
-                                impact_dir[1] * 2.2 + ((i * 53) % 7) as f32 * 0.4 - 1.2,
+                                ((i * 31) % 7) as f32 * 0.4 - 1.2,
+                                ((i * 53) % 7) as f32 * 0.4 - 1.2,
                                 2.0 + (i as f32) * 0.25,
                             ],
                             life: 0.0,
-                            max_life: 1.1,
-                            size: 0.22,
-                            grow: 0.2,
+                            max_life: 4.0,
+                            size: 0x1eb as f32 / 4096.,
+                            grow: 0.0,
                             kind: k,
                         });
                     }
                 }
             }
             22 => {
-                // Newspaper vending box: authentic Chinatown Wars loose physical body!
-                // Launches forward, tumbles in 3D, bounces along pavement, leaves newsprint flutter and cash!
-                prop.state = PropState::Loose;
+                // Newspaper vending box: movable PSP prop; collision supplies momentum separately.
+                // Keep the PSP retained mesh; physical contacts can move it again.
+                prop.state = PropState::Broken;
                 prop.collidable = false;
-                prop.sleep = false;
-                prop.v = [
-                    impact_dir[0] * (impact_speed * 0.65 + 1.8),
-                    impact_dir[1] * (impact_speed * 0.65 + 1.8),
-                    2.8 + (impact_speed * 0.12).min(2.2),
-                ];
-                prop.tumble_axis = [-impact_dir[1], impact_dir[0], 0.25];
-                prop.angular_v = impact_speed * 0.8 + 4.0;
+                prop.sleep = true;
                 // Emit fluttering white newsprint pages (kind 4)
-                for i in 0..12 {
+                for i in 0..7 {
                     if particles.len() < 160 {
                         particles.push(Particle {
                             p: [prop.p[0], prop.p[1], prop.p[2] + 0.6],
                             v: [
-                                impact_dir[0] * 2.2 + ((i * 29) % 9) as f32 * 0.35 - 1.4,
-                                impact_dir[1] * 2.2 + ((i * 47) % 9) as f32 * 0.35 - 1.4,
+                                ((i * 29) % 9) as f32 * 0.35 - 1.4,
+                                ((i * 47) % 9) as f32 * 0.35 - 1.4,
                                 2.0 + (i as f32) * 0.25,
                             ],
                             life: 0.0,
-                            max_life: 1.1,
-                            size: 0.22,
-                            grow: 0.2,
+                            max_life: 4.0,
+                            size: 0x2e1 as f32 / 4096.,
+                            grow: 0.0,
                             kind: 4, // fluttering newspaper pages
                         });
                     }
@@ -904,16 +917,9 @@ impl PropsManager {
             }
             17 => {
                 // Parking meter: loose physical body, drops $40 cash
-                prop.state = PropState::Loose;
+                prop.state = PropState::Broken;
                 prop.collidable = false;
-                prop.sleep = false;
-                prop.v = [
-                    impact_dir[0] * (impact_speed * 0.5 + 1.2),
-                    impact_dir[1] * (impact_speed * 0.5 + 1.2),
-                    2.8,
-                ];
-                prop.tumble_axis = [-impact_dir[1], impact_dir[0], 0.2];
-                prop.angular_v = 4.0;
+                prop.sleep = true;
                 if let Some(pm) = pickups {
                     pm.spawn_dropped(crate::weapons::PickupKind::Money(40), prop.p);
                 }
@@ -939,17 +945,10 @@ impl PropsManager {
                 }
                 if prop.mass < 1.8 && prop.uproot_force >= 0.0 && prop.uproot_force < 18.0 {
                     // Light crate tumbles briefly
-                    prop.state = PropState::Loose;
+                    prop.state = PropState::Broken;
                     prop.collidable = false;
-                    prop.sleep = false;
-                    prop.v = [
-                        impact_dir[0] * (impact_speed * 0.5 + 1.2),
-                        impact_dir[1] * (impact_speed * 0.5 + 1.2),
-                        2.6,
-                    ];
-                    prop.tumble_axis = [-impact_dir[1], impact_dir[0], 0.2];
-                    prop.angular_v = 4.5;
-                } else {
+                    prop.sleep = true;
+                    } else {
                     prop.state = PropState::Broken;
                     prop.collidable = false;
                 }
@@ -957,17 +956,10 @@ impl PropsManager {
             _ => {
                 // Parking meters or generic loose prop
                 if prop.mass < 2.0 && prop.uproot_force >= 0.0 && prop.uproot_force < 20.0 {
-                    prop.state = PropState::Loose;
+                    prop.state = PropState::Broken;
                     prop.collidable = false;
-                    prop.sleep = false;
-                    prop.v = [
-                        impact_dir[0] * (impact_speed * 0.5 + 1.2),
-                        impact_dir[1] * (impact_speed * 0.5 + 1.2),
-                        2.8,
-                    ];
-                    prop.tumble_axis = [-impact_dir[1], impact_dir[0], 0.2];
-                    prop.angular_v = 4.0;
-                    if prop.prop_id == 174 || prop.prop_id == 176 {
+                    prop.sleep = true;
+                        if prop.prop_id == 174 || prop.prop_id == 176 {
                         if let Some(pm) = pickups {
                             pm.spawn_dropped(crate::weapons::PickupKind::Money(40), prop.p);
                         }
@@ -1159,15 +1151,16 @@ impl PropsManager {
                 prop.p[0] += prop.v[0] * dt;
                 prop.p[1] += prop.v[1] * dt;
                 prop.p[2] += prop.v[2] * dt;
-                prop.v[2] -= 9.8 * dt; // gravity
-                prop.v[0] *= (1.0 - 1.2 * dt).max(0.0);
-                prop.v[1] *= (1.0 - 1.2 * dt).max(0.0);
+                prop.v[2] -= 29.0 * dt; // gravity
+                prop.v[0] *= (0xf3c as f32 / 4096.).powf(dt * 30.);
+                prop.v[1] *= (0xf3c as f32 / 4096.).powf(dt * 30.);
 
                 prop.roll_angle += prop.angular_v * dt;
-                prop.angular_v *= (1.0 - 1.5 * dt).max(0.0);
+                prop.angular_v *= (0xf3c as f32 / 4096.).powf(dt * 30.);
 
-                if prop.p[2] <= prop.base_z {
-                    prop.p[2] = prop.base_z;
+                let floor = prop.base_z + prop.support_height() - prop.centre[2];
+                if prop.p[2] <= floor {
+                    prop.p[2] = floor;
                     prop.v[2] = -prop.v[2] * 0.38;
                     prop.v[0] *= 0.75;
                     prop.v[1] *= 0.75;
@@ -1183,23 +1176,8 @@ impl PropsManager {
                             kind: 2, // garbage debris
                         });
                     }
-                    if (prop.smash_eff == 14 || prop.smash_eff == 22) && particles.len() < 160 {
-                        // Mail / newspaper flutter puff on ground bounce
-                        let k = if prop.smash_eff == 14 { 8 } else { 4 };
-                        particles.push(Particle {
-                            p: [prop.p[0], prop.p[1], prop.p[2] + 0.2],
-                            v: [prop.v[0] * 0.4, prop.v[1] * 0.4, 1.2],
-                            life: 0.0,
-                            max_life: 0.5,
-                            size: 0.18,
-                            grow: 0.15,
-                            kind: k,
-                        });
-                    }
                     if prop.v[2].abs() < 0.35 && (prop.v[0] * prop.v[0] + prop.v[1] * prop.v[1]) < 0.25 {
-                        prop.v = [0.0; 3];
-                        prop.angular_v = 0.0;
-                        prop.sleep = true;
+                                prop.sleep = true;
                     }
                 }
             }
@@ -1212,6 +1190,55 @@ mod tests {
     use super::*;
     use crate::actors::make_vehicle;
 
+    #[test]
+    fn contact_respects_threshold_height_and_separation() {
+        for (speed, z, threshold) in [(2., 0., 100.), (20., 10., 1.), (-20., 0., 1.)] {
+            let mut manager = PropsManager::new();
+            let mut prop = test_prop(69, 2022, [0., 1.2, z], 14, 0.8);
+            prop.smash_force = threshold;
+            prop.uproot_force = threshold;
+            manager.active.push(prop);
+            let mut car = make_vehicle([0.;3], 0., 0, 0, 0, 0, false, false);
+            car.speed = speed;
+            manager.check_vehicle_impact(&mut car, 1./30., &mut Vec::new());
+            assert!(!manager.active[0].smashed);
+            assert_eq!(manager.active[0].state, PropState::Standing);
+        }
+    }
+
+    #[test]
+    fn loose_mailbox_can_be_hit_again_without_duplicate_paper_or_loot() {
+        let mut manager = PropsManager::new();
+        manager.active.push(test_prop(69, 2022, [0.,1.2,0.], 14, 0.8));
+        let mut particles = Vec::new();
+        let mut car = make_vehicle([0.;3], 0., 0, 0, 0, 0, false, false);
+        car.speed = 20.;
+        manager.check_vehicle_impact(&mut car, 1./30., &mut particles);
+        assert_eq!(particles.len(), 7);
+        let v = manager.active[0].v;
+        car.speed = 40.;
+        manager.check_vehicle_impact(&mut car, 1./30., &mut particles);
+        assert!(manager.active[0].v[1] > v[1]);
+        assert_eq!(particles.len(), 7);
+        assert_eq!(manager.drain_pending_smashes().len(), 1);
+        for _ in 0..300 { manager.update(1./30., &mut particles); }
+        assert_eq!(particles.len(), 7, "No paper conveyor belt at each ground contact");
+        let p = &manager.active[0];
+        assert!(p.p[2]+p.centre[2]-p.support_height() >= p.base_z-0.0001);
+        assert!(p.sleep);
+    }
+
+    #[test]
+    fn rotated_box_support_uses_psp_dimensions() {
+        let mut p = test_prop(69, 2022, [0.;3], 14, 0.8);
+        p.half = [0.4, 0.6, 1.2];
+        p.tumble_axis = [1.,0.,0.];
+        p.roll_angle = std::f32::consts::FRAC_PI_2;
+        assert!((p.support_height()-0.6).abs()<0.0001);
+        p.angle = std::f32::consts::FRAC_PI_2;
+        assert!((p.support_height()-0.4).abs()<0.0001);
+    }
+
     fn test_prop(prop_id: u16, model_id: u16, p: [f32; 3], smash_eff: u8, mass: f32) -> ActiveProp {
         ActiveProp {
             cell_x: 10,
@@ -1219,7 +1246,7 @@ mod tests {
             prop_idx: 0,
             prop_id,
             model_id,
-            broken_model_id: 0xFFFE,
+            broken_model_id: if matches!(smash_eff, 14 | 17 | 22 | 35) { 0xffff } else { 0xfffe },
             p,
             angle: 0.0,
             v: [0.0; 3],
@@ -1230,14 +1257,17 @@ mod tests {
             tilt_speed: 0.0,
             tilt_axis: [0.0, 0.0],
             state: PropState::Standing,
+            smashed: false,
+            half: [0.5, 0.5, 0.75],
+            centre: [0., 0., 0.75],
             collidable: true,
             fountain: false,
             fire_timer: 0.0,
             health: 20,
             mass,
             smash_eff,
-            smash_force: 10.0,
-            uproot_force: 15.0,
+            smash_force: if matches!(smash_eff, 14 | 22) { 5. } else { 1. },
+            uproot_force: if matches!(smash_eff, 14 | 17 | 22 | 35) { 0. } else { -1. },
             planar: false,
             bullet_damage: true,
             melee_damage: true,
@@ -1248,12 +1278,12 @@ mod tests {
     }
 
     #[test]
-    fn authentic_psp_props_hydrant_geyser_and_trash_bins() {
+    fn regression_psp_props_hydrant_geyser_and_trash_bins() {
         let mut manager = PropsManager::new();
         // Hydrant (effect 9)
         let mut hydrant = test_prop(175, 2195, [100.0, 100.0, 0.0], 9, 1.5);
         hydrant.smash_force = 15.0;
-        hydrant.uproot_force = 30.0;
+        hydrant.uproot_force = -1.0;
         manager.active.push(hydrant);
 
         // Trash bin (effect 35)
@@ -1292,8 +1322,8 @@ mod tests {
         manager.check_vehicle_impact(&mut car2, 0.016, &mut particles);
         let bin = &manager.active[1];
         assert_eq!(bin.state, PropState::Loose, "Trash bin becomes loose body");
-        assert!(!bin.collidable, "Bin collision disabled while tumbling");
-        assert!(bin.v[2] > 2.0, "Bin launched upward");
+        assert!(bin.collidable, "Loose bin can receive another physical impact");
+        assert_eq!(bin.v[2], 0., "Horizontal impact does not synthesize upward launch");
         assert!(particles.len() > p_count_before, "Garbage debris particles emitted");
         assert!(particles.iter().any(|p| p.kind == 2), "Garbage debris particle kind is 2");
 
@@ -1304,7 +1334,7 @@ mod tests {
     }
 
     #[test]
-    fn authentic_newsstand_and_parking_meter_cash_drops() {
+    fn regression_newsstand_and_parking_meter_cash_drops() {
         let mut manager = PropsManager::new();
         // 1. Newsstand kiosk (effect 42)
         let mut newsstand = test_prop(180, 2200, [300.0, 300.0, 0.0], 42, 1.2);
@@ -1346,8 +1376,8 @@ mod tests {
         car2.h = [0.9, 2.1, 0.7];
         manager.check_vehicle_impact_with_loot(&mut car2, 0.016, &mut particles, &mut Some(&mut pickups));
         assert_eq!(manager.active[1].state, PropState::Loose, "Newspaper dispenser becomes loose body");
-        assert!(!manager.active[1].collidable);
-        assert!(manager.active[1].v[2] > 2.0, "Newspaper dispenser launches vertically in 3D");
+        assert!(manager.active[1].collidable);
+        assert_eq!(manager.active[1].v[2], 0.);
         assert!(manager.active[1].angular_v > 0.0, "Newspaper dispenser tumbles with angular velocity");
         assert_eq!(pickups.pickups.iter().filter(|p| matches!(p.kind, crate::weapons::PickupKind::Money(25))).count(), 2, "Newspaper box drops $25 cash");
 
@@ -1357,8 +1387,8 @@ mod tests {
         car3.h = [0.9, 2.1, 0.7];
         manager.check_vehicle_impact_with_loot(&mut car3, 0.016, &mut particles, &mut Some(&mut pickups));
         assert_eq!(manager.active[2].state, PropState::Loose, "USPS Mailbox becomes loose body");
-        assert!(!manager.active[2].collidable);
-        assert!(manager.active[2].v[2] > 2.0, "USPS Mailbox launches vertically in 3D");
+        assert!(manager.active[2].collidable);
+        assert_eq!(manager.active[2].v[2], 0.);
         assert!(manager.active[2].angular_v > 0.0, "USPS Mailbox tumbles with angular velocity");
         assert!(particles.iter().any(|p| p.kind == 8), "Mailbox releases blue USPS mail envelopes (kind 8)");
 
@@ -1386,7 +1416,7 @@ mod tests {
         let mut lamp = test_prop(190, 2210, [400.0, 400.0, 0.0], 7, 2.5);
         lamp.health = 25;
         lamp.smash_force = 18.0;
-        lamp.uproot_force = 25.0;
+        lamp.uproot_force = -1.0;
         manager.active.push(lamp);
 
         // Player walking pushes out from solid standing lamp post
@@ -1433,7 +1463,7 @@ mod tests {
     }
 
     #[test]
-    fn authentic_glass_phone_booth_and_bus_shelter_shattering() {
+    fn regression_glass_phone_booth_and_bus_shelter_shattering() {
         let mut manager = PropsManager::new();
         // Phone booth (effect 10)
         manager.active.push(test_prop(201, 2301, [500.0, 500.0, 0.0], 10, 1.8));
@@ -1464,7 +1494,7 @@ mod tests {
     }
 
     #[test]
-    fn authentic_petrol_pump_and_barrel_explosions() {
+    fn regression_petrol_pump_and_barrel_explosions() {
         let mut manager = PropsManager::new();
         // Petrol pump (effect 21)
         manager.active.push(test_prop(210, 2400, [600.0, 600.0, 0.0], 21, 2.5));
@@ -1512,7 +1542,7 @@ mod tests {
     }
 
     #[test]
-    fn authentic_wooden_crate_fence_and_sign_physics() {
+    fn regression_wooden_crate_fence_and_sign_physics() {
         let mut manager = PropsManager::new();
         // Fence (effect 26)
         manager.active.push(test_prop(220, 2500, [700.0, 700.0, 0.0], 26, 1.0));

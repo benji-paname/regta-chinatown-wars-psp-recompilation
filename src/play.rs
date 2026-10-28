@@ -44,6 +44,7 @@ pub struct Options {
     pub gps_city: bool,
     pub slice: bool,
     pub demo_drive: bool,
+    pub prop_impact: Option<u16>,
     pub demo_combat: bool,
     pub armour: u8,
     pub health: u8,
@@ -77,6 +78,7 @@ impl Default for Options {
             gps_city: false,
             slice: false,
             demo_drive: false,
+            prop_impact: None,
             demo_combat: false,
             armour: 0,
             health: crate::radar::MAX_VITAL,
@@ -289,6 +291,15 @@ pub fn run(
         scene.health = options.health as f32;
         scene.armour = options.armour;
         // Explicit diagnostic modes position the actor for deterministic validation.
+        if let Some(id) = options.prop_impact {
+            let prop = scene.props.active.iter().find(|p|p.prop_id == id)
+                .ok_or("Requested prop is not in the loaded area")?;
+            let target = prop.p;
+            let car = scene.cars.first_mut().ok_or("No car for prop diagnostic")?;
+            car.p = [target[0], target[1]-7., target[2]];
+
+            car.angle = 0.;
+        }
         if options.demo_drive {
             if let Some(car) = scene.cars.first() {
                 let side = [car.angle.cos(), car.angle.sin()];
@@ -297,6 +308,11 @@ pub fn run(
             }
             if let Some(p) = scene.toggle_vehicle(&collision, player.p) {
                 player.p = p;
+                if options.prop_impact.is_some() {
+                    scene.driving = Some(0);
+                    scene.cars[0].speed = 12.;
+                    player.p = scene.cars[0].p;
+                }
             }
         } else if options.demo_combat {
             if let Some(npc) = scene.peds.first() {
@@ -1615,6 +1631,7 @@ pub fn run(
         "cars":s.cars.len(),"cargen_spawned":s.cars.iter().filter(|c|c.from_cargen).count(),"cargen_total":collision.cells.iter().map(|c|c.car_gens.len()).sum::<usize>(),
         "loaded_car_models":car.as_ref().map(|c|c.models.len()).unwrap_or(0),
         "active_props":s.props.active.len(),
+        "props_end":s.props.active.iter().map(|p|serde_json::json!({"id":p.prop_id,"p":p.p,"effect":p.smash_eff,"state":format!("{:?}",p.state),"smashed":p.smashed,"v":p.v,"sleep":p.sleep,"half":p.half})).collect::<Vec<_>>(),
         "loaded_prop_models":prop_library.models.len(),
         "loaded_prop_textures":prop_library.textures.len(),
         "pedestrians":s.peds.len(),"driving":s.driving,

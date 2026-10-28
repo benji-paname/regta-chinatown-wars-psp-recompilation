@@ -1,6 +1,6 @@
 {
-  "checked_at": "2026-10-28T02:12:00+00:00",
-  "task": "City street furniture props, physical impacts, 3D loose tumbling, hydrant geysers, cash loot and particle bursts",
+  "checked_at": "2026-10-28T22:18:27+00:00",
+  "task": "Repair prop destruction against paired original PSP recordings",
   "repositories": [
     {
       "id": "ctw-native",
@@ -9,8 +9,8 @@
       "use": "Gameplay algorithms, class names and porting methodology; verify PSP Europe differences.",
       "status": "checked",
       "revision": "f7a45b3b7aac9bd9f4662d104d276d421c1fca52",
-      "previous_revision": "f7a45b3b7aac9bd9f4662d104d276d421c1fca52",
-      "changed_files": [],
+      "previous_revision": null,
+      "changed_files": null,
       "local_changes_present": false,
       "recent_commits": [
         {
@@ -52,8 +52,8 @@
       "use": "Overlay analysis, original control flow and rendering/audio research; validate against ULES-01347 1.01.",
       "status": "checked",
       "revision": "6562163b6f504a1db93e1be5ce580d8cd6f024a7",
-      "previous_revision": "6562163b6f504a1db93e1be5ce580d8cd6f024a7",
-      "changed_files": [],
+      "previous_revision": null,
+      "changed_files": null,
       "local_changes_present": false,
       "recent_commits": [
         {

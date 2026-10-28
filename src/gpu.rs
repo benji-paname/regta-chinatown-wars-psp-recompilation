@@ -581,7 +581,7 @@ impl Renderer {
                 }
                 if let Some(scene) = scene {
                     for prop in &scene.props.active {
-                        let model_to_draw = if prop.state == crate::props::PropState::Broken {
+                        let model_to_draw = if prop.smashed {
                             if prop.broken_model_id < 0xFFFE {
                                 prop.broken_model_id
                             } else if prop.broken_model_id == 0xFFFF {
@@ -607,6 +607,9 @@ impl Renderer {
                                     0.0,
                                 );
                             } else if prop.state == crate::props::PropState::Loose {
+                                let (sa, ca) = prop.angle.sin_cos();
+                                glTranslatef(prop.centre[0]*ca-prop.centre[1]*sa,
+                                    prop.centre[0]*sa+prop.centre[1]*ca, prop.centre[2]);
                                 glRotatef(
                                     prop.roll_angle.to_degrees(),
                                     prop.tumble_axis[0],
@@ -615,6 +618,9 @@ impl Renderer {
                                 );
                             }
                             glRotatef(prop.angle.to_degrees(), 0., 0., 1.);
+                            if prop.state == crate::props::PropState::Loose {
+                                glTranslatef(-prop.centre[0], -prop.centre[1], -prop.centre[2]);
+                            }
                             for b in batches {
                                 if (b.flags & 0x20 != 0) != late {
                                     continue;

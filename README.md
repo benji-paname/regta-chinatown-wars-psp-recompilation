@@ -8,7 +8,7 @@
 **by Benji Paname**
 
 [![Version](https://img.shields.io/badge/milestone-0.1.4--alpha-orange)](CHANGELOG.md)
-[![Tests](https://img.shields.io/badge/local_tests-234_passed-brightgreen)](docs/STATUS.md)
+[![Tests](https://img.shields.io/badge/local_tests-237_passed-brightgreen)](docs/STATUS.md)
 [![Warnings](https://img.shields.io/badge/compiler_warnings-0-brightgreen)](docs/STATUS.md)
 [![Platform](https://img.shields.io/badge/platform-Windows_x64-blue)](#build-and-run)
 [![Language](https://img.shields.io/badge/runtime-Rust-dea584)](#repository-layout)
@@ -56,7 +56,7 @@ From the repository root, in PowerShell:
 .\outputs\CTW-Rust\CTW-Rust.exe --iso "D:\Games\Chinatown-Wars-PSP.iso" --slice
 ```
 
-The compiler runs with warnings treated as errors, tests the workspace, and updates the executable only after success. Unit tests use generated synthetic fixtures and do not require an ISO or extracted game tables. Local validation on **2026-10-28: 234 passed, 0 failed, 0 ignored, 0 compiler warnings**. This is a local result, not a hosted CI badge.
+The compiler runs with warnings treated as errors, tests the workspace, and updates the executable only after success. Unit tests use generated synthetic fixtures and do not require an ISO or extracted game tables. Local validation on **2026-10-28: 237 passed, 0 failed, 0 ignored, 0 compiler warnings**. This is a local result, not a hosted CI badge.
 
 For desktop launchers, set `CTW_ISO` in the launching environment or pass `--iso` to a launcher:
 
@@ -90,7 +90,7 @@ The three camera profiles, French/English interface, keyboard/XInput controls an
 
 | Metric | Measured Value | Verification Method |
 |---|---|---|
-| **Passing Unit Tests** | **234 tests / 0 failures** | `Compiler.ps1 -Test` (100% deterministic synthetic fixtures) |
+| **Passing Unit Tests** | **237 tests / 0 failures** | `Compiler.ps1 -Test` (100% deterministic synthetic fixtures) |
 | **Compiler Warnings** | **0 warnings** | Enforced via `-D warnings` in Cargo build profile |
 | **Active Rust Modules** | **45 modules** (25,018 lines) | Pure native Rust x86_64 in `src/` |
 | **PSP Code Overlays Indexed** | **166 overlays** | Verified against `OVERLAYS.PAK` directory table |

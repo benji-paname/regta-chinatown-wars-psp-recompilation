@@ -1,4 +1,18 @@
-# ACTIVE HANDOFF - Authentic Loose Physics for Newspaper Dispensers & Mailboxes
+# ACTIVE HANDOFF — prop contact repair from paired videos
+
+Updated 2026-10-28T23:32, Europe/Paris. Read docs/PROP_CONTACT_REPAIR.md before continuing. Earlier statements of fully authentic prop physics below are NOT supported; this checkpoint supersedes them.
+
+Final build: 237 passed, zero failures, 0 warnings at 2026-10-28T23:31:26.8024184+01:00. Delivered outputs/CTW-Rust/CTW-Rust.exe SHA256 0b53c76f49afac47ddf2ca4cbdbc23179f30dfe9c2d14278aa6e61f807c179a4. Three Python inventory tests passed; dashboards regenerated. No push.
+
+Compared OG PSP.mp4 and Recomp Rust .exe.mp4 in Benjamin's Downloads. Private contact sheets and detailed impact frames in target/prop-video. Fixed automatic launch/spin from smash events, threshold bypasses, separating/height contacts, repeat impact interaction, duplicate paper emissions, paper falling, centre-based rotation/ground support, separate smashed appearance from physical state. Native contact remains an approximation: do not claim full PSP parity. See evidence/limitations in docs/PROP_CONTACT_REPAIR.md.
+
+Actual ISO smoke: --prop-impact 69 --headless --frames 180 --walk 0 1 --brake-at 30. Confirmed driving car 0; mailbox 69 became Loose/smashed, moved from y=-1554.530 to -1543.161, finite velocity, no forced initial upward launch. Capture target/prop-video/mailbox-after.bmp inspected. This confirms runtime integration, not numerical equality to the user's differently driven recording. Initial diagnostic attempts selected a different car; corrected explicit diagnostic selection, ordinary entry logic unchanged.
+
+Resume: read AGENTS.md, run python tools/maintenance/check_upstreams.py --task "Continue prop fidelity", review both upstreams, then docs/PROP_CONTACT_REPAIR.md. Full build: powershell -ExecutionPolicy Bypass -File ./Compiler.ps1 -Test. Prioritize full contact-point/inertia response, dynamic wall/prop collisions, terrain height and original PSP effect timing. Preserve driving/cameras and private data. No new upstream changes at f7a45b3 / 6562163.
+
+---
+
+# HISTORICAL / SUPERSEDED CLAIMS - Loose Physics for Newspaper Dispensers & Mailboxes
 
 Updated: 2026-10-28 20:55 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini / other models can resume directly from here.
 

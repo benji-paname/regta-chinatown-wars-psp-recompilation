@@ -215,6 +215,11 @@ fn run() -> Result<()> {
                 play_options.brake_at = Some(args.next().ok_or("Missing brake tick")?.parse()?)
             }
             "--no-test-car" => play_options.car = None,
+            "--prop-impact" => {
+                play_options.prop_impact = Some(args.next().ok_or("Missing prop ID")?.parse()?);
+                play_options.demo_drive = true;
+                play_options.slice = true;
+            }
             "--car-pos" => {
                 let x = args.next().ok_or("Missing car X")?.parse()?;
                 let y = args.next().ok_or("Missing car Y")?.parse()?;
