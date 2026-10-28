@@ -265,6 +265,7 @@ pub fn run(
             pavement.clone(),
         );
         s.props = crate::props::PropsManager::with_library(prop_library.clone());
+        s.props.sync_area(&collision, player.p);
         s.radio = crate::radio::RadioManager::new(radio_tables.clone());
         s.weather = crate::weather::WeatherManager::new(weather_tables.clone());
         if let Some(wt) = &weapon_tables {
@@ -436,7 +437,14 @@ pub fn run(
     if !options.headless && (options.frames.is_none() || options.fullscreen.is_some()) {
         renderer.set_fullscreen(hud_settings.fullscreen);
     }
-    renderer.upload(&world, &ped, car.as_ref(), &terrain, &hud_assets)?;
+    renderer.upload(
+        &world,
+        &ped,
+        car.as_ref(),
+        Some(&prop_library),
+        &terrain,
+        &hud_assets,
+    )?;
     println!(
         "Rendu : {}. Chargement {:.2} s.",
         renderer.driver,
@@ -984,6 +992,7 @@ pub fn run(
                 s.health = options.health as f32;
                 s.armour = options.armour;
                 s.props = crate::props::PropsManager::with_library(prop_library.clone());
+        s.props.sync_area(&collision, player.p);
                 s.radio = crate::radio::RadioManager::new(radio_tables.clone());
                 s.weather = crate::weather::WeatherManager::new(weather_tables.clone());
                 if let Some(wt) = &weapon_tables {
@@ -1466,7 +1475,14 @@ pub fn run(
                 centre,
                 if camera.is_free() { 410. } else { 210. },
             )?;
-            renderer.upload(&world, &ped, car.as_ref(), &terrain, &hud_assets)?;
+            renderer.upload(
+        &world,
+        &ped,
+        car.as_ref(),
+        Some(&prop_library),
+        &terrain,
+        &hud_assets,
+    )?;
             stream_pos = centre;
         }
         renderer.draw(
@@ -1587,6 +1603,9 @@ pub fn run(
     report["slice"] = scene.as_ref().map(|s| serde_json::json!({
         "cars":s.cars.len(),"cargen_spawned":s.cars.iter().filter(|c|c.from_cargen).count(),"cargen_total":collision.cells.iter().map(|c|c.car_gens.len()).sum::<usize>(),
         "loaded_car_models":car.as_ref().map(|c|c.models.len()).unwrap_or(0),
+        "active_props":s.props.active.len(),
+        "loaded_prop_models":prop_library.models.len(),
+        "loaded_prop_textures":prop_library.textures.len(),
         "pedestrians":s.peds.len(),"driving":s.driving,
         "health":s.health,"armour":s.armour,"hits":s.hits,"kills":s.kills,
         "vehicle_entries":s.vehicle_entries,"vehicle_exits":s.vehicle_exits,

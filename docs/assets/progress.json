@@ -3,8 +3,8 @@
   "measurement": "native Rust function inventory; not original-code coverage",
   "pspParityVerified": false,
   "pspCompletionPercent": null,
-  "sourceSha256": "644c57a9ce2d22d1d115b74cd0a0f33de21dd64cfa8438987950fd5e8da260e3",
-  "runtimeFunctions": 1036,
+  "sourceSha256": "d31d115ab8fae0631b3e1d587dcbe94b5c626b357735686aae2e839c5cda2b6d",
+  "runtimeFunctions": 1037,
   "testFunctions": 255,
   "modules": 49,
   "subsystems": [
@@ -122,7 +122,7 @@
     },
     {
       "name": "World and rendering",
-      "runtimeFunctions": 120,
+      "runtimeFunctions": 121,
       "testFunctions": 31,
       "classes": [
         {
@@ -164,7 +164,7 @@
         },
         {
           "name": "props.rs",
-          "runtimeFunctions": 14,
+          "runtimeFunctions": 15,
           "testFunctions": 3,
           "relatedClasses": [
             "cDynamicProp",

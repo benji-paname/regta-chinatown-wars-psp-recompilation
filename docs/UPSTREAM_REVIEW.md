@@ -158,3 +158,33 @@ Validation:
 - Three Python progress-inventory tests pass cleanly.
 - ISO driving audit on `work/Chinatown-Wars-PSP.iso`: **0 failures across all 166 real-map routes**.
 - Delivered to `outputs/CTW-Rust/CTW-Rust.exe`.
+
+## 28 October 2026 - City Street Furniture Models & Textures OpenGL Pipeline Integration
+
+Preflight and upstream review verified against CTW-Native `f7a45b3b7aac9bd9f4662d104d276d421c1fca52` and highcmd `6562163b6f504a1db93e1be5ce580d8cd6f024a7`.
+
+Defect resolved:
+- In `CTW-Rust.exe`, street furniture and props were synchronized in memory but invisible on screen because `Renderer::upload` only uploaded map meshes and car models, leaving `self.models.get(&model_to_draw)` returning `None` for every prop.
+- Furthermore, prop 3D meshes (368 models from PAK resource 1866) and textures (266 static, 5 animated from PAK resources 1869..2163) were not previously parsed from `GAME.PAK`.
+
+Fix implementation:
+1. **Asset Extraction in `PropLibrary::load` (`src/props.rs`)**:
+   - Parses all 368 intact and broken prop 3D meshes referenced by prop definitions using `model::parse`.
+   - Decodes all 271 unique prop textures and animated texture frame sets using `texture::decode` and `texture::animation`.
+2. **OpenGL Display Lists & Texture Upload in `Renderer::upload` (`src/gpu.rs`)**:
+   - Added dedicated `prop_models` and `prop_textures` maps to `Renderer`.
+   - Uploads all prop textures to GPU memory with mipmapping, and builds display list triangle batches for each prop model with surface vertex normals and illumination shading.
+   - Preserves memory safety with clean teardown in `clear_assets`.
+3. **Display Rendering & Animation in `Renderer::draw` (`src/gpu.rs`)**:
+   - Queries `self.prop_models` (with fallback to `self.models`) for `model_to_draw`.
+   - Binds prop textures and animates flashing/neon prop lights using `prop_library.animations`.
+   - Extended active streaming area in `sync_area` to $5 \times 5$ cells ($250\text{ m} \times 250\text{ m}$) with 130m retention distance, preventing pop-ins.
+4. **Immediate Initial Synchronization (`src/play.rs`)**:
+   - Calls `s.props.sync_area` immediately upon scene initialization so all furniture around the spawn is present from frame 0.
+   - Added `active_props`, `loaded_prop_models`, and `loaded_prop_textures` telemetry to slice validation.
+
+Validation:
+- `Compiler.ps1 -Test`: **229 passed, 0 failed, 0 warnings** under `-D warnings`.
+- Runtime verification: 81 active props in initial bubble, 368 prop models loaded, 266 prop textures uploaded to OpenGL.
+- Visual frame capture `target/prop-screen.bmp` and `target/prop-drive.bmp` confirms rendered street lamps, green trash cans, food carts, trees, and street furniture.
+- Delivered to `outputs/CTW-Rust/CTW-Rust.exe`.

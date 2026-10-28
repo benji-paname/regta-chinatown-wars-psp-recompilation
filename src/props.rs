@@ -9,6 +9,7 @@ use crate::{
     iso::{u16le, u32le, Disc, Result},
     pak::Pak,
 };
+use std::collections::HashMap;
 
 #[allow(dead_code)]
 #[derive(Clone, Debug, PartialEq)]
@@ -37,13 +38,27 @@ pub struct PropDef {
     pub shapes: Vec<PropShape>,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Default)]
 pub struct PropLibrary {
     pub defs: Vec<PropDef>,
     pub kinds: Vec<PropKind>,
+    pub models: HashMap<u16, crate::model::Mesh>,
+    pub textures: HashMap<u16, crate::texture::Texture>,
+    pub animations: HashMap<u16, Vec<(u16, u16)>>,
 }
 
 impl PropLibrary {
+    #[allow(dead_code)]
+    pub fn new_empty() -> Self {
+        Self {
+            defs: Vec::new(),
+            kinds: Vec::new(),
+            models: HashMap::new(),
+            textures: HashMap::new(),
+            animations: HashMap::new(),
+        }
+    }
+
     pub fn load(disc: &mut Disc, pak: &Pak) -> Result<Self> {
         let d1867 = pak.read(disc, 1867)?.0;
         let mut kinds = Vec::new();
@@ -134,7 +149,56 @@ impl PropLibrary {
                 shapes,
             });
         }
-        Ok(Self { defs, kinds })
+
+        let mut models = HashMap::new();
+        let mut textures = HashMap::new();
+        let mut animations = HashMap::new();
+
+        let mut load_model = |model_id: u16| {
+            if model_id == 0 || model_id >= 0xFFFE || models.contains_key(&model_id) {
+                return;
+            }
+            if let Ok((raw, _)) = pak.read(disc, model_id as usize) {
+                if let Ok(m) = crate::model::parse(&raw) {
+                    for &tid in &m.texture_ids {
+                        if tid != 65535 && !textures.contains_key(&tid) {
+                            if let Ok((traw, _)) = pak.read(disc, tid as usize) {
+                                if let Ok(Some(anim)) = crate::texture::animation(&traw) {
+                                    for &(frame, _) in &anim {
+                                        if !textures.contains_key(&frame) {
+                                            if let Ok((fraw, _)) = pak.read(disc, frame as usize) {
+                                                if let Ok(tex) = crate::texture::decode(frame as usize, &fraw) {
+                                                    textures.insert(frame, tex);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    animations.insert(tid, anim);
+                                } else if let Ok(tex) = crate::texture::decode(tid as usize, &traw) {
+                                    textures.insert(tid, tex);
+                                }
+                            }
+                        }
+                    }
+                    models.insert(model_id, m);
+                }
+            }
+        };
+
+        for def in &defs {
+            load_model(def.model);
+            if def.broken < 0xFFFE {
+                load_model(def.broken);
+            }
+        }
+
+        Ok(Self {
+            defs,
+            kinds,
+            models,
+            textures,
+            animations,
+        })
     }
 
     pub fn kind_for(&self, prop_id: usize) -> Option<&PropKind> {
@@ -225,8 +289,8 @@ impl PropsManager {
         let Some((cx, cy)) = Collision::cell_xy(focus[0], focus[1]) else {
             return;
         };
-        for x in cx.saturating_sub(1)..=(cx + 1).min(139) {
-            for y in cy.saturating_sub(1)..=(cy + 1).min(99) {
+        for x in cx.saturating_sub(2)..=(cx + 2).min(139) {
+            for y in cy.saturating_sub(2)..=(cy + 2).min(99) {
                 let cell = &collision.cells[x * 100 + y];
                 for (idx, p) in cell.props.iter().enumerate() {
                     let prop_id = p.prop as usize;
@@ -276,12 +340,12 @@ impl PropsManager {
                 }
             }
         }
-        // Cleanup distant props beyond 85m (unless currently spewing a fountain or tumbling)
+        // Cleanup distant props beyond 130m (unless currently spewing a fountain or tumbling)
         self.active.retain(|ap| {
             ap.fountain || !ap.sleep || {
                 let dx = ap.p[0] - focus[0];
                 let dy = ap.p[1] - focus[1];
-                dx * dx + dy * dy < 85.0 * 85.0
+                dx * dx + dy * dy < 130.0 * 130.0
             }
         });
     }

@@ -67,6 +67,8 @@ pub struct Renderer {
     ped_textures: HashMap<(u16, u8), u32>,
     car_textures: HashMap<u16, u32>,
     car_models: HashMap<u16, Vec<Batch>>,
+    prop_textures: HashMap<u16, u32>,
+    prop_models: HashMap<u16, Vec<Batch>>,
     terrain_texture: u32,
     radar_origin: [f32; 2],
     radar_size: [f32; 2],
@@ -99,6 +101,8 @@ impl Renderer {
             ped_textures: HashMap::new(),
             car_textures: HashMap::new(),
             car_models: HashMap::new(),
+            prop_textures: HashMap::new(),
+            prop_models: HashMap::new(),
             terrain_texture: 0,
             radar_origin: [0.; 2],
             radar_size: [1.; 2],
@@ -179,7 +183,12 @@ impl Renderer {
     }
     fn clear_assets(&mut self) {
         unsafe {
-            for b in self.models.values().chain(self.car_models.values()) {
+            for b in self
+                .models
+                .values()
+                .chain(self.car_models.values())
+                .chain(self.prop_models.values())
+            {
                 for b in b {
                     glDeleteLists(b.list, 1);
                 }
@@ -188,9 +197,11 @@ impl Renderer {
         }
         self.models.clear();
         self.car_models.clear();
+        self.prop_models.clear();
         self.texture_ids.clear();
         self.ped_textures.clear();
         self.car_textures.clear();
+        self.prop_textures.clear();
         self.textures.clear();
     }
     pub fn upload(
@@ -198,6 +209,7 @@ impl Renderer {
         world: &World,
         ped: &PedAssets,
         car: Option<&crate::vehicle::TestCar>,
+        props: Option<&crate::props::PropLibrary>,
         _terrain: &crate::texture::Texture,
         hud: &crate::hud::Assets,
     ) -> Result<()> {
@@ -251,6 +263,13 @@ impl Renderer {
                     let tex = upload_texture(t, true)?;
                     self.textures.push(tex);
                     self.car_textures.insert(id, tex);
+                }
+            }
+            if let Some(props) = props {
+                for (&id, t) in &props.textures {
+                    let tex = upload_texture(t, true)?;
+                    self.textures.push(tex);
+                    self.prop_textures.insert(id, tex);
                 }
             }
             for (id, m) in world
@@ -345,6 +364,52 @@ impl Renderer {
                         });
                     }
                     self.car_models.insert(model_id, batches);
+                }
+            }
+            if let Some(props) = props {
+                for (&model_id, m) in &props.models {
+                    let mut groups = BTreeMap::<(u16, u8, u8), Vec<_>>::new();
+                    for s in &m.surfaces {
+                        groups
+                            .entry((s.texture, s.flags, s.alpha))
+                            .or_default()
+                            .push(s);
+                    }
+                    let mut batches = Vec::new();
+                    for ((tex, flags, alpha), tris) in groups {
+                        let list = glGenLists(1);
+                        if list == 0 {
+                            return Err("OpenGL prop mesh allocation".into());
+                        }
+                        glNewList(list, 0x1300);
+                        glBegin(4);
+                        self.triangles += tris.len();
+                        for t in tris {
+                            let a = std::array::from_fn::<_, 3, _>(|i| t.v[1].p[i] - t.v[0].p[i]);
+                            let b = std::array::from_fn::<_, 3, _>(|i| t.v[2].p[i] - t.v[0].p[i]);
+                            let n = [
+                                a[1] * b[2] - a[2] * b[1],
+                                a[2] * b[0] - a[0] * b[2],
+                                a[0] * b[1] - a[1] * b[0],
+                            ];
+                            let len = (n.iter().map(|v| v * v).sum::<f32>()).sqrt().max(1e-6);
+                            let light = 0.67
+                                + 0.33 * ((n[0] * 0.3 + n[1] * 0.5 + n[2] * 0.81) / len).abs();
+                            glColor4f(light, light, light, alpha as f32 / 255.);
+                            for v in t.v {
+                                glTexCoord2f(v.uv[0], v.uv[1]);
+                                glVertex3f(v.p[0], v.p[1], v.p[2]);
+                            }
+                        }
+                        glEnd();
+                        glEndList();
+                        batches.push(Batch {
+                            list,
+                            texture: tex,
+                            flags,
+                        });
+                    }
+                    self.prop_models.insert(model_id, batches);
                 }
             }
             self.texture_ids = textures;
@@ -527,7 +592,11 @@ impl Renderer {
                         } else {
                             prop.model_id
                         };
-                        if let Some(batches) = self.models.get(&model_to_draw) {
+                        let batches_opt = self
+                            .prop_models
+                            .get(&model_to_draw)
+                            .or_else(|| self.models.get(&model_to_draw));
+                        if let Some(batches) = batches_opt {
                             glPushMatrix();
                             glTranslatef(prop.p[0], prop.p[1], prop.p[2]);
                             if prop.state == crate::props::PropState::Tilted {
@@ -556,12 +625,20 @@ impl Renderer {
                                     glEnable(0x0b44);
                                 }
                                 glDepthMask(if b.flags & 0x20 != 0 { 0 } else { 1 });
-                                let id = world
-                                    .animations
-                                    .get(&b.texture)
+                                let id = scene
+                                    .props
+                                    .library
+                                    .as_ref()
+                                    .and_then(|l| l.animations.get(&b.texture))
+                                    .or_else(|| world.animations.get(&b.texture))
                                     .map(|a| crate::texture::frame(a, ticks))
                                     .unwrap_or(b.texture);
-                                let texture = self.texture_ids.get(&id).copied().unwrap_or(0);
+                                let texture = self
+                                    .prop_textures
+                                    .get(&id)
+                                    .copied()
+                                    .or_else(|| self.texture_ids.get(&id).copied())
+                                    .unwrap_or(0);
                                 if texture != 0 {
                                     glEnable(0x0de1);
                                     glBindTexture(0x0de1, texture);
