@@ -207,8 +207,8 @@ Fix implementation:
 2. **Authentic Toppling & Physical Destruction (`src/props.rs`, `propdynamics.cpp:216-224, 489-502`)**:
    - Added `tilt_speed: f32` and `base_z: f32` to `ActiveProp`.
    - Added `pending_disables: Vec<(usize, usize, usize)>` to `PropsManager` and drained in `src/play.rs` to call `collision.set_prop_solid(cx, cy, prop_idx, false)`.
-   - Streetlights (`smash_eff == 7`): Impact unanchors solid collision via `set_prop_solid`, emits broken lamp head electric sparks (`kind: 5`), and initiates gravitational topple (`tilt_speed += 12.0 * dt`). Tilts progressively from $0^\circ$ to $88^\circ$ ($1.54$ rad), triggers ground clatter sound 56 on pavement contact, and rests flat on the ground.
-   - High-speed ramming ($> 8\text{ m/s}$) uproots lamp posts into loose tumbling bodies with 3D ballistic trajectory, ground bounce with restitution $0.38$, and elevation settling at `prop.base_z`.
+   - Streetlights (`smash_eff == 7`): Impact unanchors solid collision via `set_prop_solid`, emits broken lamp head electric sparks (`kind: 5`), and initiates gravitational topple (`tilt_speed = (impact_speed * 0.15 + 2.8).min(5.5)`, accelerating with `10.0 * dt`). Tilts progressively from $0^\circ$ to $88^\circ$ ($1.54$ rad), triggers ground clatter sound 56 on pavement contact, and rests flat on the ground.
+   - Streetlights strictly remain anchored at their base; they never fly into the air or execute barrel rolls/tonneaux at high speed, matching original Chinatown Wars behavior.
    - Large streetlights / signals (`smash_eff == 8`): tilt flat immediately ($1.48$ rad / $85^\circ$) with electric sparks and unanchored collision.
    - Dumpsters & trash bins (`smash_eff == 35`): loose tumbling physics with ground restitution settling at `prop.base_z`.
    - When props are broken/tilted, `Collision::set_prop_solid` parks their shapes below the world (`-100000.0`), allowing pedestrians and vehicles to walk or drive over the fallen debris.

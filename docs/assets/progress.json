@@ -3,7 +3,7 @@
   "measurement": "native Rust function inventory; not original-code coverage",
   "pspParityVerified": false,
   "pspCompletionPercent": null,
-  "sourceSha256": "92e96e2ddc4e8fbb64f5247cfdd4531f0539e41b1b71363cec3e1a2afd89e395",
+  "sourceSha256": "ec0e3dbdb509c1331d5f28cd3107d3816d849184d2e2fe0fc697fa8a3cc1d686",
   "runtimeFunctions": 1040,
   "testFunctions": 256,
   "modules": 49,

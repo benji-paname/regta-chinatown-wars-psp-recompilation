@@ -534,28 +534,15 @@ impl PropsManager {
                 }
             }
             7 => {
-                // Lamp post / streetlight: authentic toppling physics
-                if impact_speed > 8.0 && prop.mass < 2.5 {
-                    // High-speed impact uproots the post into a tumbling loose body
-                    prop.state = PropState::Loose;
-                    prop.collidable = false;
-                    prop.sleep = false;
-                    prop.v = [
-                        impact_dir[0] * (impact_speed * 0.45 + 1.8),
-                        impact_dir[1] * (impact_speed * 0.45 + 1.8),
-                        3.2 + (impact_speed * 0.12).min(2.0),
-                    ];
-                    prop.tumble_axis = [-impact_dir[1], impact_dir[0], 0.2];
-                    prop.angular_v = impact_speed * 0.6 + 2.5;
-                } else {
-                    // Progressive gravitational topple until landing flat on pavement
-                    prop.tilt = 0.08;
-                    prop.tilt_speed = 3.2;
-                    prop.tilt_axis = [-impact_dir[1], impact_dir[0]];
-                    prop.state = PropState::Tilted;
-                    prop.collidable = false;
-                    prop.sleep = false;
-                }
+                // Lamp post / streetlight: authentic Chinatown Wars toppling physics
+                // Base snaps and pole topples under gravity until lying flat on pavement.
+                // Streetlights NEVER fly up into the air or perform barrel rolls.
+                prop.tilt = 0.08;
+                prop.tilt_speed = (impact_speed * 0.15 + 2.8).min(5.5);
+                prop.tilt_axis = [-impact_dir[1], impact_dir[0]];
+                prop.state = PropState::Tilted;
+                prop.collidable = false;
+                prop.sleep = false;
                 for i in 0..12 {
                     if particles.len() < 160 {
                         particles.push(Particle {
@@ -987,13 +974,15 @@ mod tests {
         assert!(pushed, "Solid standing lamp post blocks walking player");
         assert!(player_p[0] > 400.3, "Player pushed out from lamp post");
 
-        // Car rams lamp post at 6 m/s -> progressive topple initiated
+        // Car rams lamp post at high speed (20 m/s) -> progressive topple initiated without barrel rolls or flight
         let mut particles = Vec::new();
         let mut car = make_vehicle([400.0, 398.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
-        car.speed = 6.0;
+        car.speed = 20.0;
         car.h = [0.9, 2.1, 0.7];
         manager.check_vehicle_impact(&mut car, 0.016, &mut particles);
-        assert_eq!(manager.active[0].state, PropState::Tilted, "Lamp post tilts on impact");
+        assert_eq!(manager.active[0].state, PropState::Tilted, "Lamp post tilts on impact even at high speed");
+        assert_eq!(manager.active[0].v, [0.0; 3], "Lamp post stays anchored to base without aerial flight");
+        assert_eq!(manager.active[0].angular_v, 0.0, "Lamp post does not perform barrel rolls");
         assert!(particles.iter().any(|p| p.kind == 5), "Electric sparks generated from damaged lamp post");
         assert!(!manager.active[0].collidable, "Lamp post unanchors collision");
 
