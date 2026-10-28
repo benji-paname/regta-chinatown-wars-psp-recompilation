@@ -4,14 +4,14 @@
 use crate::iso::{bytes, u16le, u32le, Result};
 use flate2::read::ZlibDecoder;
 use std::io::Read;
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct BoxShape {
     pub c: [f32; 3],
     pub h: [f32; 3],
     pub angle: f32,
     pub flags: u16,
 }
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Cylinder {
     pub p: [f32; 3],
     pub r: f32,
@@ -53,6 +53,17 @@ pub struct CityEmitter {
     pub p: [f32; 3],
 }
 
+#[derive(Clone, Debug, PartialEq)]
+pub struct PropShapeRange {
+    pub box_start: usize,
+    pub box_count: usize,
+    pub cyl_start: usize,
+    pub cyl_count: usize,
+    pub solid: bool,
+    pub saved_boxes: Vec<BoxShape>,
+    pub saved_cyls: Vec<Cylinder>,
+}
+
 #[derive(Default)]
 pub struct Cell {
     pub paths: crate::ped_paths::Paths,
@@ -63,6 +74,7 @@ pub struct Cell {
     pub cylinders: Vec<Cylinder>,
     pub triangles: Vec<[[f32; 3]; 3]>,
     pub ground: Vec<u8>,
+    pub prop_shapes: Vec<PropShapeRange>,
 }
 pub struct Collision {
     pub cells: Vec<Cell>,
@@ -234,6 +246,9 @@ impl Collision {
         }
         for cell in self.nearby_cells(p[0], p[1]) {
             for b in &cell.boxes {
+                if b.flags & 0x8000 != 0 {
+                    continue;
+                }
                 if p[2] + 0.015 >= b.c[2] + b.h[2] || p[2] + height - 0.015 <= b.c[2] - b.h[2] {
                     continue;
                 }
@@ -273,6 +288,9 @@ impl Collision {
         }
         for cell in self.nearby_cells(p[0], p[1]) {
             for b in &cell.boxes {
+                if b.flags & 0x8000 != 0 {
+                    continue;
+                }
                 if p[2] + 0.015 >= b.c[2] + b.h[2] || p[2] + height - 0.015 <= b.c[2] - b.h[2] {
                     continue;
                 }
@@ -562,6 +580,111 @@ impl Collision {
             }
         }
         hit
+    }
+
+    pub fn populate_prop_shapes(&mut self, library: &crate::props::PropLibrary) {
+        for cell in &mut self.cells {
+            cell.prop_shapes.clear();
+            for p in &cell.props {
+                let prop_id = p.prop as usize;
+                let box_start = cell.boxes.len();
+                let cyl_start = cell.cylinders.len();
+                if let Some(def) = library.defs.get(prop_id) {
+                    let theta = (p.heading as f32) * std::f32::consts::TAU / 65536.0;
+                    let (s, c) = theta.sin_cos();
+                    for shape in &def.shapes {
+                        match shape {
+                            crate::props::PropShape::Box { offset, half } => {
+                                let at = [
+                                    p.p[0] + (c * offset[0] - s * offset[1]),
+                                    p.p[1] + (s * offset[0] + c * offset[1]),
+                                    p.p[2] + offset[2],
+                                ];
+                                cell.boxes.push(BoxShape {
+                                    c: [at[0], at[1], at[2] + half[2]],
+                                    h: *half,
+                                    angle: theta,
+                                    flags: 0x8000,
+                                });
+                            }
+                            crate::props::PropShape::Cylinder { offset, radius, height } => {
+                                let at = [
+                                    p.p[0] + (c * offset[0] - s * offset[1]),
+                                    p.p[1] + (s * offset[0] + c * offset[1]),
+                                    p.p[2] + offset[2],
+                                ];
+                                cell.cylinders.push(Cylinder {
+                                    p: at,
+                                    r: *radius,
+                                    h: *height,
+                                });
+                            }
+                            crate::props::PropShape::Sphere { offset, radius } => {
+                                let at = [
+                                    p.p[0] + (c * offset[0] - s * offset[1]),
+                                    p.p[1] + (s * offset[0] + c * offset[1]),
+                                    p.p[2] + offset[2],
+                                ];
+                                cell.cylinders.push(Cylinder {
+                                    p: [at[0], at[1], at[2] - *radius],
+                                    r: *radius,
+                                    h: *radius * 2.0,
+                                });
+                            }
+                        }
+                    }
+                }
+                let box_count = cell.boxes.len() - box_start;
+                let cyl_count = cell.cylinders.len() - cyl_start;
+                cell.prop_shapes.push(PropShapeRange {
+                    box_start,
+                    box_count,
+                    cyl_start,
+                    cyl_count,
+                    solid: true,
+                    saved_boxes: Vec::new(),
+                    saved_cyls: Vec::new(),
+                });
+            }
+        }
+    }
+
+    pub fn set_prop_solid(&mut self, cx: usize, cy: usize, prop_idx: usize, solid: bool) {
+        if cx >= 140 || cy >= 100 {
+            return;
+        }
+        let cell = &mut self.cells[cx * 100 + cy];
+        if let Some(ps) = cell.prop_shapes.get_mut(prop_idx) {
+            if ps.solid == solid {
+                return;
+            }
+            ps.solid = solid;
+            if !solid {
+                if ps.saved_boxes.is_empty() && ps.saved_cyls.is_empty() {
+                    ps.saved_boxes = cell.boxes[ps.box_start..ps.box_start + ps.box_count].to_vec();
+                    ps.saved_cyls = cell.cylinders[ps.cyl_start..ps.cyl_start + ps.cyl_count].to_vec();
+                }
+                for b in &mut cell.boxes[ps.box_start..ps.box_start + ps.box_count] {
+                    b.c[2] = -100000.0;
+                    b.h[2] = 0.0;
+                }
+                for c in &mut cell.cylinders[ps.cyl_start..ps.cyl_start + ps.cyl_count] {
+                    c.p[2] = -100000.0;
+                    c.h = 0.0;
+                }
+            } else {
+                for (i, b) in ps.saved_boxes.drain(..).enumerate() {
+                    if ps.box_start + i < cell.boxes.len() {
+                        cell.boxes[ps.box_start + i] = b;
+                    }
+                }
+                for (i, c) in ps.saved_cyls.drain(..).enumerate() {
+                    if ps.cyl_start + i < cell.cylinders.len() {
+                        cell.cylinders[ps.cyl_start + i] = c;
+                    }
+                }
+            }
+        }
     }
 }
 impl BoxShape {
@@ -1123,5 +1246,64 @@ mod tests {
         assert_eq!(c.ground(50.5, 10., 2.).z, 2.);
         assert!(c.body_clear([50.5, 10., 2.], 0.875, 2.));
         assert!(!c.body_clear([50.5, 10., 0.], 0.875, 2.));
+    }
+    #[test]
+    fn prop_shapes_solid_on_foot_and_destruction_unanchors() {
+        let mut c = flat_world();
+        let (cx, cy) = Collision::cell_xy(10., 10.).unwrap();
+        let cell_idx = cx * 100 + cy;
+        // Add a streetlight prop (ID 0) at (10, 10, 0)
+        c.cells[cell_idx].props.push(Prop {
+            prop: 0,
+            kind: 0,
+            heading: 0,
+            state: 0,
+            p: [10., 10., 0.],
+        });
+        // Create library with 1 prop def containing a cylinder (pole) and box (base)
+        let mut lib = crate::props::PropLibrary::new_empty();
+        lib.defs.push(crate::props::PropDef {
+            model: 100,
+            broken: 101,
+            kind: 0,
+            shapes: vec![
+                crate::props::PropShape::Cylinder {
+                    offset: [0., 0., 0.],
+                    radius: 0.35,
+                    height: 5.0,
+                },
+                crate::props::PropShape::Box {
+                    offset: [0., 0., 0.],
+                    half: [0.4, 0.4, 0.5],
+                },
+            ],
+        });
+
+        // 1. Populate prop shapes into collision world
+        c.populate_prop_shapes(&lib);
+        assert_eq!(c.cells[cell_idx].prop_shapes.len(), 1);
+        assert_eq!(c.cells[cell_idx].prop_shapes[0].box_count, 1);
+        assert_eq!(c.cells[cell_idx].prop_shapes[0].cyl_count, 1);
+        assert!(c.cells[cell_idx].prop_shapes[0].solid);
+
+        // 2. Walking on foot towards the prop pushes the player out solidly
+        let mut w = Walker::new(&c, [8.5, 10.]).unwrap();
+        for _ in 0..30 {
+            w.step(&c, [1., 0.], 1. / 30., false, false);
+        }
+        assert!(w.p[0] < 9.2, "Standing prop blocks player walking on foot");
+        assert!(w.contacts > 0, "Walker registered collision contact with prop");
+
+        // 3. Destroy / unanchor prop collision
+        c.set_prop_solid(cx, cy, 0, false);
+        assert!(!c.cells[cell_idx].prop_shapes[0].solid);
+
+        // 4. Player can now walk through the destroyed prop space unobstructed
+        let old_x = w.p[0];
+        for _ in 0..40 {
+            w.step(&c, [1., 0.], 1. / 30., false, false);
+        }
+        assert!(w.p[0] > 10.5, "Walker passed through unanchored prop location");
+        assert!(w.p[0] > old_x + 1.5, "Walker moved forward past the fallen prop");
     }
 }

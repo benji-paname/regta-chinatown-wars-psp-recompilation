@@ -235,6 +235,7 @@ pub struct ActiveProp {
     pub tumble_axis: [f32; 3],
     pub angular_v: f32,
     pub tilt: f32,
+    pub tilt_speed: f32,
     pub tilt_axis: [f32; 2],
     pub state: PropState,
     pub collidable: bool,
@@ -244,6 +245,7 @@ pub struct ActiveProp {
     pub smash_eff: u8,
     pub smash_force: f32,
     pub uproot_force: f32,
+    pub base_z: f32,
     pub sleep: bool,
 }
 
@@ -251,6 +253,7 @@ pub struct PropsManager {
     pub library: Option<std::sync::Arc<PropLibrary>>,
     pub active: Vec<ActiveProp>,
     pub pending_smashes: Vec<([f32; 3], usize)>,
+    pub pending_disables: Vec<(usize, usize, usize)>,
 }
 
 impl PropsManager {
@@ -259,6 +262,7 @@ impl PropsManager {
             library: None,
             active: Vec::new(),
             pending_smashes: Vec::new(),
+            pending_disables: Vec::new(),
         }
     }
 
@@ -267,6 +271,7 @@ impl PropsManager {
             library: Some(library),
             active: Vec::new(),
             pending_smashes: Vec::new(),
+            pending_disables: Vec::new(),
         }
     }
 
@@ -278,6 +283,10 @@ impl PropsManager {
 
     pub fn drain_pending_smashes(&mut self) -> Vec<([f32; 3], usize)> {
         std::mem::take(&mut self.pending_smashes)
+    }
+
+    pub fn drain_pending_disables(&mut self) -> Vec<(usize, usize, usize)> {
+        std::mem::take(&mut self.pending_disables)
     }
 
     /// Synchronizes street furniture and props within the streaming bubble around focus.
@@ -326,6 +335,7 @@ impl PropsManager {
                         tumble_axis: [1.0, 0.0, 0.0],
                         angular_v: 0.0,
                         tilt: 0.0,
+                        tilt_speed: 0.0,
                         tilt_axis: [0.0, 0.0],
                         state: PropState::Standing,
                         collidable: true,
@@ -335,6 +345,7 @@ impl PropsManager {
                         smash_eff,
                         smash_force,
                         uproot_force,
+                        base_z: p.p[2],
                         sleep: true,
                     });
                 }
@@ -432,6 +443,7 @@ impl PropsManager {
             return;
         }
         self.pending_smashes.push((prop.p, prop.smash_eff as usize));
+        self.pending_disables.push((prop.cell_x, prop.cell_y, prop.prop_idx));
 
         match prop.smash_eff {
             9 => {
@@ -521,16 +533,59 @@ impl PropsManager {
                     pm.spawn_dropped(crate::weapons::PickupKind::Money(25), prop.p);
                 }
             }
-            7 | 8 => {
-                // Lamp post / streetlight: tilts, emits electric sparks
-                prop.tilt = 0.52;
-                prop.tilt_axis = [-impact_dir[1], impact_dir[0]];
-                prop.state = PropState::Tilted;
-                prop.collidable = false;
+            7 => {
+                // Lamp post / streetlight: authentic toppling physics
+                if impact_speed > 8.0 && prop.mass < 2.5 {
+                    // High-speed impact uproots the post into a tumbling loose body
+                    prop.state = PropState::Loose;
+                    prop.collidable = false;
+                    prop.sleep = false;
+                    prop.v = [
+                        impact_dir[0] * (impact_speed * 0.45 + 1.8),
+                        impact_dir[1] * (impact_speed * 0.45 + 1.8),
+                        3.2 + (impact_speed * 0.12).min(2.0),
+                    ];
+                    prop.tumble_axis = [-impact_dir[1], impact_dir[0], 0.2];
+                    prop.angular_v = impact_speed * 0.6 + 2.5;
+                } else {
+                    // Progressive gravitational topple until landing flat on pavement
+                    prop.tilt = 0.08;
+                    prop.tilt_speed = 3.2;
+                    prop.tilt_axis = [-impact_dir[1], impact_dir[0]];
+                    prop.state = PropState::Tilted;
+                    prop.collidable = false;
+                    prop.sleep = false;
+                }
                 for i in 0..12 {
                     if particles.len() < 160 {
                         particles.push(Particle {
                             p: [prop.p[0], prop.p[1], prop.p[2] + 2.5],
+                            v: [
+                                ((i * 41) % 11) as f32 * 0.4 - 2.0,
+                                ((i * 67) % 11) as f32 * 0.4 - 2.0,
+                                ((i * 19) % 7) as f32 * 0.5 + 1.0,
+                            ],
+                            life: 0.0,
+                            max_life: 0.45,
+                            size: 0.12,
+                            grow: 0.1,
+                            kind: 5, // electric sparks
+                        });
+                    }
+                }
+            }
+            8 => {
+                // Large streetlight / Traffic signal: tilts flat immediately (0x3C72 ~ 1.48 rad ~ 85 deg)
+                prop.tilt = 1.48;
+                prop.tilt_speed = 0.0;
+                prop.tilt_axis = [-impact_dir[1], impact_dir[0]];
+                prop.state = PropState::Tilted;
+                prop.collidable = false;
+                prop.sleep = true;
+                for i in 0..12 {
+                    if particles.len() < 160 {
+                        particles.push(Particle {
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 2.8],
                             v: [
                                 ((i * 41) % 11) as f32 * 0.4 - 2.0,
                                 ((i * 67) % 11) as f32 * 0.4 - 2.0,
@@ -666,7 +721,7 @@ impl PropsManager {
         pushed
     }
 
-    /// Updates dynamic props physics, tumble integration, and water hydrant geysers.
+    /// Updates dynamic props physics, tumble integration, falling streetlights, and water hydrant geysers.
     pub fn update(&mut self, dt: f32, particles: &mut Vec<Particle>) {
         for prop in &mut self.active {
             // Indefinite water geyser fountain for smashed hydrants
@@ -685,7 +740,37 @@ impl PropsManager {
                     });
                 }
             }
-            // Loose tumbling props (bins, crates, parking meters)
+            // Gravitational topple for damaged streetlights
+            if prop.state == PropState::Tilted && !prop.sleep {
+                if prop.smash_eff == 7 {
+                    prop.tilt_speed += 12.0 * dt;
+                    prop.tilt += prop.tilt_speed * dt;
+                    if prop.tilt >= 1.54 {
+                        prop.tilt = 1.54; // flat on pavement (~88 degrees)
+                        prop.tilt_speed = 0.0;
+                        prop.sleep = true;
+                        self.pending_smashes.push((prop.p, 56)); // Sound 56: ground impact clatter
+                        for i in 0..6 {
+                            if particles.len() < 160 {
+                                particles.push(Particle {
+                                    p: [prop.p[0], prop.p[1], prop.p[2] + 0.1],
+                                    v: [
+                                        ((i * 31) % 7) as f32 * 0.4 - 1.2,
+                                        ((i * 47) % 7) as f32 * 0.4 - 1.2,
+                                        0.8 + ((i * 13) % 5) as f32 * 0.3,
+                                    ],
+                                    life: 0.0,
+                                    max_life: 0.35,
+                                    size: 0.15,
+                                    grow: 0.1,
+                                    kind: 5, // ground impact sparks
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            // Loose tumbling props (bins, crates, parking meters, uprooted poles)
             if prop.state == PropState::Loose && !prop.sleep {
                 prop.p[0] += prop.v[0] * dt;
                 prop.p[1] += prop.v[1] * dt;
@@ -697,8 +782,8 @@ impl PropsManager {
                 prop.roll_angle += prop.angular_v * dt;
                 prop.angular_v *= (1.0 - 1.5 * dt).max(0.0);
 
-                if prop.p[2] <= 0.0 {
-                    prop.p[2] = 0.0;
+                if prop.p[2] <= prop.base_z {
+                    prop.p[2] = prop.base_z;
                     prop.v[2] = -prop.v[2] * 0.38;
                     prop.v[0] *= 0.75;
                     prop.v[1] *= 0.75;
@@ -736,6 +821,7 @@ mod tests {
             tumble_axis: [1.0, 0.0, 0.0],
             angular_v: 0.0,
             tilt: 0.0,
+            tilt_speed: 0.0,
             tilt_axis: [0.0, 0.0],
             state: PropState::Standing,
             collidable: true,
@@ -745,6 +831,7 @@ mod tests {
             smash_eff: 9,
             smash_force: 15.0,
             uproot_force: 30.0,
+            base_z: 0.0,
             sleep: true,
         });
 
@@ -763,6 +850,7 @@ mod tests {
             tumble_axis: [1.0, 0.0, 0.0],
             angular_v: 0.0,
             tilt: 0.0,
+            tilt_speed: 0.0,
             tilt_axis: [0.0, 0.0],
             state: PropState::Standing,
             collidable: true,
@@ -772,6 +860,7 @@ mod tests {
             smash_eff: 35,
             smash_force: 8.0,
             uproot_force: 12.0,
+            base_z: 0.0,
             sleep: true,
         });
 
@@ -832,6 +921,7 @@ mod tests {
             tumble_axis: [1.0, 0.0, 0.0],
             angular_v: 0.0,
             tilt: 0.0,
+            tilt_speed: 0.0,
             tilt_axis: [0.0, 0.0],
             state: PropState::Standing,
             collidable: true,
@@ -841,6 +931,7 @@ mod tests {
             smash_eff: 42,
             smash_force: 10.0,
             uproot_force: 15.0,
+            base_z: 0.0,
             sleep: true,
         });
 
@@ -876,6 +967,7 @@ mod tests {
             tumble_axis: [1.0, 0.0, 0.0],
             angular_v: 0.0,
             tilt: 0.0,
+            tilt_speed: 0.0,
             tilt_axis: [0.0, 0.0],
             state: PropState::Standing,
             collidable: true,
@@ -885,6 +977,7 @@ mod tests {
             smash_eff: 7,
             smash_force: 18.0,
             uproot_force: 25.0,
+            base_z: 0.0,
             sleep: true,
         });
 
@@ -894,14 +987,32 @@ mod tests {
         assert!(pushed, "Solid standing lamp post blocks walking player");
         assert!(player_p[0] > 400.3, "Player pushed out from lamp post");
 
-        // Car rams lamp post
+        // Car rams lamp post at 6 m/s -> progressive topple initiated
         let mut particles = Vec::new();
         let mut car = make_vehicle([400.0, 398.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
-        car.speed = 12.0;
+        car.speed = 6.0;
         car.h = [0.9, 2.1, 0.7];
         manager.check_vehicle_impact(&mut car, 0.016, &mut particles);
-        assert_eq!(manager.active[0].state, PropState::Tilted, "Lamp post tilts on hard impact");
+        assert_eq!(manager.active[0].state, PropState::Tilted, "Lamp post tilts on impact");
         assert!(particles.iter().any(|p| p.kind == 5), "Electric sparks generated from damaged lamp post");
+        assert!(!manager.active[0].collidable, "Lamp post unanchors collision");
+
+        // Gravitational topple progresses over time until landing flat on ground (>= 1.54 rad)
+        let tilt_initial = manager.active[0].tilt;
+        for _ in 0..30 {
+            manager.update(0.016, &mut particles);
+        }
+        assert!(manager.active[0].tilt > tilt_initial, "Lamp post accelerates downward");
+        for _ in 0..60 {
+            manager.update(0.016, &mut particles);
+        }
+        assert!((manager.active[0].tilt - 1.54).abs() < 1e-4, "Lamp post lies flat on pavement (~88 degrees)");
+        assert!(manager.active[0].sleep, "Fallen lamp post rests asleep on pavement");
+        assert!(manager.drain_pending_smashes().iter().any(|&(_, eff)| eff == 56), "Impact sound 56 triggered on pavement landing");
+
+        // Pending disables recorded
+        let disables = manager.drain_pending_disables();
+        assert_eq!(disables, vec![(10, 10, 0)]);
 
         // Explosion blast damages nearby props
         let mut exp_particles = Vec::new();

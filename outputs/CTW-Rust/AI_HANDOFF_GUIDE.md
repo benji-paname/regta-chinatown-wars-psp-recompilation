@@ -1,6 +1,6 @@
-# ACTIVE HANDOFF - Street Furniture Props Visual Rendering Pipeline & Physics Integration
+# ACTIVE HANDOFF - Street Furniture Props Solid Collision On Foot & Authentic Falling Physics
 
-Updated: 2026-10-28 03:33 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini / other models can resume directly from here.
+Updated: 2026-10-28 20:15 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini / other models can resume directly from here.
 
 ## Resume in 10 seconds
 
@@ -14,26 +14,22 @@ Before a new task, run the mandatory upstream check, review relevant changes and
 
 ## Exact delivered state
 
-- Baseline: `ececbd4`. Fulfills user request: "en leçant le .exe je ne voit aucun props" -> Props now fully visible, textured, and physically reactive in the world!
-  - **Complete Model & Texture Loading Pipeline (`src/props.rs`)**:
-    - Extracted all 368 intact and broken street furniture meshes from `GAME.PAK` (resource 1866) via `model::parse`.
-    - Decoded all 271 unique prop textures and animated texture frame sequences via `texture::decode` and `texture::animation`.
-  - **OpenGL Render Lists & Textures (`src/gpu.rs`)**:
-    - Created dedicated `prop_models` and `prop_textures` buffers in `Renderer`.
-    - Populated OpenGL display lists with vertex normals, illumination shading, and mipmapped textures.
-    - Props seamlessly integrate into both opaque and alpha-blending rendering passes.
-  - **Initial Streaming & Retention**:
-    - Synchronized area expanded to $5 \times 5$ cells ($250\text{ m} \times 250\text{ m}$) with a 130m retention bubble.
-    - Initial `s.props.sync_area` executed on startup so props are rendered from frame 0 without pop-in.
-  - **3D Loose Body Ballistic Tumbling & Physical Destruction**:
-    - Loose props (trash cans, crates, parking meters) translate with 3D velocity, gravity, angular tumbling rotation, ground bounce with restitution ($0.38$), rolling friction ($0.75$), and settling to sleep.
-    - Fire hydrants tilt 24° and spew continuous water spray geysers with sound.
-    - Trash cans launch upward, roll, and spill garbage debris (`kind: 2`).
-    - Wooden fences shatter into flying wood splinters (`kind: 3`).
-    - Newspaper stands and parking meters burst into fluttering paper (`kind: 4`) and drop \$25 / \$40 cash pickup loot on the pavement.
-    - Streetlights tilt and throw electric sparks (`kind: 5`).
-    - Solid Player Push-out: Walking player is pushed out from solid standing street furniture.
-- Build report: **2026-10-28T03:31:55+01:00**, **229 passed, 0 failed, 0 ignored, 0 warnings** under `-D warnings`. Log: `target/validation/build-report.json`. Pure native Rust treemap, site, README and SVG badges synchronized: **1037 runtime functions, 255 test/helper functions, 49 modules**.
+- Baseline: `7a98f70`. Fulfills user request:
+  - *"a pied on passe a travers"* -> Fixed! Props now have solid geometric collision on foot; the player cannot walk through street furniture.
+  - *"les lempadaire ne tombe pas au sol par exemple"* -> Fixed! Smashed lamp posts topple under gravity torque and fall flat on the pavement with ground impact clatter sound 56 and sparks.
+- **Solid Prop Collision On Foot (`src/collision.rs`)**:
+  - Implemented `Collision::populate_prop_shapes(&mut self, library: &PropLibrary)`: transforms and populates all 165 box and 74 cylinder primitives from PAK 1866 into `cell.boxes` and `cell.cylinders`, tracked via `PropShapeRange` per prop.
+  - Walking player (`Walker::step`) sub-stepping calls `push_out(&mut p, 0.875, 2.0)`, solidly stopping the player against standing streetlights, fences, phone booths, bins, and trees.
+  - Prop boxes are marked with `flags: 0x8000`, cleanly skipped by `rail_body_clear` so ambient traffic road rails are never obstructed.
+  - `car_position_for` uses `rail_body_clear`, allowing driving vehicles to reach breakable street furniture and trigger authentic destruction rather than stopping on an invisible wall.
+- **Authentic Toppling & Physical Destruction (`src/props.rs`, `propdynamics.cpp:216-224, 489-502`)**:
+  - Streetlights (`smash_eff == 7`): Impact unanchors collision via `pending_disables` (`collision.set_prop_solid(cx, cy, prop_idx, false)`), emits broken lamp head electric sparks (`kind: 5`), and initiates gravitational topple (`tilt_speed += 12.0 * dt`). Tilts progressively from $0^\circ$ to $88^\circ$ ($1.54$ rad), triggers ground clatter sound 56 on pavement contact, and rests flat on the ground.
+  - High-speed ramming ($> 8\text{ m/s}$) uproots lamp posts into loose tumbling bodies with 3D ballistic trajectory, ground bounce with restitution $0.38$, and elevation settling at `prop.base_z`.
+  - Large streetlights / signals (`smash_eff == 8`): tilt flat immediately ($1.48$ rad / $85^\circ$) with electric sparks and unanchored collision.
+  - Dumpsters & trash bins (`smash_eff == 35`): loose tumbling physics with ground restitution settling at `prop.base_z`.
+  - When props are broken/tilted, `Collision::set_prop_solid` parks their shapes below the world (`-100000.0`), allowing pedestrians and vehicles to walk or drive over the fallen debris.
+- Build report: **230 passed, 0 failed, 0 ignored, 0 warnings** under `-D warnings`. Log: `target/validation/build-report.json`. Pure native Rust treemap, site, README and SVG badges synchronized: **1040 runtime functions, 256 test/helper functions, 49 modules**.
+- Real-map driving audit: **92 vehicles, 166 real-map routes, 0 failures**.
 - Delivered executable: `outputs/CTW-Rust/CTW-Rust.exe`. No GitHub push performed.
 - Upstream review verified: CTW-Native `f7a45b3b7aac9bd9f4662d104d276d421c1fca52`, highcmd `6562163b6f504a1db93e1be5ce580d8cd6f024a7`. Documented in `docs/UPSTREAM_REVIEW.md`.
 

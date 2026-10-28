@@ -408,7 +408,7 @@ pub(crate) fn car_position_for(
                     p[2],
                 ];
                 let g = c.ground(q[0], q[1], p[2]);
-                if g.water || (g.z - p[2]).abs() > 0.55 || !c.body_clear(q, 0.55, CAR_HEIGHT) {
+                if g.water || (g.z - p[2]).abs() > 0.55 || !c.rail_body_clear(q, 0.55, CAR_HEIGHT) {
                     return None;
                 }
             }
@@ -424,7 +424,7 @@ pub(crate) fn car_position_for(
                 p[2],
             ];
             let g = c.ground(q[0], q[1], p[2]);
-            if g.water || (g.z - p[2]).abs() > 0.55 || !c.body_clear(q, 0.8, CAR_HEIGHT) {
+            if g.water || (g.z - p[2]).abs() > 0.55 || !c.rail_body_clear(q, 0.8, CAR_HEIGHT) {
                 return None;
             }
         }

@@ -188,3 +188,33 @@ Validation:
 - Runtime verification: 81 active props in initial bubble, 368 prop models loaded, 266 prop textures uploaded to OpenGL.
 - Visual frame capture `target/prop-screen.bmp` and `target/prop-drive.bmp` confirms rendered street lamps, green trash cans, food carts, trees, and street furniture.
 - Delivered to `outputs/CTW-Rust/CTW-Rust.exe`.
+
+## 28 October 2026 - Street Furniture Solid Collision On Foot & Authentic Falling Physics
+
+Preflight and upstream review verified against CTW-Native `references/ctw-native/port/src/world/collision.cpp` (`Collision::setPropSolid`, `propShapes`), `references/ctw-native/port/src/world/props.cpp` (`PropLibrary::shapes`), and `references/ctw-native/port/game/propdynamics.cpp` (`smashEffect == 7` / `8`, `lampTimer`, toppling physics).
+
+Defects resolved:
+1. **On foot (à pied)**: Zero solid collision physics; the walking player ghosted straight through standing street furniture (lamp posts, phone booths, trees, dumpsters, fences, etc.).
+2. **In vehicle / Destruction physics**: Smashed street furniture lacked authentic physical behaviors — notably, lamp posts froze in mid-air at a fixed ~30° tilt rather than toppling over and landing flat on the pavement.
+
+Fix implementation:
+1. **Solid Prop Collision On Foot (`src/collision.rs`)**:
+   - Added `PropShapeRange { box_start, box_count, cyl_start, cyl_count, solid, saved_boxes, saved_cyls }` and `pub prop_shapes: Vec<PropShapeRange>` to `Cell`.
+   - Implemented `Collision::populate_prop_shapes(&mut self, library: &PropLibrary)`: transforms and populates all 165 box, 74 cylinder, and 12 sphere primitives from PAK 1866 into each `Cell`'s `boxes` and `cylinders`.
+   - `Walker::step` sub-stepping calls `push_out(&mut p, 0.875, 2.0)`, stopping the walking player solidly against standing streetlights, fences, phone booths, bins, and trees.
+   - Marked prop boxes with `flags: 0x8000`, cleanly skipped by `rail_body_clear` and `body_clear` so ambient traffic road rails are never obstructed.
+   - `car_position_for` uses `rail_body_clear`, allowing vehicles to impact breakable furniture directly into `PropsManager::check_vehicle_impact_with_loot` without premature wall stopping.
+2. **Authentic Toppling & Physical Destruction (`src/props.rs`, `propdynamics.cpp:216-224, 489-502`)**:
+   - Added `tilt_speed: f32` and `base_z: f32` to `ActiveProp`.
+   - Added `pending_disables: Vec<(usize, usize, usize)>` to `PropsManager` and drained in `src/play.rs` to call `collision.set_prop_solid(cx, cy, prop_idx, false)`.
+   - Streetlights (`smash_eff == 7`): Impact unanchors solid collision via `set_prop_solid`, emits broken lamp head electric sparks (`kind: 5`), and initiates gravitational topple (`tilt_speed += 12.0 * dt`). Tilts progressively from $0^\circ$ to $88^\circ$ ($1.54$ rad), triggers ground clatter sound 56 on pavement contact, and rests flat on the ground.
+   - High-speed ramming ($> 8\text{ m/s}$) uproots lamp posts into loose tumbling bodies with 3D ballistic trajectory, ground bounce with restitution $0.38$, and elevation settling at `prop.base_z`.
+   - Large streetlights / signals (`smash_eff == 8`): tilt flat immediately ($1.48$ rad / $85^\circ$) with electric sparks and unanchored collision.
+   - Dumpsters & trash bins (`smash_eff == 35`): loose tumbling physics with ground restitution settling at `prop.base_z`.
+   - When props are broken/tilted, `Collision::set_prop_solid` parks their shapes below the world (`-100000.0`), allowing pedestrians and vehicles to walk or drive over the fallen debris.
+
+Validation:
+- `Compiler.ps1 -Test`: **230 passed, 0 failed, 0 warnings** under `-D warnings`.
+- Treemap, site, README and SVG badges synchronized: **1040 runtime functions, 256 test/helper functions, 49 modules**.
+- Real-map driving audit on `work/Chinatown-Wars-PSP.iso`: **0 failures across all 166 real-map routes**.
+- Delivered to `outputs/CTW-Rust/CTW-Rust.exe`.

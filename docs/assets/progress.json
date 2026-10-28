@@ -3,9 +3,9 @@
   "measurement": "native Rust function inventory; not original-code coverage",
   "pspParityVerified": false,
   "pspCompletionPercent": null,
-  "sourceSha256": "d31d115ab8fae0631b3e1d587dcbe94b5c626b357735686aae2e839c5cda2b6d",
-  "runtimeFunctions": 1037,
-  "testFunctions": 255,
+  "sourceSha256": "92e96e2ddc4e8fbb64f5247cfdd4531f0539e41b1b71363cec3e1a2afd89e395",
+  "runtimeFunctions": 1040,
+  "testFunctions": 256,
   "modules": 49,
   "subsystems": [
     {
@@ -122,8 +122,8 @@
     },
     {
       "name": "World and rendering",
-      "runtimeFunctions": 121,
-      "testFunctions": 31,
+      "runtimeFunctions": 124,
+      "testFunctions": 32,
       "classes": [
         {
           "name": "camera.rs",
@@ -138,8 +138,8 @@
         },
         {
           "name": "collision.rs",
-          "runtimeFunctions": 28,
-          "testFunctions": 8,
+          "runtimeFunctions": 30,
+          "testFunctions": 9,
           "relatedClasses": [
             "CCollision",
             "CCollisionBox",
@@ -164,7 +164,7 @@
         },
         {
           "name": "props.rs",
-          "runtimeFunctions": 15,
+          "runtimeFunctions": 16,
           "testFunctions": 3,
           "relatedClasses": [
             "cDynamicProp",
@@ -635,7 +635,7 @@
     }
   ],
   "lastLocalValidation": {
-    "passed": 229,
+    "passed": 230,
     "date": "2026-10-28"
   }
 }

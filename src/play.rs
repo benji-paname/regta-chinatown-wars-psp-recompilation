@@ -229,6 +229,7 @@ pub fn run(
     let pavement = std::sync::Arc::new(crate::pavement::Network::build(&collision.cells));
     // PAK resources 1866 and 1867: Chinatown Wars prop library and physics kinds.
     let prop_library = std::sync::Arc::new(crate::props::PropLibrary::load(disc, pak)?);
+    collision.populate_prop_shapes(&prop_library);
     let weapon_tables_bytes = reference_table("weapon_tables.bin");
     let weapon_tables = crate::weapons::WeaponTables::parse(&weapon_tables_bytes).ok();
     let radio_tables_bytes = reference_table("radio_tables.bin");
@@ -991,8 +992,9 @@ pub fn run(
                 );
                 s.health = options.health as f32;
                 s.armour = options.armour;
+                collision.populate_prop_shapes(&prop_library);
                 s.props = crate::props::PropsManager::with_library(prop_library.clone());
-        s.props.sync_area(&collision, player.p);
+                s.props.sync_area(&collision, player.p);
                 s.radio = crate::radio::RadioManager::new(radio_tables.clone());
                 s.weather = crate::weather::WeatherManager::new(weather_tables.clone());
                 if let Some(wt) = &weapon_tables {
@@ -1341,6 +1343,9 @@ pub fn run(
                     }
                     for (pos, effect) in s.props.drain_pending_smashes() {
                         sound.play_prop_smash(pos, effect, player.p, [-player.heading.sin(), player.heading.cos()]);
+                    }
+                    for (cx, cy, prop_idx) in s.props.drain_pending_disables() {
+                        collision.set_prop_solid(cx, cy, prop_idx, false);
                     }
                     for car in &mut s.cars {
                         if car.horn_timer > 0.0 {
