@@ -1644,9 +1644,6 @@ impl Scene {
                         self.driving = None;
                     }
                 }
-                if let Some(driving_idx) = self.driving {
-                    self.props.check_vehicle_impact(&mut self.cars[driving_idx], dt, &mut self.particles);
-                }
             } else if !self.cars[i].parked {
                 let car = &mut self.cars[i];
                 if car.disabled || car.health <= 0. {
@@ -1713,6 +1710,13 @@ impl Scene {
                         step_car(car, c, DriveInput { brake: true, ..DriveInput::default() }, dt);
                     }
                 }
+            }
+        }
+        // Check street furniture / prop impacts for all active moving vehicles
+        for i in 0..self.cars.len() {
+            if self.cars[i].speed.abs() > 1.2 {
+                let mut pickups_opt = Some(&mut self.pickups);
+                self.props.check_vehicle_impact_with_loot(&mut self.cars[i], dt, &mut self.particles, &mut pickups_opt);
             }
         }
         // Resolve vehicle-to-vehicle contacts with mass-weighted momentum transfer
@@ -2583,6 +2587,17 @@ impl Scene {
                 blast.damage_radius,
                 &mut self.save_progress,
                 &mut self.cash,
+            );
+
+            // 6. Blast and damage street furniture / props
+            let mut pickups_opt = Some(&mut self.pickups);
+            self.props.explosion(
+                blast.pos,
+                blast.force_radius,
+                blast.damage_radius,
+                blast.damage,
+                &mut self.particles,
+                &mut pickups_opt,
             );
         }
 

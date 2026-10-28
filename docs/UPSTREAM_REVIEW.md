@@ -129,3 +129,32 @@ Validation:
 - Three Python progress-inventory tests pass cleanly.
 - ISO driving audit on `work/Chinatown-Wars-PSP.iso`: **0 failures across all 166 real-map routes**.
 - Delivered to `outputs/CTW-Rust/CTW-Rust.exe`.
+
+## 28 October 2026 - City Street Furniture Props, Physical Impacts, 3D Loose Tumbling, and Loot Drops
+
+Preflight and upstream review verified against CTW-Native `f7a45b3b7aac9bd9f4662d104d276d421c1fca52` and highcmd `6562163b6f504a1db93e1be5ce580d8cd6f024a7`.
+
+Implementation summary:
+1. **Citywide Props Synchronization & Rendering (`src/props.rs`, `src/gpu.rs`)**:
+   - Upstream reference: `references/ctw-native/port/src/world/props.h`, `props.cpp`, `cDynamicPropManager`, `Collision::setPropSolid`.
+   - Removed the filter skipping indestructible/static street props (`smash_force < 0 && uproot_force < 0`) in `PropsManager::sync_area`. All street furniture across Liberty City (solid lampposts, traffic light poles, telephone booths, trees, mailboxes, bus shelters, fences, hydrants, bins) are now synchronized, visible, and rendered.
+   - Smashed/broken model support: if a prop definition specifies a broken model (`broken_model_id < 0xFFFE`), the broken mesh is rendered in place of the intact one; if `0xFFFE`, it is cleanly removed.
+2. **Comprehensive Vehicle & Explosion Impacts (`src/props.rs`, `src/actors.rs`, `src/play.rs`)**:
+   - Vehicle impacts checked across all active moving cars (player vehicle and ambient traffic) via `check_vehicle_impact_with_loot`.
+   - Explosion blasts (`Scene::step_explosions`) blow up, tilt, and fling nearby street furniture within blast radii.
+   - Solid push-out for pedestrians (`push_out_player`): player on foot can no longer ghost through solid street furniture.
+3. **Authentic Physics Reactions & Particle Bursts**:
+   - Hydrants (effect 9): tilts by 24 degrees in impact direction, disables collision, launches continuous vertical water spray geyser (`kind: 1`), and triggers looping hydrant audio.
+   - Trash cans & dumpsters (effect 35): becomes a `Loose` physical body with 3D ballistic translation ($\mathbf{p} += \mathbf{v} \cdot dt$), gravity ($-9.8\text{ m/s}^2$), angular tumbling rotation, ground restitution bounce ($0.38$), rolling friction ($0.75$), settling to sleep, and emitting garbage debris (`kind: 2`).
+   - Wooden fences & barriers (effect 16, 26, 27): shatters into flying wood splinters (`kind: 3`) with wood smash audio.
+   - Newspaper stands (effect 14, 22, 42): breaks, releases fluttering paper pages (`kind: 4`), and drops \$25 cash pickup loot on the pavement.
+   - Parking meters: snaps, drops \$40 cash pickup loot with authentic chime audio.
+   - Streetlights & lampposts (effect 7, 8): tilts, emits electrical arc sparks (`kind: 5`), and topples.
+   - Spatial sound dispatch: `drain_pending_smashes` hooked into `sound.play_prop_smash` in `src/play.rs`.
+
+Validation:
+- `Compiler.ps1 -Test`: **229 passed, 0 failed, 0 warnings** under `-D warnings`.
+- Treemap, site, README and SVG badges synchronized: **1036 runtime functions, 255 test/helper functions, 49 modules**.
+- Three Python progress-inventory tests pass cleanly.
+- ISO driving audit on `work/Chinatown-Wars-PSP.iso`: **0 failures across all 166 real-map routes**.
+- Delivered to `outputs/CTW-Rust/CTW-Rust.exe`.

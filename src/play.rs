@@ -1330,6 +1330,9 @@ pub fn run(
                     for (pos, lethal) in s.drain_pending_impact_sounds() {
                         sound.play_ped_impact(pos, lethal, player.p, [-player.heading.sin(), player.heading.cos()]);
                     }
+                    for (pos, effect) in s.props.drain_pending_smashes() {
+                        sound.play_prop_smash(pos, effect, player.p, [-player.heading.sin(), player.heading.cos()]);
+                    }
                     for car in &mut s.cars {
                         if car.horn_timer > 0.0 {
                             let prev = car.horn_timer;
@@ -1372,6 +1375,7 @@ pub fn run(
                     };
                     if let Some(s) = scene.as_mut() {
                         s.with_car_collision(&mut collision, &mut step);
+                        s.props.push_out_player(&mut player.p, 0.42);
                         if player.in_water {
                             s.swimming = true;
                         }

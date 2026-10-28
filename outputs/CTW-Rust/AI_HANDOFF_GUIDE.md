@@ -1,4 +1,37 @@
-# ACTIVE HANDOFF - Handling suspension (Option B), traffic avoidance (Option C), and pop-in / teleportation eradication (Option A)
+# ACTIVE HANDOFF - City Street Furniture Props, 3D Loose Body Tumbling, and Physical Destruction
+
+Updated: 2026-10-28 03:12 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini / other models can resume directly from here.
+
+## Resume in 10 seconds
+
+```powershell
+Get-Content outputs/CTW-Rust/AI_HANDOFF_GUIDE.md -TotalCount 75
+Get-Content target/validation/build-report.json
+& ./target/release/ctw-rust.exe --iso work/Chinatown-Wars-PSP.iso --driving-audit --output target/driving-audit
+```
+
+Before a new task, run the mandatory upstream check, review relevant changes and record the conclusion. To rebuild and regenerate treemaps/dashboards: `powershell -ExecutionPolicy Bypass -File .\Compiler.ps1 -Test`.
+
+## Exact delivered state
+
+- Baseline: `62ef82f`. Fulfills user request: "je veux les props de la villes avec leurs physique".
+  - **Citywide Street Furniture Synchronization**: Synchronizes and renders all street furniture (static and destructible) across Liberty City (lampposts, traffic lights, mailboxes, hydrants, dumpsters, newspaper stands, fences).
+  - **3D Loose Body Ballistic Tumbling**: Loose props (trash cans, crates, parking meters) translate with 3D velocity, gravity, angular tumbling rotation, ground bounce with restitution ($0.38$), rolling friction ($0.75$), and settling to sleep.
+  - **Impacts & Smashing**: Moving vehicles (player and ambient traffic) and explosion blasts deform, uproot, or shatter props with authentic effects:
+    - Fire hydrants tilt 24° and spew continuous water spray geysers with sound.
+    - Trash cans launch upward, roll, and spill garbage debris (`kind: 2`).
+    - Wooden fences shatter into flying wood splinters (`kind: 3`).
+    - Newspaper stands and parking meters burst into fluttering paper (`kind: 4`) and drop \$25 / \$40 cash pickup loot on the pavement.
+    - Streetlights tilt and throw electric sparks (`kind: 5`).
+  - **Solid Player Push-out**: Walking player is pushed out from solid standing street furniture, eliminating ghosting through poles and hydrants.
+- Build report: **2026-10-28T03:12:01.3719126+01:00**, **229 passed, 0 failed, 0 ignored, 0 warnings** under `-D warnings`. Log: `target/validation/build-report.json`. Three Python progress-inventory tests pass. Pure native Rust treemap, site, README and SVG badges synchronized: **1036 runtime functions, 255 test/helper functions, 49 modules**.
+- Delivered executable: `outputs/CTW-Rust/CTW-Rust.exe`; SHA-256 `d22d3cf2fcfdbd57758f9a0b968655a2b718cc5f813da134e113a75be12ae378`, verified against build report. No GitHub push performed.
+- Upstream review verified: CTW-Native `f7a45b3b7aac9bd9f4662d104d276d421c1fca52`, highcmd `6562163b6f504a1db93e1be5ce580d8cd6f024a7`. Documented in `docs/UPSTREAM_REVIEW.md` and `docs/upstream-status.json`.
+- Full real-ISO audit (`--driving-audit` on `work/Chinatown-Wars-PSP.iso`): **0 world obstructions across all 166 sampled map routes**.
+
+---
+
+# HISTORICAL CHECKPOINT - Handling suspension (Option B), traffic avoidance (Option C), and pop-in / teleportation eradication (Option A)
 
 Updated: 2026-10-28 02:45 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini / other models can resume directly from here.
 

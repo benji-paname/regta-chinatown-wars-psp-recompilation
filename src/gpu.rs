@@ -516,10 +516,18 @@ impl Renderer {
                 }
                 if let Some(scene) = scene {
                     for prop in &scene.props.active {
-                        if prop.state == crate::props::PropState::Broken {
-                            continue;
-                        }
-                        if let Some(batches) = self.models.get(&prop.model_id) {
+                        let model_to_draw = if prop.state == crate::props::PropState::Broken {
+                            if prop.broken_model_id < 0xFFFE {
+                                prop.broken_model_id
+                            } else if prop.broken_model_id == 0xFFFF {
+                                prop.model_id
+                            } else {
+                                continue;
+                            }
+                        } else {
+                            prop.model_id
+                        };
+                        if let Some(batches) = self.models.get(&model_to_draw) {
                             glPushMatrix();
                             glTranslatef(prop.p[0], prop.p[1], prop.p[2]);
                             if prop.state == crate::props::PropState::Tilted {
@@ -528,6 +536,13 @@ impl Renderer {
                                     prop.tilt_axis[0],
                                     prop.tilt_axis[1],
                                     0.0,
+                                );
+                            } else if prop.state == crate::props::PropState::Loose {
+                                glRotatef(
+                                    prop.roll_angle.to_degrees(),
+                                    prop.tumble_axis[0],
+                                    prop.tumble_axis[1],
+                                    prop.tumble_axis[2],
                                 );
                             }
                             glRotatef(prop.angle.to_degrees(), 0., 0., 1.);
@@ -721,6 +736,30 @@ impl Renderer {
                                 glVertex3f(p.p[0] - hs * 0.5, p.p[1] - hs * 1.5, p.p[2] + hs);
                                 glVertex3f(p.p[0] + hs * 0.5, p.p[1] + hs * 1.5, p.p[2] + hs);
                                 glVertex3f(p.p[0] + hs * 0.5, p.p[1] - hs * 1.5, p.p[2]);
+                                glEnd();
+                            }
+                        }
+                        4 => {
+                            // Paper flutter / cash notes (smashed newsstand / parking meter)
+                            let alpha = (1.0 - progress * 0.4).clamp(0.0, 0.90);
+                            if alpha > 0.01 {
+                                glColor4f(0.92, 0.94, 0.88, alpha);
+                                glBegin(7);
+                                glVertex3f(p.p[0] - hs, p.p[1] - hs * 0.5, p.p[2]);
+                                glVertex3f(p.p[0] + hs, p.p[1] - hs * 0.5, p.p[2]);
+                                glVertex3f(p.p[0] + hs, p.p[1] + hs * 0.5, p.p[2] + hs * 0.3);
+                                glVertex3f(p.p[0] - hs, p.p[1] + hs * 0.5, p.p[2] + hs * 0.3);
+                                glEnd();
+                            }
+                        }
+                        5 => {
+                            // Electric sparks (tilted / damaged street lamp)
+                            let alpha = (1.0 - progress).clamp(0.0, 1.0);
+                            if alpha > 0.01 {
+                                glColor4f(0.4, 0.8, 1.0, alpha);
+                                glBegin(1);
+                                glVertex3f(p.p[0], p.p[1], p.p[2]);
+                                glVertex3f(p.p[0] + p.v[0] * 0.04, p.p[1] + p.v[1] * 0.04, p.p[2] + p.v[2] * 0.04);
                                 glEnd();
                             }
                         }
