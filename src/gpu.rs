@@ -869,6 +869,19 @@ impl Renderer {
                                 glEnd();
                             }
                         }
+                        8 => {
+                            // Mail envelopes (blue USPS postbox mail)
+                            let alpha = (1.0 - progress * 0.4).clamp(0.0, 0.95);
+                            if alpha > 0.01 {
+                                glColor4f(0.43, 0.60, 0.82, alpha);
+                                glBegin(7);
+                                glVertex3f(p.p[0] - hs * 0.8, p.p[1] - hs * 0.5, p.p[2]);
+                                glVertex3f(p.p[0] + hs * 0.8, p.p[1] - hs * 0.5, p.p[2]);
+                                glVertex3f(p.p[0] + hs * 0.8, p.p[1] + hs * 0.5, p.p[2] + hs * 0.25);
+                                glVertex3f(p.p[0] - hs * 0.8, p.p[1] + hs * 0.5, p.p[2] + hs * 0.25);
+                                glEnd();
+                            }
+                        }
                         _ => {}
                     }
                 }

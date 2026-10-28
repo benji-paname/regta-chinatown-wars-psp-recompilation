@@ -791,18 +791,61 @@ impl PropsManager {
                     }
                 }
             }
-            14 | 22 => {
-                // Newspaper stand / dispenser: shatters, leaves paper fluttering and cash!
-                prop.state = PropState::Broken;
+            14 => {
+                // USPS Mailbox (blue street postbox): authentic Chinatown Wars loose physical body!
+                // Launches forward, tumbles in 3D, bounces along pavement and comes to rest on its side.
+                prop.state = PropState::Loose;
                 prop.collidable = false;
-                for i in 0..10 {
+                prop.sleep = false;
+                prop.v = [
+                    impact_dir[0] * (impact_speed * 0.65 + 1.8),
+                    impact_dir[1] * (impact_speed * 0.65 + 1.8),
+                    2.8 + (impact_speed * 0.12).min(2.2),
+                ];
+                prop.tumble_axis = [-impact_dir[1], impact_dir[0], 0.25];
+                prop.angular_v = impact_speed * 0.8 + 4.0;
+                // Emit letters and mail envelopes: alternating blue USPS mail (kind 8) and white envelopes (kind 4)
+                for i in 0..12 {
+                    if particles.len() < 160 {
+                        let k = if i % 2 == 0 { 8 } else { 4 };
+                        particles.push(Particle {
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 0.6],
+                            v: [
+                                impact_dir[0] * 2.2 + ((i * 31) % 7) as f32 * 0.4 - 1.2,
+                                impact_dir[1] * 2.2 + ((i * 53) % 7) as f32 * 0.4 - 1.2,
+                                2.0 + (i as f32) * 0.25,
+                            ],
+                            life: 0.0,
+                            max_life: 1.1,
+                            size: 0.22,
+                            grow: 0.2,
+                            kind: k,
+                        });
+                    }
+                }
+            }
+            22 => {
+                // Newspaper vending box: authentic Chinatown Wars loose physical body!
+                // Launches forward, tumbles in 3D, bounces along pavement, leaves newsprint flutter and cash!
+                prop.state = PropState::Loose;
+                prop.collidable = false;
+                prop.sleep = false;
+                prop.v = [
+                    impact_dir[0] * (impact_speed * 0.65 + 1.8),
+                    impact_dir[1] * (impact_speed * 0.65 + 1.8),
+                    2.8 + (impact_speed * 0.12).min(2.2),
+                ];
+                prop.tumble_axis = [-impact_dir[1], impact_dir[0], 0.25];
+                prop.angular_v = impact_speed * 0.8 + 4.0;
+                // Emit fluttering white newsprint pages (kind 4)
+                for i in 0..12 {
                     if particles.len() < 160 {
                         particles.push(Particle {
                             p: [prop.p[0], prop.p[1], prop.p[2] + 0.6],
                             v: [
-                                impact_dir[0] * 2.0 + ((i * 29) % 9) as f32 * 0.3 - 1.2,
-                                impact_dir[1] * 2.0 + ((i * 47) % 9) as f32 * 0.3 - 1.2,
-                                1.8 + (i as f32) * 0.25,
+                                impact_dir[0] * 2.2 + ((i * 29) % 9) as f32 * 0.35 - 1.4,
+                                impact_dir[1] * 2.2 + ((i * 47) % 9) as f32 * 0.35 - 1.4,
+                                2.0 + (i as f32) * 0.25,
                             ],
                             life: 0.0,
                             max_life: 1.1,
@@ -812,6 +855,7 @@ impl PropsManager {
                         });
                     }
                 }
+                // Smashed newspaper dispenser drops authentic $25 cash
                 if let Some(pm) = pickups {
                     pm.spawn_dropped(crate::weapons::PickupKind::Money(25), prop.p);
                 }
@@ -1139,6 +1183,19 @@ impl PropsManager {
                             kind: 2, // garbage debris
                         });
                     }
+                    if (prop.smash_eff == 14 || prop.smash_eff == 22) && particles.len() < 160 {
+                        // Mail / newspaper flutter puff on ground bounce
+                        let k = if prop.smash_eff == 14 { 8 } else { 4 };
+                        particles.push(Particle {
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 0.2],
+                            v: [prop.v[0] * 0.4, prop.v[1] * 0.4, 1.2],
+                            life: 0.0,
+                            max_life: 0.5,
+                            size: 0.18,
+                            grow: 0.15,
+                            kind: k,
+                        });
+                    }
                     if prop.v[2].abs() < 0.35 && (prop.v[0] * prop.v[0] + prop.v[1] * prop.v[1]) < 0.25 {
                         prop.v = [0.0; 3];
                         prop.angular_v = 0.0;
@@ -1249,23 +1306,77 @@ mod tests {
     #[test]
     fn authentic_newsstand_and_parking_meter_cash_drops() {
         let mut manager = PropsManager::new();
-        // Newsstand (effect 42)
+        // 1. Newsstand kiosk (effect 42)
         let mut newsstand = test_prop(180, 2200, [300.0, 300.0, 0.0], 42, 1.2);
         newsstand.health = 15;
         manager.active.push(newsstand);
 
+        // 2. Newspaper vending box (effect 22)
+        let mut newsbox = test_prop(181, 2051, [320.0, 300.0, 0.0], 22, 1.0);
+        newsbox.prop_idx = 1;
+        manager.active.push(newsbox);
+
+        // 3. USPS Mailbox (effect 14)
+        let mut mailbox = test_prop(182, 2022, [340.0, 300.0, 0.0], 14, 0.8);
+        mailbox.prop_idx = 2;
+        manager.active.push(mailbox);
+
+        // 4. Parking meter (effect 17)
+        let mut meter = test_prop(183, 2218, [360.0, 300.0, 0.0], 17, 0.5);
+        meter.prop_idx = 3;
+        manager.active.push(meter);
+
         let mut pickups = crate::weapons::PickupManager::new();
-        let mut pickups_opt = Some(&mut pickups);
         let mut particles = Vec::new();
         let mut car = make_vehicle([300.0, 298.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
         car.speed = 10.0;
         car.h = [0.9, 2.1, 0.7];
 
-        manager.check_vehicle_impact_with_loot(&mut car, 0.016, &mut particles, &mut pickups_opt);
+        // Impact newsstand kiosk (effect 42) -> Broken, drops $25 cash, wood & paper particles
+        manager.check_vehicle_impact_with_loot(&mut car, 0.016, &mut particles, &mut Some(&mut pickups));
         assert_eq!(manager.active[0].state, PropState::Broken);
         assert!(!manager.active[0].collidable);
         assert!(particles.iter().any(|p| p.kind == 4), "Newsstand releases paper flutter particles");
-        assert!(pickups.pickups.iter().any(|p| matches!(p.kind, crate::weapons::PickupKind::Money(_))), "Newsstand drops cash loot");
+        assert!(particles.iter().any(|p| p.kind == 3), "Newsstand releases wood splinters");
+        assert!(pickups.pickups.iter().any(|p| matches!(p.kind, crate::weapons::PickupKind::Money(25))), "Newsstand drops $25 cash");
+
+        // Impact newspaper vending box (effect 22) -> Loose physical tumbling body, drops $25 cash, paper particles
+        let mut car2 = make_vehicle([320.0, 298.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
+        car2.speed = 10.0;
+        car2.h = [0.9, 2.1, 0.7];
+        manager.check_vehicle_impact_with_loot(&mut car2, 0.016, &mut particles, &mut Some(&mut pickups));
+        assert_eq!(manager.active[1].state, PropState::Loose, "Newspaper dispenser becomes loose body");
+        assert!(!manager.active[1].collidable);
+        assert!(manager.active[1].v[2] > 2.0, "Newspaper dispenser launches vertically in 3D");
+        assert!(manager.active[1].angular_v > 0.0, "Newspaper dispenser tumbles with angular velocity");
+        assert_eq!(pickups.pickups.iter().filter(|p| matches!(p.kind, crate::weapons::PickupKind::Money(25))).count(), 2, "Newspaper box drops $25 cash");
+
+        // Impact USPS mailbox (effect 14) -> Loose physical tumbling body, blue (kind 8) and white (kind 4) mail envelopes
+        let mut car3 = make_vehicle([340.0, 298.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
+        car3.speed = 10.0;
+        car3.h = [0.9, 2.1, 0.7];
+        manager.check_vehicle_impact_with_loot(&mut car3, 0.016, &mut particles, &mut Some(&mut pickups));
+        assert_eq!(manager.active[2].state, PropState::Loose, "USPS Mailbox becomes loose body");
+        assert!(!manager.active[2].collidable);
+        assert!(manager.active[2].v[2] > 2.0, "USPS Mailbox launches vertically in 3D");
+        assert!(manager.active[2].angular_v > 0.0, "USPS Mailbox tumbles with angular velocity");
+        assert!(particles.iter().any(|p| p.kind == 8), "Mailbox releases blue USPS mail envelopes (kind 8)");
+
+        // Impact parking meter (effect 17) -> Loose physical body, drops $40 cash
+        let mut car4 = make_vehicle([360.0, 298.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
+        car4.speed = 10.0;
+        car4.h = [0.9, 2.1, 0.7];
+        manager.check_vehicle_impact_with_loot(&mut car4, 0.016, &mut particles, &mut Some(&mut pickups));
+        assert_eq!(manager.active[3].state, PropState::Loose, "Parking meter becomes loose body");
+        assert!(pickups.pickups.iter().any(|p| matches!(p.kind, crate::weapons::PickupKind::Money(40))), "Parking meter drops $40 cash");
+
+        // Physics integration test for loose newspaper dispenser & mailbox
+        let pos_before = manager.active[1].p;
+        for _ in 0..15 {
+            manager.update(0.016, &mut particles);
+        }
+        assert_ne!(manager.active[1].p, pos_before, "Newspaper box integrates velocity");
+        assert!(manager.active[1].roll_angle > 0.0, "Newspaper box rolls");
     }
 
     #[test]

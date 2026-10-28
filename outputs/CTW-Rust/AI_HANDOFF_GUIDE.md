@@ -1,6 +1,6 @@
-# ACTIVE HANDOFF - Universal Authentic Chinatown Wars Prop Physics (All City Props)
+# ACTIVE HANDOFF - Authentic Loose Physics for Newspaper Dispensers & Mailboxes
 
-Updated: 2026-10-28 20:45 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini / other models can resume directly from here.
+Updated: 2026-10-28 20:55 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini / other models can resume directly from here.
 
 ## Resume in 10 seconds
 
@@ -14,8 +14,26 @@ Before a new task, run the mandatory upstream check, review relevant changes and
 
 ## Exact delivered state
 
-- Baseline: `8371b10`. Fulfills user request:
-  - *"nikel parfait. maintenant je veux une physique pour tous les pops, fidele au jeu de base"* -> Complete universal authentic Chinatown Wars prop physics across all props in Liberty City!
+- Fulfills user request:
+  - *"physique des propos a journeaux et boite au lettres toujours pas bon"* -> Fully authentic Chinatown Wars physical loose body tumble & launch physics for all newspaper vending boxes and USPS mailboxes, with mail envelopes & newsprint particle emitters, ground bounce puffs, and cash drops!
+- **Authentic Physical Overhaul for Mailboxes & Newspaper Dispensers (`src/props.rs`, `src/gpu.rs`)**:
+  - **USPS Blue Street Mailboxes (`smash_eff == 14`, models 2022 & 2024)**:
+    - Become dynamic physical loose bodies (`PropState::Loose`) instead of remaining stationary `Broken` ghost meshes.
+    - Launches forward with 3D velocity ($v_z \approx 2.8\text{ to }5.0$ m/s depending on impact speed), tumbles with angular velocity around lateral tilt axis, bounces off pavement with restitution ($0.38$), rolls with ground friction, and comes to rest sleeping on its side (`sleep = true`).
+    - Emits authentic fluttering mail envelopes: alternating blue USPS postbox mail envelopes (`kind: 8`, RGB `[110, 152, 195]`) and white letters (`kind: 4`).
+    - Ground bounce contact spawns a secondary mail envelope puff.
+  - **Newspaper Vending Dispensers (`smash_eff == 22`, models 2051, 2054, 2055)**:
+    - Become dynamic physical loose bodies (`PropState::Loose`) launching forward in 3D, tumbling with angular velocity, bouncing off pavement, and coming to rest on their side.
+    - Emits fluttering white newsprint pages (`kind: 4`) and drops authentic \$25 cash pickup on pavement.
+    - Ground bounce contact spawns a secondary newsprint page puff.
+  - **Wooden Newsstand Kiosks (`smash_eff == 42`, model 2015)**:
+    - Retains anchored foundation (`uproot_f = -1.0`, `PropState::Broken`), shatters wooden frame into wood splinters (`kind: 3`), newsprint pages (`kind: 4`), drops \$25 cash pickup, and swaps to broken kiosk mesh `0x07E2`.
+  - **Renderer Shaders & Particles (`src/gpu.rs`)**:
+    - Added particle `kind: 8` for USPS postbox blue envelopes rendered with authentic PSP dimensions and alpha fading.
+- **Validation**:
+  - Build report: **234 passed, 0 failed, 0 ignored, 0 warnings** under `-D warnings`. Pure native Rust treemap, site, README and SVG badges synchronized: **1042 runtime functions, 261 test/helper functions, 49 modules**.
+  - Real-map driving audit: **92 vehicles, 166 real-map routes, 0 failures**.
+  - Delivered executable: `outputs/CTW-Rust/CTW-Rust.exe`. No GitHub push performed.
 - **Universal Prop Smash & Physical Response Matrix (`src/props.rs`, `references/ctw-native/port/game/propdynamics.cpp:24-224`, PAK 1867)**:
   - **Glass Phone Booths & Bus Shelters (`smash_eff == 10 | 41`)**: Phone booths shatter with 16 glass burst emitters across the booth (`kind: 6`); bus stop shelters burst wood frame splinters (`kind: 3`) along with 6 glass pane shard bursts (`kind: 6`). Collision is immediately unanchored.
   - **Gas Station Petrol Pumps (`smash_eff == 21`)**: Vehicle impact or explosion detonation triggers a massive `ExplosionType::BigVehicle` fireball blast (`scale: 1.25`), spawns ground fire flame particles (`kind: 7`), and initiates persistent ground petrol fire burning for 30s (`spawn_fire`).
