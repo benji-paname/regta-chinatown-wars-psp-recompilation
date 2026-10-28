@@ -1,6 +1,6 @@
-# ACTIVE HANDOFF - Street Furniture Props Solid Collision On Foot & Authentic Falling Physics
+# ACTIVE HANDOFF - Universal Authentic Chinatown Wars Prop Physics (All City Props)
 
-Updated: 2026-10-28 20:15 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini / other models can resume directly from here.
+Updated: 2026-10-28 20:45 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini / other models can resume directly from here.
 
 ## Resume in 10 seconds
 
@@ -14,24 +14,33 @@ Before a new task, run the mandatory upstream check, review relevant changes and
 
 ## Exact delivered state
 
-- Baseline: `7a98f70`. Fulfills user request:
-  - *"a pied on passe a travers"* -> Fixed! Props now have solid geometric collision on foot; the player cannot walk through street furniture.
-  - *"les lempadaire ne tombe pas au sol par exemple"* -> Fixed! Smashed lamp posts topple under gravity torque and fall flat on the pavement with ground impact clatter sound 56 and sparks.
-- **Solid Prop Collision On Foot (`src/collision.rs`)**:
-  - Implemented `Collision::populate_prop_shapes(&mut self, library: &PropLibrary)`: transforms and populates all 165 box and 74 cylinder primitives from PAK 1866 into `cell.boxes` and `cell.cylinders`, tracked via `PropShapeRange` per prop.
-  - Walking player (`Walker::step`) sub-stepping calls `push_out(&mut p, 0.875, 2.0)`, solidly stopping the player against standing streetlights, fences, phone booths, bins, and trees.
-  - Prop boxes are marked with `flags: 0x8000`, cleanly skipped by `rail_body_clear` so ambient traffic road rails are never obstructed.
-  - `car_position_for` uses `rail_body_clear`, allowing driving vehicles to reach breakable street furniture and trigger authentic destruction rather than stopping on an invisible wall.
-- **Authentic Toppling & Physical Destruction (`src/props.rs`, `propdynamics.cpp:216-224, 489-502`)**:
-  - Streetlights (`smash_eff == 7`): Impact unanchors collision via `pending_disables` (`collision.set_prop_solid(cx, cy, prop_idx, false)`), emits broken lamp head electric sparks (`kind: 5`), and initiates gravitational topple (`tilt_speed = (impact_speed * 0.15 + 2.8).min(5.5)`, accelerating with `10.0 * dt`). Tilts progressively from $0^\circ$ to $88^\circ$ ($1.54$ rad), triggers ground clatter sound 56 on pavement contact, and rests flat on the ground.
-  - Streetlights strictly remain anchored at their base $Z$; they **never** fly into the air or execute barrel rolls/tonneaux at high speed, matching original Chinatown Wars behavior.
-  - Large streetlights / signals (`smash_eff == 8`): tilt flat immediately ($1.48$ rad / $85^\circ$) with electric sparks and unanchored collision.
-  - Dumpsters & trash bins (`smash_eff == 35`): loose tumbling physics with ground restitution settling at `prop.base_z`.
-  - When props are broken/tilted, `Collision::set_prop_solid` parks their shapes below the world (`-100000.0`), allowing pedestrians and vehicles to walk or drive over the fallen debris.
-- Build report: **230 passed, 0 failed, 0 ignored, 0 warnings** under `-D warnings`. Log: `target/validation/build-report.json`. Pure native Rust treemap, site, README and SVG badges synchronized: **1040 runtime functions, 256 test/helper functions, 49 modules**.
-- Real-map driving audit: **92 vehicles, 166 real-map routes, 0 failures**.
-- Delivered executable: `outputs/CTW-Rust/CTW-Rust.exe`. No GitHub push performed.
-- Upstream review verified: CTW-Native `f7a45b3b7aac9bd9f4662d104d276d421c1fca52`, highcmd `6562163b6f504a1db93e1be5ce580d8cd6f024a7`. Documented in `docs/UPSTREAM_REVIEW.md`.
+- Baseline: `8371b10`. Fulfills user request:
+  - *"nikel parfait. maintenant je veux une physique pour tous les pops, fidele au jeu de base"* -> Complete universal authentic Chinatown Wars prop physics across all props in Liberty City!
+- **Universal Prop Smash & Physical Response Matrix (`src/props.rs`, `references/ctw-native/port/game/propdynamics.cpp:24-224`, PAK 1867)**:
+  - **Glass Phone Booths & Bus Shelters (`smash_eff == 10 | 41`)**: Phone booths shatter with 16 glass burst emitters across the booth (`kind: 6`); bus stop shelters burst wood frame splinters (`kind: 3`) along with 6 glass pane shard bursts (`kind: 6`). Collision is immediately unanchored.
+  - **Gas Station Petrol Pumps (`smash_eff == 21`)**: Vehicle impact or explosion detonation triggers a massive `ExplosionType::BigVehicle` fireball blast (`scale: 1.25`), spawns ground fire flame particles (`kind: 7`), and initiates persistent ground petrol fire burning for 30s (`spawn_fire`).
+  - **Hotdog Carts (`smash_eff == 23 | 30`)**: Sets the cart on fire (`fire_timer = 5.0`), hard vehicle impact triggers a propane barrel blast (`ExplosionType::Barrel`, `scale: 0.9`) with fire patch, while softer impacts trigger generic gas jet flame eruptions (`kind: 7`).
+  - **Propane Tanks & Explosive Barrels (`smash_eff == 28`)**: Detonates `ExplosionType::Barrel` blast, propelling and damaging nearby entities and street furniture.
+  - **Streetlights & Traffic Signals (`smash_eff == 7 | 8`)**: Streetlights (`eff == 7`) topple under gravity around their base pivot until resting flat on the pavement ($\approx 1.54$ rad / $88^\circ$) with clatter sound 56 and electric sparks (`kind: 5`), strictly anchored to ground without flight or barrel rolls. Large signals (`eff == 8`) tilt flat immediately ($1.48$ rad / $85^\circ$).
+  - **Fire Hydrants (`smash_eff == 9`)**: Snaps collision, tilts up to 24° ($0.42$ rad) in impact direction, and spews an indefinite vertical water geyser fountain (`kind: 1`) with ambient audio.
+  - **Rubbish Bins & Trash Dumpsters (`smash_eff == 13 | 35 | 37`)**: Stationary bins shatter into garbage debris (`kind: 2`); dumpsters (`eff == 35`) become dynamic physical loose bodies (`PropState::Loose`) with 3D translation, gravity, angular tumble velocity, ground bounce restitution (0.38) at `prop.base_z`, and debris puffs on bounce.
+  - **Newspaper Stands & Loot Drops (`smash_eff == 14 | 22 | 42`)**: Emits fluttering newsprint pages (`kind: 4`) and drops \$25 cash pickups. Effect 42 includes wooden frame splinters (`kind: 3`).
+  - **Parking Meters (`smash_eff == 17`)**: Snaps at base into loose tumbling physical body, dropping \$40 cash pickup.
+  - **Street Signs & Small Posts (`smash_eff == 15 | 25 | 31 | 38`)**: Tilts 30° ($0.52$ rad) or 45° ($0.78$ rad) in impact direction, unanchoring solid collision.
+  - **Wooden Crates, Fruit Boxes, Pallets & Market Stalls (`smash_eff in 11..=12 | 20 | 24 | 29 | 32..=34 | 36 | 39 | 43..=55`)**: Shatters into directional wood splinters (`kind: 3`). Light crates tumble briefly before settling.
+- **On-Foot Solid Collision, Gunfire & Melee Interactions (`src/collision.rs`, `src/actors.rs`, `src/props.rs`)**:
+  - Walking player cannot phase through standing street furniture (`push_out_player` & `Walker::push_out`).
+  - Gunfire (handguns, shotguns, assault rifles, sniper rifles) and melee swings (fists, baseball bat) inflict damage via `PropsManager::damage_at`, cleanly shattering phone booths, crates, and exploding barrels/petrol pumps.
+  - Broken and tilted props immediately unanchor collision (`Collision::set_prop_solid`), allowing pedestrians and vehicles to walk and drive over the debris.
+- **Explosion Propagation & Chain Reactions (`src/actors.rs`, `src/props.rs`, `src/explosions.rs`)**:
+  - `PropsManager::explosion` triggers prop damage in force radius; detonating a barrel or petrol pump queues secondary blasts that drain into `Scene::explosions` and `Scene::fire_manager`, supporting chain reactions.
+- **Rendering Shaders & Particles (`src/gpu.rs`)**:
+  - Added OpenGL particle renderers for `kind: 6` (glittering glass shards) and `kind: 7` (hot flame fireballs/gas jets).
+- **Validation**:
+  - Build report: **234 passed, 0 failed, 0 ignored, 0 warnings** under `-D warnings`. Log: `target/validation/build-report.json`. Pure native Rust treemap, site, README and SVG badges synchronized: **1042 runtime functions, 261 test/helper functions, 49 modules**.
+  - Real-map driving audit: **92 vehicles, 166 real-map routes, 0 failures**.
+  - Delivered executable: `outputs/CTW-Rust/CTW-Rust.exe`. No GitHub push performed.
+  - Upstream review verified: CTW-Native `f7a45b3b7aac9bd9f4662d104d276d421c1fca52`, highcmd `6562163b6f504a1db93e1be5ce580d8cd6f024a7`. Documented in `docs/UPSTREAM_REVIEW.md`.
 
 ---
 

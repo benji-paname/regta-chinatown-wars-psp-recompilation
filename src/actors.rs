@@ -1185,6 +1185,14 @@ impl Scene {
                 });
                 self.police.heli_manager.check_projectile_hit(target_pos, damage);
                 self.alert_gunfire(player, 22.0);
+                let mut pickups_opt = Some(&mut self.pickups);
+                self.props.damage_at(target_pos, 1.8, damage as u8, [f[0], f[1], 0.0], &mut self.particles, &mut pickups_opt);
+                for (pos, kind, scale) in self.props.drain_pending_explosions() {
+                    self.explosions.trigger(pos, kind, scale);
+                }
+                for (pos, radius, duration) in self.props.drain_pending_fires() {
+                    self.fire_manager.spawn_fire(pos, radius, duration);
+                }
                 if let Some(idx) = hit_idx {
                     let ped = &mut self.peds[idx];
                     ped.health = (ped.health - damage).max(0.0);
@@ -1259,6 +1267,14 @@ impl Scene {
             });
             self.police.heli_manager.check_projectile_hit(target_pos, damage);
             self.alert_gunfire(player, 22.0);
+            let mut pickups_opt = Some(&mut self.pickups);
+            self.props.damage_at(target_pos, 1.8, damage as u8, [f[0], f[1], 0.0], &mut self.particles, &mut pickups_opt);
+            for (pos, kind, scale) in self.props.drain_pending_explosions() {
+                self.explosions.trigger(pos, kind, scale);
+            }
+            for (pos, radius, duration) in self.props.drain_pending_fires() {
+                self.fire_manager.spawn_fire(pos, radius, duration);
+            }
 
             if self.particles.len() < 160 {
                 self.particles.push(Particle {
@@ -1320,6 +1336,15 @@ impl Scene {
             })
             .min_by(|a, b| a.1.total_cmp(&b.1));
         let Some((index, _)) = target else {
+            let melee_pos = [player[0] + f[0] * 1.2, player[1] + f[1] * 1.2, player[2] + 0.5];
+            let mut pickups_opt = Some(&mut self.pickups);
+            self.props.damage_at(melee_pos, 1.4, 25, [f[0], f[1], 0.0], &mut self.particles, &mut pickups_opt);
+            for (pos, kind, scale) in self.props.drain_pending_explosions() {
+                self.explosions.trigger(pos, kind, scale);
+            }
+            for (pos, radius, duration) in self.props.drain_pending_fires() {
+                self.fire_manager.spawn_fire(pos, radius, duration);
+            }
             return false;
         };
         let ped = &mut self.peds[index];
@@ -1719,6 +1744,12 @@ impl Scene {
                 self.props.check_vehicle_impact_with_loot(&mut self.cars[i], dt, &mut self.particles, &mut pickups_opt);
             }
         }
+        for (pos, kind, scale) in self.props.drain_pending_explosions() {
+            self.explosions.trigger(pos, kind, scale);
+        }
+        for (pos, radius, duration) in self.props.drain_pending_fires() {
+            self.fire_manager.spawn_fire(pos, radius, duration);
+        }
         // Resolve vehicle-to-vehicle contacts with mass-weighted momentum transfer
         // (calcImpactCar: PAK 29 mass differentiates bikes, cars, trucks and Rhino tank).
         for i in 0..self.cars.len() {
@@ -2031,6 +2062,12 @@ impl Scene {
         let focus = self.driving.map(|i| self.cars[i].p).unwrap_or(player);
         self.props.sync_area(c, focus);
         self.props.update(dt, &mut self.particles);
+        for (pos, kind, scale) in self.props.drain_pending_explosions() {
+            self.explosions.trigger(pos, kind, scale);
+        }
+        for (pos, radius, duration) in self.props.drain_pending_fires() {
+            self.fire_manager.spawn_fire(pos, radius, duration);
+        }
         for trace in &mut self.bullet_traces {
             trace.life = (trace.life - dt).max(0.0);
         }
@@ -2599,6 +2636,12 @@ impl Scene {
                 &mut self.particles,
                 &mut pickups_opt,
             );
+            for (pos, kind, scale) in self.props.drain_pending_explosions() {
+                self.explosions.trigger(pos, kind, scale);
+            }
+            for (pos, radius, duration) in self.props.drain_pending_fires() {
+                self.fire_manager.spawn_fire(pos, radius, duration);
+            }
         }
 
         // Chinatown Wars authentic Pay 'n' Spray Respray Garage update

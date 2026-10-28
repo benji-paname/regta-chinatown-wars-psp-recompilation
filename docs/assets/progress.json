@@ -3,9 +3,9 @@
   "measurement": "native Rust function inventory; not original-code coverage",
   "pspParityVerified": false,
   "pspCompletionPercent": null,
-  "sourceSha256": "ec0e3dbdb509c1331d5f28cd3107d3816d849184d2e2fe0fc697fa8a3cc1d686",
-  "runtimeFunctions": 1040,
-  "testFunctions": 256,
+  "sourceSha256": "67431d2116c5bd653ce27509a3ea34ccd0a7be5dbe2b8495e9a1040a891d200e",
+  "runtimeFunctions": 1042,
+  "testFunctions": 261,
   "modules": 49,
   "subsystems": [
     {
@@ -122,8 +122,8 @@
     },
     {
       "name": "World and rendering",
-      "runtimeFunctions": 124,
-      "testFunctions": 32,
+      "runtimeFunctions": 126,
+      "testFunctions": 37,
       "classes": [
         {
           "name": "camera.rs",
@@ -164,8 +164,8 @@
         },
         {
           "name": "props.rs",
-          "runtimeFunctions": 16,
-          "testFunctions": 3,
+          "runtimeFunctions": 18,
+          "testFunctions": 8,
           "relatedClasses": [
             "cDynamicProp",
             "cZoneManager"
@@ -635,7 +635,7 @@
     }
   ],
   "lastLocalValidation": {
-    "passed": 230,
+    "passed": 234,
     "date": "2026-10-28"
   }
 }

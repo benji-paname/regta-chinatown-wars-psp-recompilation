@@ -28,6 +28,10 @@ pub struct PropKind {
     pub mass: f32,
     pub smash_force: f32,
     pub uproot_force: f32,
+    pub planar: bool,
+    pub bullet_damage: bool,
+    pub melee_damage: bool,
+    pub inflammable: bool,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -72,6 +76,10 @@ impl PropLibrary {
             let smash_eff = d1867[at + 1];
             let health = d1867[at + 2];
             let flags = d1867[at + 3];
+            let bullet_damage = d1867[at + 3] != 0;
+            let melee_damage = d1867[at + 4] != 0;
+            let inflammable = d1867[at + 5] != 0;
+            let planar = d1867[at + 7] != 0;
             let mass = u16le(&d1867, at + 8)? as i16 as f32 / 4096.0;
             let smash_force = u16le(&d1867, at + 10)? as i16 as f32 / 4096.0;
             let uproot_force = u16le(&d1867, at + 12)? as i16 as f32 / 4096.0;
@@ -83,6 +91,10 @@ impl PropLibrary {
                 mass,
                 smash_force,
                 uproot_force,
+                planar,
+                bullet_damage,
+                melee_damage,
+                inflammable,
             });
             at += 16;
         }
@@ -240,11 +252,16 @@ pub struct ActiveProp {
     pub state: PropState,
     pub collidable: bool,
     pub fountain: bool,
+    pub fire_timer: f32,
     pub health: u8,
     pub mass: f32,
     pub smash_eff: u8,
     pub smash_force: f32,
     pub uproot_force: f32,
+    pub planar: bool,
+    pub bullet_damage: bool,
+    pub melee_damage: bool,
+    pub inflammable: bool,
     pub base_z: f32,
     pub sleep: bool,
 }
@@ -254,6 +271,8 @@ pub struct PropsManager {
     pub active: Vec<ActiveProp>,
     pub pending_smashes: Vec<([f32; 3], usize)>,
     pub pending_disables: Vec<(usize, usize, usize)>,
+    pub pending_explosions: Vec<([f32; 3], crate::explosions::ExplosionType, f32)>,
+    pub pending_fires: Vec<([f32; 3], f32, f32)>,
 }
 
 impl PropsManager {
@@ -263,6 +282,8 @@ impl PropsManager {
             active: Vec::new(),
             pending_smashes: Vec::new(),
             pending_disables: Vec::new(),
+            pending_explosions: Vec::new(),
+            pending_fires: Vec::new(),
         }
     }
 
@@ -272,6 +293,8 @@ impl PropsManager {
             active: Vec::new(),
             pending_smashes: Vec::new(),
             pending_disables: Vec::new(),
+            pending_explosions: Vec::new(),
+            pending_fires: Vec::new(),
         }
     }
 
@@ -287,6 +310,14 @@ impl PropsManager {
 
     pub fn drain_pending_disables(&mut self) -> Vec<(usize, usize, usize)> {
         std::mem::take(&mut self.pending_disables)
+    }
+
+    pub fn drain_pending_explosions(&mut self) -> Vec<([f32; 3], crate::explosions::ExplosionType, f32)> {
+        std::mem::take(&mut self.pending_explosions)
+    }
+
+    pub fn drain_pending_fires(&mut self) -> Vec<([f32; 3], f32, f32)> {
+        std::mem::take(&mut self.pending_fires)
     }
 
     /// Synchronizes street furniture and props within the streaming bubble around focus.
@@ -308,11 +339,22 @@ impl PropsManager {
                     }
                     let def = &lib.defs[prop_id];
                     let kind = lib.kind_for(prop_id);
-                    let (mass, smash_eff, smash_force, uproot_force, health) = if let Some(k) = kind {
-                        (k.mass, k.smash_eff, k.smash_force, k.uproot_force, k.health)
-                    } else {
-                        (1.0, 0, -1.0, -1.0, 15)
-                    };
+                    let (mass, smash_eff, smash_force, uproot_force, health, planar, bullet_damage, melee_damage, inflammable) =
+                        if let Some(k) = kind {
+                            (
+                                k.mass,
+                                k.smash_eff,
+                                k.smash_force,
+                                k.uproot_force,
+                                k.health,
+                                k.planar,
+                                k.bullet_damage,
+                                k.melee_damage,
+                                k.inflammable,
+                            )
+                        } else {
+                            (1.0, 0, -1.0, -1.0, 15, false, true, true, false)
+                        };
                     if self
                         .active
                         .iter()
@@ -340,11 +382,16 @@ impl PropsManager {
                         state: PropState::Standing,
                         collidable: true,
                         fountain: false,
+                        fire_timer: 0.0,
                         health,
                         mass: if mass > 0.0 { mass } else { 1.0 },
                         smash_eff,
                         smash_force,
                         uproot_force,
+                        planar,
+                        bullet_damage,
+                        melee_damage,
+                        inflammable,
                         base_z: p.p[2],
                         sleep: true,
                     });
@@ -413,10 +460,10 @@ impl PropsManager {
                     continue;
                 }
 
-                let can_uproot = prop.uproot_force >= 0.0 && (force >= prop.uproot_force || speed >= 2.5);
-                let can_smash = prop.smash_force >= 0.0 && (force >= prop.smash_force || speed >= 2.5);
+                let can_uproot = prop.uproot_force >= 0.0 && (force >= prop.uproot_force || speed >= 2.2);
+                let can_smash = prop.smash_force >= 0.0 && (force >= prop.smash_force || speed >= 2.2);
 
-                if can_uproot || can_smash || prop.health == 0 || [7, 8, 9, 14, 16, 22, 26, 27, 35, 42].contains(&prop.smash_eff) {
+                if can_uproot || can_smash || prop.health == 0 || prop.smash_eff > 0 {
                     let prop_mass = prop.mass;
                     smash_trigger = Some((i, impact_dir, prop_mass));
                     break;
@@ -425,7 +472,10 @@ impl PropsManager {
         }
         if let Some((i, impact_dir, prop_mass)) = smash_trigger {
             self.apply_smash(i, impact_dir, speed, particles, pickups);
-            car.speed *= (1.0 - 0.08 * prop_mass.min(2.0)).max(0.72);
+            car.speed *= (1.0 - 0.06 * prop_mass.min(2.5)).max(0.72);
+            if prop_mass > 1.5 && speed > 10.0 {
+                car.health = (car.health - 2.0).max(0.0);
+            }
         }
     }
 
@@ -446,6 +496,60 @@ impl PropsManager {
         self.pending_disables.push((prop.cell_x, prop.cell_y, prop.prop_idx));
 
         match prop.smash_eff {
+            7 => {
+                // Lamp post / streetlight: authentic Chinatown Wars toppling physics
+                // Base snaps and pole topples under gravity until lying flat on pavement.
+                // Streetlights NEVER fly up into the air or perform barrel rolls.
+                prop.tilt = 0.08;
+                prop.tilt_speed = (impact_speed * 0.15 + 2.8).min(5.5);
+                prop.tilt_axis = [-impact_dir[1], impact_dir[0]];
+                prop.state = PropState::Tilted;
+                prop.collidable = false;
+                prop.sleep = false;
+                for i in 0..12 {
+                    if particles.len() < 160 {
+                        particles.push(Particle {
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 2.5],
+                            v: [
+                                ((i * 41) % 11) as f32 * 0.4 - 2.0,
+                                ((i * 67) % 11) as f32 * 0.4 - 2.0,
+                                ((i * 19) % 7) as f32 * 0.5 + 1.0,
+                            ],
+                            life: 0.0,
+                            max_life: 0.45,
+                            size: 0.12,
+                            grow: 0.1,
+                            kind: 5, // electric sparks
+                        });
+                    }
+                }
+            }
+            8 => {
+                // Large streetlight / Traffic signal: tilts flat immediately (0x3C72 ~ 1.48 rad ~ 85 deg)
+                prop.tilt = 1.48;
+                prop.tilt_speed = 0.0;
+                prop.tilt_axis = [-impact_dir[1], impact_dir[0]];
+                prop.state = PropState::Tilted;
+                prop.collidable = false;
+                prop.sleep = true;
+                for i in 0..12 {
+                    if particles.len() < 160 {
+                        particles.push(Particle {
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 2.8],
+                            v: [
+                                ((i * 41) % 11) as f32 * 0.4 - 2.0,
+                                ((i * 67) % 11) as f32 * 0.4 - 2.0,
+                                ((i * 19) % 7) as f32 * 0.5 + 1.0,
+                            ],
+                            life: 0.0,
+                            max_life: 0.45,
+                            size: 0.12,
+                            grow: 0.1,
+                            kind: 5, // electric sparks
+                        });
+                    }
+                }
+            }
             9 => {
                 // Fire Hydrant (tilt 24 degrees, indefinite water geyser fountain)
                 prop.tilt = 0.42;
@@ -453,6 +557,185 @@ impl PropsManager {
                 prop.state = PropState::Tilted;
                 prop.collidable = false;
                 prop.fountain = true;
+            }
+            10 => {
+                // Glass phone booth: shatters with glass fragments
+                prop.state = PropState::Broken;
+                prop.collidable = false;
+                for i in 0..16 {
+                    if particles.len() < 160 {
+                        let sign = if i % 2 == 0 { 1.0 } else { -1.0 };
+                        particles.push(Particle {
+                            p: [prop.p[0] + sign * 0.35, prop.p[1] + (i as f32 * 0.08 - 0.6), prop.p[2] + 1.2],
+                            v: [
+                                impact_dir[0] * 2.5 + ((i * 29) % 7) as f32 * 0.6 - 1.8,
+                                impact_dir[1] * 2.5 + ((i * 47) % 7) as f32 * 0.6 - 1.8,
+                                1.5 + (i as f32) * 0.25,
+                            ],
+                            life: 0.0,
+                            max_life: 0.65,
+                            size: 0.20,
+                            grow: 0.15,
+                            kind: 6, // glass shards
+                        });
+                    }
+                }
+            }
+            41 => {
+                // Bus stop shelter: wood/metal frame splinters + 6 glass bursts along shelter width
+                prop.state = PropState::Broken;
+                prop.collidable = false;
+                for i in 0..12 {
+                    if particles.len() < 160 {
+                        particles.push(Particle {
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 0.8],
+                            v: [
+                                impact_dir[0] * 3.0 + ((i * 31) % 7) as f32 * 0.5 - 1.5,
+                                impact_dir[1] * 3.0 + ((i * 53) % 7) as f32 * 0.5 - 1.5,
+                                2.0 + (i as f32) * 0.3,
+                            ],
+                            life: 0.0,
+                            max_life: 0.75,
+                            size: 0.26,
+                            grow: 0.3,
+                            kind: 3, // wood frame splinters
+                        });
+                    }
+                }
+                for i in 0..16 {
+                    if particles.len() < 160 {
+                        let offset = (i as f32 - 8.0) * 0.15;
+                        particles.push(Particle {
+                            p: [prop.p[0] - impact_dir[1] * offset, prop.p[1] + impact_dir[0] * offset, prop.p[2] + 1.1],
+                            v: [
+                                impact_dir[0] * 2.8 + ((i * 41) % 5) as f32 * 0.5 - 1.0,
+                                impact_dir[1] * 2.8 + ((i * 67) % 5) as f32 * 0.5 - 1.0,
+                                1.8 + (i as f32) * 0.2,
+                            ],
+                            life: 0.0,
+                            max_life: 0.70,
+                            size: 0.22,
+                            grow: 0.15,
+                            kind: 6, // glass shards
+                        });
+                    }
+                }
+            }
+            21 => {
+                // Petrol pump: MASSIVE EXPLOSION + persistent ground fire!
+                prop.state = PropState::Broken;
+                prop.collidable = false;
+                self.pending_explosions.push((prop.p, crate::explosions::ExplosionType::BigVehicle, 1.25));
+                self.pending_fires.push((prop.p, 3.5, 30.0));
+                for i in 0..12 {
+                    if particles.len() < 160 {
+                        particles.push(Particle {
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 0.5],
+                            v: [
+                                ((i * 37) % 9) as f32 * 0.6 - 2.4,
+                                ((i * 59) % 9) as f32 * 0.6 - 2.4,
+                                3.0 + (i as f32) * 0.4,
+                            ],
+                            life: 0.0,
+                            max_life: 0.90,
+                            size: 0.45,
+                            grow: 1.2,
+                            kind: 7, // fire flame
+                        });
+                    }
+                }
+            }
+            23 | 30 => {
+                // Hotdog cart: propane gas & fire blast!
+                prop.state = PropState::Broken;
+                prop.collidable = false;
+                prop.fire_timer = 5.0;
+                let is_hard = impact_speed >= 4.5;
+                if is_hard {
+                    self.pending_explosions.push((prop.p, crate::explosions::ExplosionType::Barrel, 0.9));
+                    self.pending_fires.push((prop.p, 2.2, 8.0));
+                } else {
+                    self.pending_explosions.push((prop.p, crate::explosions::ExplosionType::Generic, 0.65));
+                    self.pending_fires.push((prop.p, 1.5, 4.0));
+                }
+                for i in 0..10 {
+                    if particles.len() < 160 {
+                        particles.push(Particle {
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 0.6],
+                            v: [
+                                impact_dir[0] * 3.5 + ((i * 23) % 7) as f32 * 0.5 - 1.5,
+                                impact_dir[1] * 3.5 + ((i * 43) % 7) as f32 * 0.5 - 1.5,
+                                2.2 + (i as f32) * 0.35,
+                            ],
+                            life: 0.0,
+                            max_life: 0.85,
+                            size: 0.35,
+                            grow: 0.8,
+                            kind: 7, // flame jet
+                        });
+                    }
+                }
+            }
+            28 => {
+                // Propane cylinders / explosive barrels: blast detonation
+                prop.state = PropState::Broken;
+                prop.collidable = false;
+                self.pending_explosions.push((prop.p, crate::explosions::ExplosionType::Barrel, 1.0));
+                for i in 0..10 {
+                    if particles.len() < 160 {
+                        particles.push(Particle {
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 0.5],
+                            v: [
+                                ((i * 31) % 9) as f32 * 0.8 - 3.2,
+                                ((i * 53) % 9) as f32 * 0.8 - 3.2,
+                                2.5 + (i as f32) * 0.35,
+                            ],
+                            life: 0.0,
+                            max_life: 0.70,
+                            size: 0.40,
+                            grow: 0.9,
+                            kind: 7, // flame fireball
+                        });
+                    }
+                }
+            }
+            15 | 25 | 31 => {
+                // Street signs, parking signs, small posts: tilt 30 degrees (0.52 rad)
+                prop.tilt = 0.52;
+                prop.tilt_axis = [-impact_dir[1], impact_dir[0]];
+                prop.state = PropState::Tilted;
+                prop.collidable = false;
+                prop.sleep = true;
+            }
+            38 => {
+                // Medium street sign / pole: tilt 45 degrees
+                prop.tilt = 0.78;
+                prop.tilt_axis = [-impact_dir[1], impact_dir[0]];
+                prop.state = PropState::Tilted;
+                prop.collidable = false;
+                prop.sleep = true;
+            }
+            13 | 37 => {
+                // Rubbish bins (stationary): garbage debris burst
+                prop.state = PropState::Broken;
+                prop.collidable = false;
+                for i in 0..8 {
+                    if particles.len() < 160 {
+                        particles.push(Particle {
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 0.4],
+                            v: [
+                                impact_dir[0] * 2.2 + ((i * 37) % 7) as f32 * 0.4 - 1.2,
+                                impact_dir[1] * 2.2 + ((i * 53) % 7) as f32 * 0.4 - 1.2,
+                                1.8 + (i as f32) * 0.3,
+                            ],
+                            life: 0.0,
+                            max_life: 0.80,
+                            size: 0.22,
+                            grow: 0.3,
+                            kind: 2, // garbage debris
+                        });
+                    }
+                }
             }
             35 => {
                 // Trash can / Dumpster: becomes Loose physical body!
@@ -508,7 +791,7 @@ impl PropsManager {
                     }
                 }
             }
-            14 | 22 | 42 => {
+            14 | 22 => {
                 // Newspaper stand / dispenser: shatters, leaves paper fluttering and cash!
                 prop.state = PropState::Broken;
                 prop.collidable = false;
@@ -533,58 +816,98 @@ impl PropsManager {
                     pm.spawn_dropped(crate::weapons::PickupKind::Money(25), prop.p);
                 }
             }
-            7 => {
-                // Lamp post / streetlight: authentic Chinatown Wars toppling physics
-                // Base snaps and pole topples under gravity until lying flat on pavement.
-                // Streetlights NEVER fly up into the air or perform barrel rolls.
-                prop.tilt = 0.08;
-                prop.tilt_speed = (impact_speed * 0.15 + 2.8).min(5.5);
-                prop.tilt_axis = [-impact_dir[1], impact_dir[0]];
-                prop.state = PropState::Tilted;
+            42 => {
+                // Wooden newspaper stand: wood splinters + paper flutter + cash
+                prop.state = PropState::Broken;
                 prop.collidable = false;
-                prop.sleep = false;
-                for i in 0..12 {
+                for i in 0..6 {
                     if particles.len() < 160 {
                         particles.push(Particle {
-                            p: [prop.p[0], prop.p[1], prop.p[2] + 2.5],
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 0.5],
                             v: [
-                                ((i * 41) % 11) as f32 * 0.4 - 2.0,
-                                ((i * 67) % 11) as f32 * 0.4 - 2.0,
-                                ((i * 19) % 7) as f32 * 0.5 + 1.0,
+                                impact_dir[0] * 2.8 + ((i * 37) % 5) as f32 * 0.4 - 0.8,
+                                impact_dir[1] * 2.8 + ((i * 59) % 5) as f32 * 0.4 - 0.8,
+                                2.0 + (i as f32) * 0.3,
                             ],
                             life: 0.0,
-                            max_life: 0.45,
-                            size: 0.12,
-                            grow: 0.1,
-                            kind: 5, // electric sparks
+                            max_life: 0.70,
+                            size: 0.26,
+                            grow: 0.3,
+                            kind: 3, // wood splinters
                         });
                     }
                 }
-            }
-            8 => {
-                // Large streetlight / Traffic signal: tilts flat immediately (0x3C72 ~ 1.48 rad ~ 85 deg)
-                prop.tilt = 1.48;
-                prop.tilt_speed = 0.0;
-                prop.tilt_axis = [-impact_dir[1], impact_dir[0]];
-                prop.state = PropState::Tilted;
-                prop.collidable = false;
-                prop.sleep = true;
-                for i in 0..12 {
+                for i in 0..8 {
                     if particles.len() < 160 {
                         particles.push(Particle {
-                            p: [prop.p[0], prop.p[1], prop.p[2] + 2.8],
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 0.6],
                             v: [
-                                ((i * 41) % 11) as f32 * 0.4 - 2.0,
-                                ((i * 67) % 11) as f32 * 0.4 - 2.0,
-                                ((i * 19) % 7) as f32 * 0.5 + 1.0,
+                                impact_dir[0] * 2.0 + ((i * 29) % 7) as f32 * 0.3 - 0.9,
+                                impact_dir[1] * 2.0 + ((i * 47) % 7) as f32 * 0.3 - 0.9,
+                                1.8 + (i as f32) * 0.25,
                             ],
                             life: 0.0,
-                            max_life: 0.45,
-                            size: 0.12,
-                            grow: 0.1,
-                            kind: 5, // electric sparks
+                            max_life: 1.1,
+                            size: 0.22,
+                            grow: 0.2,
+                            kind: 4, // paper flutter
                         });
                     }
+                }
+                if let Some(pm) = pickups {
+                    pm.spawn_dropped(crate::weapons::PickupKind::Money(25), prop.p);
+                }
+            }
+            17 => {
+                // Parking meter: loose physical body, drops $40 cash
+                prop.state = PropState::Loose;
+                prop.collidable = false;
+                prop.sleep = false;
+                prop.v = [
+                    impact_dir[0] * (impact_speed * 0.5 + 1.2),
+                    impact_dir[1] * (impact_speed * 0.5 + 1.2),
+                    2.8,
+                ];
+                prop.tumble_axis = [-impact_dir[1], impact_dir[0], 0.2];
+                prop.angular_v = 4.0;
+                if let Some(pm) = pickups {
+                    pm.spawn_dropped(crate::weapons::PickupKind::Money(40), prop.p);
+                }
+            }
+            11 | 12 | 20 | 24 | 29 | 32..=34 | 36 | 39 | 43..=55 => {
+                // Wooden crates, fruit boxes, pallets, market stalls
+                for i in 0..10 {
+                    if particles.len() < 160 {
+                        particles.push(Particle {
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 0.4],
+                            v: [
+                                impact_dir[0] * 3.0 + ((i * 31) % 7) as f32 * 0.5 - 1.5,
+                                impact_dir[1] * 3.0 + ((i * 53) % 7) as f32 * 0.5 - 1.5,
+                                2.2 + (i as f32) * 0.3,
+                            ],
+                            life: 0.0,
+                            max_life: 0.75,
+                            size: 0.26,
+                            grow: 0.3,
+                            kind: 3, // wood splinters
+                        });
+                    }
+                }
+                if prop.mass < 1.8 && prop.uproot_force >= 0.0 && prop.uproot_force < 18.0 {
+                    // Light crate tumbles briefly
+                    prop.state = PropState::Loose;
+                    prop.collidable = false;
+                    prop.sleep = false;
+                    prop.v = [
+                        impact_dir[0] * (impact_speed * 0.5 + 1.2),
+                        impact_dir[1] * (impact_speed * 0.5 + 1.2),
+                        2.6,
+                    ];
+                    prop.tumble_axis = [-impact_dir[1], impact_dir[0], 0.2];
+                    prop.angular_v = 4.5;
+                } else {
+                    prop.state = PropState::Broken;
+                    prop.collidable = false;
                 }
             }
             _ => {
@@ -600,7 +923,7 @@ impl PropsManager {
                     ];
                     prop.tumble_axis = [-impact_dir[1], impact_dir[0], 0.2];
                     prop.angular_v = 4.0;
-                    if prop.smash_eff == 17 || prop.prop_id == 174 || prop.prop_id == 176 {
+                    if prop.prop_id == 174 || prop.prop_id == 176 {
                         if let Some(pm) = pickups {
                             pm.spawn_dropped(crate::weapons::PickupKind::Money(40), prop.p);
                         }
@@ -614,7 +937,6 @@ impl PropsManager {
     }
 
     /// Damages props in radius from bullet traces or melee attacks.
-    #[allow(dead_code)]
     pub fn damage_at(
         &mut self,
         pos: [f32; 3],
@@ -634,8 +956,16 @@ impl PropsManager {
             let dy = prop.p[1] - pos[1];
             let dz = prop.p[2] - pos[2];
             if dx * dx + dy * dy + dz * dz <= radius * radius {
+                let breakable = prop.smash_force >= 0.0 || prop.uproot_force >= 0.0 || prop.smash_eff > 0;
+                if !breakable {
+                    continue;
+                }
                 prop.health = prop.health.saturating_sub(damage);
-                if prop.health == 0 && (prop.smash_force >= 0.0 || prop.uproot_force >= 0.0) {
+                if prop.health == 0
+                    || (prop.smash_force >= 0.0 && (damage as f32) >= prop.smash_force)
+                    || prop.smash_eff == 10
+                    || prop.smash_eff == 28
+                {
                     let dir_2d = [force_dir[0], force_dir[1]];
                     let len = (dir_2d[0] * dir_2d[0] + dir_2d[1] * dir_2d[1]).sqrt().max(1e-4);
                     let dir_norm = [dir_2d[0] / len, dir_2d[1] / len];
@@ -645,7 +975,7 @@ impl PropsManager {
             }
         }
         if let Some((i, dir_norm)) = smash_trigger {
-            self.apply_smash(i, dir_norm, 12.0, particles, pickups);
+            self.apply_smash(i, dir_norm, 8.0, particles, pickups);
         }
     }
 
@@ -675,7 +1005,7 @@ impl PropsManager {
                 let damage_fraction = (1.0 - (dist / damage_radius).min(1.0)) * damage;
                 prop.health = prop.health.saturating_sub(damage_fraction as u8);
                 if prop.health == 0 || dist < force_radius * 0.75 {
-                    if prop.smash_force >= 0.0 || prop.uproot_force >= 0.0 {
+                    if prop.smash_force >= 0.0 || prop.uproot_force >= 0.0 || prop.smash_eff > 0 {
                         to_smash.push((i, dir_2d));
                     }
                 }
@@ -727,6 +1057,29 @@ impl PropsManager {
                     });
                 }
             }
+            // Burning prop fire emitter (hotdog carts, petrol pump fires)
+            if prop.fire_timer > 0.0 {
+                prop.fire_timer = (prop.fire_timer - dt).max(0.0);
+                if particles.len() < 160 && (particles.len() % 2 == 0) {
+                    particles.push(Particle {
+                        p: [
+                            prop.p[0] + (prop.fire_timer * 11.0).sin() * 0.25,
+                            prop.p[1] + (prop.fire_timer * 17.0).cos() * 0.25,
+                            prop.p[2] + 0.3,
+                        ],
+                        v: [
+                            (prop.fire_timer * 7.0).sin() * 0.4,
+                            (prop.fire_timer * 13.0).cos() * 0.4,
+                            1.8 + (prop.fire_timer * 3.0).sin().abs() * 1.2,
+                        ],
+                        life: 0.0,
+                        max_life: 0.55,
+                        size: 0.30,
+                        grow: 0.6,
+                        kind: 7, // flame
+                    });
+                }
+            }
             // Gravitational topple for damaged streetlights
             if prop.state == PropState::Tilted && !prop.sleep {
                 if prop.smash_eff == 7 {
@@ -774,6 +1127,18 @@ impl PropsManager {
                     prop.v[2] = -prop.v[2] * 0.38;
                     prop.v[0] *= 0.75;
                     prop.v[1] *= 0.75;
+                    if prop.smash_eff == 35 && particles.len() < 160 {
+                        // Debris puff on bounce
+                        particles.push(Particle {
+                            p: [prop.p[0], prop.p[1], prop.p[2] + 0.2],
+                            v: [prop.v[0] * 0.5, prop.v[1] * 0.5, 1.2],
+                            life: 0.0,
+                            max_life: 0.5,
+                            size: 0.20,
+                            grow: 0.2,
+                            kind: 2, // garbage debris
+                        });
+                    }
                     if prop.v[2].abs() < 0.35 && (prop.v[0] * prop.v[0] + prop.v[1] * prop.v[1]) < 0.25 {
                         prop.v = [0.0; 3];
                         prop.angular_v = 0.0;
@@ -790,66 +1155,57 @@ mod tests {
     use super::*;
     use crate::actors::make_vehicle;
 
+    fn test_prop(prop_id: u16, model_id: u16, p: [f32; 3], smash_eff: u8, mass: f32) -> ActiveProp {
+        ActiveProp {
+            cell_x: 10,
+            cell_y: 10,
+            prop_idx: 0,
+            prop_id,
+            model_id,
+            broken_model_id: 0xFFFE,
+            p,
+            angle: 0.0,
+            v: [0.0; 3],
+            roll_angle: 0.0,
+            tumble_axis: [1.0, 0.0, 0.0],
+            angular_v: 0.0,
+            tilt: 0.0,
+            tilt_speed: 0.0,
+            tilt_axis: [0.0, 0.0],
+            state: PropState::Standing,
+            collidable: true,
+            fountain: false,
+            fire_timer: 0.0,
+            health: 20,
+            mass,
+            smash_eff,
+            smash_force: 10.0,
+            uproot_force: 15.0,
+            planar: false,
+            bullet_damage: true,
+            melee_damage: true,
+            inflammable: false,
+            base_z: p[2],
+            sleep: true,
+        }
+    }
+
     #[test]
     fn authentic_psp_props_hydrant_geyser_and_trash_bins() {
         let mut manager = PropsManager::new();
         // Hydrant (effect 9)
-        manager.active.push(ActiveProp {
-            cell_x: 10,
-            cell_y: 10,
-            prop_idx: 0,
-            prop_id: 175,
-            model_id: 2195,
-            broken_model_id: 0xFFFE,
-            p: [100.0, 100.0, 0.0],
-            angle: 0.0,
-            v: [0.0; 3],
-            roll_angle: 0.0,
-            tumble_axis: [1.0, 0.0, 0.0],
-            angular_v: 0.0,
-            tilt: 0.0,
-            tilt_speed: 0.0,
-            tilt_axis: [0.0, 0.0],
-            state: PropState::Standing,
-            collidable: true,
-            fountain: false,
-            health: 20,
-            mass: 1.5,
-            smash_eff: 9,
-            smash_force: 15.0,
-            uproot_force: 30.0,
-            base_z: 0.0,
-            sleep: true,
-        });
+        let mut hydrant = test_prop(175, 2195, [100.0, 100.0, 0.0], 9, 1.5);
+        hydrant.smash_force = 15.0;
+        hydrant.uproot_force = 30.0;
+        manager.active.push(hydrant);
 
         // Trash bin (effect 35)
-        manager.active.push(ActiveProp {
-            cell_x: 10,
-            cell_y: 10,
-            prop_idx: 1,
-            prop_id: 173,
-            model_id: 2193,
-            broken_model_id: 0xFFFE,
-            p: [200.0, 200.0, 0.0],
-            angle: 0.0,
-            v: [0.0; 3],
-            roll_angle: 0.0,
-            tumble_axis: [1.0, 0.0, 0.0],
-            angular_v: 0.0,
-            tilt: 0.0,
-            tilt_speed: 0.0,
-            tilt_axis: [0.0, 0.0],
-            state: PropState::Standing,
-            collidable: true,
-            fountain: false,
-            health: 10,
-            mass: 0.8,
-            smash_eff: 35,
-            smash_force: 8.0,
-            uproot_force: 12.0,
-            base_z: 0.0,
-            sleep: true,
-        });
+        let mut bin = test_prop(173, 2193, [200.0, 200.0, 0.0], 35, 0.8);
+        bin.prop_idx = 1;
+        bin.health = 10;
+        bin.smash_force = 8.0;
+        bin.uproot_force = 12.0;
+        manager.active.push(bin);
 
         let mut particles = Vec::new();
         let mut car = make_vehicle([100.0, 98.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
@@ -894,33 +1250,9 @@ mod tests {
     fn authentic_newsstand_and_parking_meter_cash_drops() {
         let mut manager = PropsManager::new();
         // Newsstand (effect 42)
-        manager.active.push(ActiveProp {
-            cell_x: 10,
-            cell_y: 10,
-            prop_idx: 0,
-            prop_id: 180,
-            model_id: 2200,
-            broken_model_id: 0xFFFE,
-            p: [300.0, 300.0, 0.0],
-            angle: 0.0,
-            v: [0.0; 3],
-            roll_angle: 0.0,
-            tumble_axis: [1.0, 0.0, 0.0],
-            angular_v: 0.0,
-            tilt: 0.0,
-            tilt_speed: 0.0,
-            tilt_axis: [0.0, 0.0],
-            state: PropState::Standing,
-            collidable: true,
-            fountain: false,
-            health: 15,
-            mass: 1.2,
-            smash_eff: 42,
-            smash_force: 10.0,
-            uproot_force: 15.0,
-            base_z: 0.0,
-            sleep: true,
-        });
+        let mut newsstand = test_prop(180, 2200, [300.0, 300.0, 0.0], 42, 1.2);
+        newsstand.health = 15;
+        manager.active.push(newsstand);
 
         let mut pickups = crate::weapons::PickupManager::new();
         let mut pickups_opt = Some(&mut pickups);
@@ -940,33 +1272,11 @@ mod tests {
     fn street_lamp_tilt_electric_sparks_and_player_push_out() {
         let mut manager = PropsManager::new();
         // Lamp post (effect 7)
-        manager.active.push(ActiveProp {
-            cell_x: 10,
-            cell_y: 10,
-            prop_idx: 0,
-            prop_id: 190,
-            model_id: 2210,
-            broken_model_id: 0xFFFE,
-            p: [400.0, 400.0, 0.0],
-            angle: 0.0,
-            v: [0.0; 3],
-            roll_angle: 0.0,
-            tumble_axis: [1.0, 0.0, 0.0],
-            angular_v: 0.0,
-            tilt: 0.0,
-            tilt_speed: 0.0,
-            tilt_axis: [0.0, 0.0],
-            state: PropState::Standing,
-            collidable: true,
-            fountain: false,
-            health: 25,
-            mass: 2.5,
-            smash_eff: 7,
-            smash_force: 18.0,
-            uproot_force: 25.0,
-            base_z: 0.0,
-            sleep: true,
-        });
+        let mut lamp = test_prop(190, 2210, [400.0, 400.0, 0.0], 7, 2.5);
+        lamp.health = 25;
+        lamp.smash_force = 18.0;
+        lamp.uproot_force = 25.0;
+        manager.active.push(lamp);
 
         // Player walking pushes out from solid standing lamp post
         let mut player_p = [400.3, 400.0, 0.0];
@@ -1009,5 +1319,141 @@ mod tests {
         let mut pickups_opt = Some(&mut pickups);
         manager.explosion([400.0, 401.0, 0.0], 5.0, 3.5, 40.0, &mut exp_particles, &mut pickups_opt);
         assert!(!manager.active[0].collidable, "Explosion disables collidability");
+    }
+
+    #[test]
+    fn authentic_glass_phone_booth_and_bus_shelter_shattering() {
+        let mut manager = PropsManager::new();
+        // Phone booth (effect 10)
+        manager.active.push(test_prop(201, 2301, [500.0, 500.0, 0.0], 10, 1.8));
+        // Bus shelter (effect 41)
+        let mut shelter = test_prop(202, 2302, [520.0, 500.0, 0.0], 41, 3.0);
+        shelter.prop_idx = 1;
+        manager.active.push(shelter);
+
+        let mut particles = Vec::new();
+        let mut car = make_vehicle([500.0, 498.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
+        car.speed = 10.0;
+        car.h = [0.9, 2.1, 0.7];
+
+        // Impact with phone booth
+        manager.check_vehicle_impact(&mut car, 0.016, &mut particles);
+        assert_eq!(manager.active[0].state, PropState::Broken, "Phone booth shatters");
+        assert!(!manager.active[0].collidable, "Collision removed on shatter");
+        assert!(particles.iter().any(|p| p.kind == 6), "Glass shards particle emitted (kind 6)");
+
+        // Impact with bus shelter
+        let mut car2 = make_vehicle([520.0, 498.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
+        car2.speed = 10.0;
+        car2.h = [0.9, 2.1, 0.7];
+        manager.check_vehicle_impact(&mut car2, 0.016, &mut particles);
+        assert_eq!(manager.active[1].state, PropState::Broken, "Bus shelter shatters");
+        assert!(particles.iter().any(|p| p.kind == 3), "Wood frame splinters emitted (kind 3)");
+        assert!(particles.iter().any(|p| p.kind == 6), "Glass panels burst into shards (kind 6)");
+    }
+
+    #[test]
+    fn authentic_petrol_pump_and_barrel_explosions() {
+        let mut manager = PropsManager::new();
+        // Petrol pump (effect 21)
+        manager.active.push(test_prop(210, 2400, [600.0, 600.0, 0.0], 21, 2.5));
+        // Explosive barrel (effect 28)
+        let mut barrel = test_prop(211, 2401, [620.0, 600.0, 0.0], 28, 1.2);
+        barrel.prop_idx = 1;
+        manager.active.push(barrel);
+        // Hotdog cart (effect 23)
+        let mut hotdog = test_prop(212, 2402, [640.0, 600.0, 0.0], 23, 1.4);
+        hotdog.prop_idx = 2;
+        manager.active.push(hotdog);
+
+        let mut particles = Vec::new();
+        let mut car = make_vehicle([600.0, 598.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
+        car.speed = 12.0;
+        car.h = [0.9, 2.1, 0.7];
+
+        // Impact with petrol pump
+        manager.check_vehicle_impact(&mut car, 0.016, &mut particles);
+        let exps = manager.drain_pending_explosions();
+        let fires = manager.drain_pending_fires();
+        assert_eq!(exps.len(), 1, "Petrol pump queues explosion");
+        assert_eq!(exps[0].1, crate::explosions::ExplosionType::BigVehicle, "Petrol pump triggers BigVehicle explosion");
+        assert_eq!(fires.len(), 1, "Petrol pump leaves persistent petrol fire");
+        assert!(fires[0].2 >= 20.0, "Petrol fire burns for long duration");
+        assert!(particles.iter().any(|p| p.kind == 7), "Fire flames emitted from pump burst");
+
+        // Impact with explosive barrel
+        let mut car2 = make_vehicle([620.0, 598.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
+        car2.speed = 10.0;
+        car2.h = [0.9, 2.1, 0.7];
+        manager.check_vehicle_impact(&mut car2, 0.016, &mut particles);
+        let exps2 = manager.drain_pending_explosions();
+        assert_eq!(exps2.len(), 1, "Barrel queues explosion");
+        assert_eq!(exps2[0].1, crate::explosions::ExplosionType::Barrel, "Barrel triggers Barrel explosion");
+
+        // Impact with hotdog cart
+        let mut car3 = make_vehicle([640.0, 598.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
+        car3.speed = 8.0;
+        car3.h = [0.9, 2.1, 0.7];
+        manager.check_vehicle_impact(&mut car3, 0.016, &mut particles);
+        assert!(manager.active[2].fire_timer > 0.0, "Hotdog cart catches fire");
+        let exps3 = manager.drain_pending_explosions();
+        assert!(!exps3.is_empty(), "Hotdog cart triggers gas explosion");
+    }
+
+    #[test]
+    fn authentic_wooden_crate_fence_and_sign_physics() {
+        let mut manager = PropsManager::new();
+        // Fence (effect 26)
+        manager.active.push(test_prop(220, 2500, [700.0, 700.0, 0.0], 26, 1.0));
+        // Street sign (effect 15)
+        let mut sign = test_prop(221, 2501, [720.0, 700.0, 0.0], 15, 0.5);
+        sign.prop_idx = 1;
+        manager.active.push(sign);
+        // Traffic signal (effect 8)
+        let mut signal = test_prop(222, 2502, [740.0, 700.0, 0.0], 8, 2.0);
+        signal.prop_idx = 2;
+        manager.active.push(signal);
+
+        let mut particles = Vec::new();
+        let mut car = make_vehicle([700.0, 698.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
+        car.speed = 8.0;
+        car.h = [0.9, 2.1, 0.7];
+
+        // Impact with fence
+        manager.check_vehicle_impact(&mut car, 0.016, &mut particles);
+        assert_eq!(manager.active[0].state, PropState::Broken, "Wooden fence shatters");
+        assert!(particles.iter().any(|p| p.kind == 3), "Wood slat splinters emitted");
+
+        // Impact with sign
+        let mut car2 = make_vehicle([720.0, 698.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
+        car2.speed = 6.0;
+        car2.h = [0.9, 2.1, 0.7];
+        manager.check_vehicle_impact(&mut car2, 0.016, &mut particles);
+        assert_eq!(manager.active[1].state, PropState::Tilted, "Sign tilts on impact");
+        assert!((manager.active[1].tilt - 0.52).abs() < 1e-4, "Sign tilts 30 degrees (0.52 rad)");
+
+        // Impact with traffic signal
+        let mut car3 = make_vehicle([740.0, 698.8, 0.0], 0.0, 0, 0, 0, 0, false, false);
+        car3.speed = 8.0;
+        car3.h = [0.9, 2.1, 0.7];
+        manager.check_vehicle_impact(&mut car3, 0.016, &mut particles);
+        assert_eq!(manager.active[2].state, PropState::Tilted, "Traffic signal tilts flat");
+        assert!((manager.active[2].tilt - 1.48).abs() < 1e-4, "Traffic signal tilts flat (1.48 rad)");
+    }
+
+    #[test]
+    fn prop_gunfire_and_melee_damage() {
+        let mut manager = PropsManager::new();
+        // Phone booth (effect 10)
+        manager.active.push(test_prop(230, 2600, [800.0, 800.0, 0.0], 10, 1.5));
+        let mut particles = Vec::new();
+        let mut pickups = crate::weapons::PickupManager::new();
+        let mut pickups_opt = Some(&mut pickups);
+
+        // Gunfire hits phone booth
+        manager.damage_at([800.2, 800.1, 0.5], 1.5, 30, [1.0, 0.0, 0.0], &mut particles, &mut pickups_opt);
+        assert_eq!(manager.active[0].state, PropState::Broken, "Gunfire shatters phone booth");
+        assert!(!manager.active[0].collidable);
+        assert!(particles.iter().any(|p| p.kind == 6), "Glass fragments emitted from bullet strike");
     }
 }

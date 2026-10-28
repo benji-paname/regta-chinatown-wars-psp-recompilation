@@ -840,6 +840,35 @@ impl Renderer {
                                 glEnd();
                             }
                         }
+                        6 => {
+                            // Glass shards (smashed phone booth / bus stop shelter)
+                            let alpha = ((1.0 - progress * 0.7) * 0.85).clamp(0.0, 0.85);
+                            if alpha > 0.01 {
+                                glColor4f(0.85, 0.95, 1.0, alpha);
+                                glBegin(7);
+                                glVertex3f(p.p[0] - hs * 0.7, p.p[1] - hs * 0.4, p.p[2]);
+                                glVertex3f(p.p[0] + hs * 0.7, p.p[1] - hs * 0.4, p.p[2]);
+                                glVertex3f(p.p[0] + hs * 0.4, p.p[1] + hs * 0.7, p.p[2] + hs * 0.4);
+                                glVertex3f(p.p[0] - hs * 0.4, p.p[1] + hs * 0.7, p.p[2] + hs * 0.4);
+                                glEnd();
+                            }
+                        }
+                        7 => {
+                            // Fire flame / gas jet (burning props, hotdog cart, petrol pump)
+                            let alpha = (1.0 - progress).clamp(0.0, 0.95);
+                            if alpha > 0.01 {
+                                glColor4f(1.0, 0.45 + (1.0 - progress) * 0.35, 0.1, alpha);
+                                glBegin(6);
+                                glVertex3f(p.p[0], p.p[1], p.p[2] + hs);
+                                glColor4f(1.0, 0.2, 0.05, 0.0);
+                                glVertex3f(p.p[0] - hs, p.p[1] - hs, p.p[2]);
+                                glVertex3f(p.p[0] + hs, p.p[1] - hs, p.p[2]);
+                                glVertex3f(p.p[0] + hs, p.p[1] + hs, p.p[2]);
+                                glVertex3f(p.p[0] - hs, p.p[1] + hs, p.p[2]);
+                                glVertex3f(p.p[0] - hs, p.p[1] - hs, p.p[2]);
+                                glEnd();
+                            }
+                        }
                         _ => {}
                     }
                 }

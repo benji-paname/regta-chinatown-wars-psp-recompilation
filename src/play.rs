@@ -1347,6 +1347,12 @@ pub fn run(
                     for (cx, cy, prop_idx) in s.props.drain_pending_disables() {
                         collision.set_prop_solid(cx, cy, prop_idx, false);
                     }
+                    for (pos, kind, scale) in s.props.drain_pending_explosions() {
+                        s.explosions.trigger(pos, kind, scale);
+                    }
+                    for (pos, radius, duration) in s.props.drain_pending_fires() {
+                        s.fire_manager.spawn_fire(pos, radius, duration);
+                    }
                     for car in &mut s.cars {
                         if car.horn_timer > 0.0 {
                             let prev = car.horn_timer;
