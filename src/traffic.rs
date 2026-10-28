@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Algorithms adapted from traffic.cpp / aispline.cpp, (C) 2026 Kryo.to, b0506abc.
 //! Grounded ambient traffic: continuous rails, clearance braking and route recovery.
-use crate::{actors::{Car, Ped, forward, car_position_for}, collision::Collision, gps::{Roads, distance}, vehicle::TrafficLightManager};
+use crate::{actors::{Car, Ped, forward, rail_position_for}, collision::Collision, gps::{Roads, distance}, vehicle::TrafficLightManager};
 
 #[derive(Clone, Copy)]
 pub struct Body { pub p: [f32; 3], pub angle: f32, pub h: [f32; 3] }
@@ -44,7 +44,7 @@ pub fn initialize_rail(car: &mut Car, roads: &Roads, collision: &Collision, alon
     let (_, _, total, _) = pose(car, roads, 0.);
     car.rail_dist = along.clamp(0., total.max(0.));
     let (p, angle, _, _) = pose(car, roads, car.rail_dist);
-    let Some(p) = car_position_for(collision, p, angle, car.info_id) else { return false; };
+    let Some(p) = rail_position_for(collision, p, angle, car.info_id) else { return false; };
     car.p = p; car.angle = angle; car.on_rail = true;
     true
 }
@@ -90,7 +90,7 @@ pub fn move_on_rail(car: &mut Car, roads: &Roads, collision: &Collision, distanc
         }
         if remaining > 0.001 { valid = false; }
         let (p, angle, _, _) = pose(car, roads, car.rail_dist);
-        if let Some(p) = car_position_for(collision, p, angle, car.info_id) { final_pose = (p, angle); }
+        if let Some(p) = rail_position_for(collision, p, angle, car.info_id) { final_pose = (p, angle); }
         else { valid = false; }
         if !valid { break; }
     }
@@ -336,5 +336,52 @@ mod tests {
         assert!(visible(Some(&view),[0.,0.,-50.],5.));
         assert!(!visible(Some(&view),[1000.,0.,-50.],5.));
         assert!(!visible(Some(&view),[0.,0.,10.],2.));
+    }
+    #[test]
+    fn collinear_lateral_shift_and_acute_angle_curves_remain_bounded() {
+        // Collinear links with lateral shift (analog of 197->142->215)
+        let r_collinear = Roads {
+            nodes: vec![
+                Node { p: [0., 0., 0.], flags: 0x220, links: vec![1] },
+                Node { p: [0., 80., 0.], flags: 0x220, links: vec![2] },
+                Node { p: [6., 160., 0.], flags: 0x204, links: vec![] },
+            ],
+        };
+        let (p, _angle, total, curved) = r_collinear.rail_pose(0, 1, 2, 75., 0, 0., 0, 0.);
+        assert!(curved);
+        // Total curve length must stay well-bounded within the junction corridor (< 120m), never ballooning to km
+        assert!(total < 120., "Curve length ballooned to {}", total);
+        assert!((p[0] - 0.).abs() < 7., "Curve drifted laterally out of corridor: {:?}", p);
+
+        // Acute outgoing angle (analog of 626->1439->1467)
+        let r_acute = Roads {
+            nodes: vec![
+                Node { p: [100., 0., 0.], flags: 0x204, links: vec![1] },
+                Node { p: [0., 0., 0.], flags: 0x220, links: vec![2] },
+                Node { p: [-30., -2.5, 0.], flags: 0x604, links: vec![] },
+            ],
+        };
+        let (p_start, _, total_acute, _) = r_acute.rail_pose(0, 1, 2, 95., 0, 0., 0, 0.);
+        let (p_mid, _, _, _) = r_acute.rail_pose(0, 1, 2, 98., 0, 0., 0, 0.);
+        assert!(total_acute < 130., "Acute junction ballooned to {}", total_acute);
+        // Progress must advance forward (decreasing X), never loop backwards to the East (X > p_start[0])
+        assert!(p_mid[0] <= p_start[0] + 0.5, "Fishhook reverse detected: start X={}, mid X={}", p_start[0], p_mid[0]);
+    }
+    #[test]
+    fn curb_decorative_cylinder_does_not_block_rail_travel() {
+        use crate::collision::Cylinder;
+        let (roads, mut c) = (roads(), flat());
+        let mut car = car(&roads, &c, 10.);
+        let p = car.p;
+        let (cx, cy) = Collision::cell_xy(p[0] + 3., p[1] + 5.).unwrap();
+        // A cylinder on the curb whose canopy reaches into the roadway
+        c.cells[cx * 100 + cy].cylinders.push(Cylinder {
+            p: [p[0] + 3., p[1] + 5., 0.],
+            r: 2.5,
+            h: 2.5,
+        });
+        // On-rail vehicle moves past the curb cylinder smoothly without rollback
+        assert!(move_on_rail(&mut car, &roads, &c, 8., 0));
+        assert!(car.p[1] > p[1] + 7.);
     }
 }

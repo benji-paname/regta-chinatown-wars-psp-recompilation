@@ -1,207 +1,207 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560" font-family="Verdana,DejaVu Sans,sans-serif">
 <rect width="1000" height="560" fill="#16191c"/>
-<text x="8" y="18" font-size="13" fill="#e6e8ea">Native Rust inventory: 1026 runtime functions | grey: tests/helpers | PSP completion: unmeasured</text>
-<g><title>minigames.rs: 54 runtime, 11 test/helper functions</title><rect x="3.0" y="43.0" width="137.9" height="183.1" fill="#4d5257" stroke="#16191c"/>
-<rect x="3.0" y="74.0" width="137.9" height="152.1" fill="#3fa34d" stroke="#16191c"/>
+<text x="8" y="18" font-size="13" fill="#e6e8ea">Native Rust inventory: 1028 runtime functions | grey: tests/helpers | PSP completion: unmeasured</text>
+<g><title>minigames.rs: 54 runtime, 11 test/helper functions</title><rect x="3.0" y="43.0" width="137.8" height="182.6" fill="#4d5257" stroke="#16191c"/>
+<rect x="3.0" y="73.9" width="137.8" height="151.7" fill="#3fa34d" stroke="#16191c"/>
 <text x="6.0" y="55.0" font-size="9" fill="#e6e8ea">minigames.rs</text>
 </g>
-<g><title>drugs.rs: 30 runtime, 5 test/helper functions</title><rect x="3.0" y="226.1" width="137.9" height="98.6" fill="#4d5257" stroke="#16191c"/>
-<rect x="3.0" y="240.2" width="137.9" height="84.5" fill="#3fa34d" stroke="#16191c"/>
-<text x="6.0" y="238.1" font-size="9" fill="#e6e8ea">drugs.rs</text>
+<g><title>drugs.rs: 30 runtime, 5 test/helper functions</title><rect x="3.0" y="225.6" width="137.8" height="98.3" fill="#4d5257" stroke="#16191c"/>
+<rect x="3.0" y="239.6" width="137.8" height="84.3" fill="#3fa34d" stroke="#16191c"/>
+<text x="6.0" y="237.6" font-size="9" fill="#e6e8ea">drugs.rs</text>
 </g>
-<g><title>missions.rs: 21 runtime, 6 test/helper functions</title><rect x="140.9" y="43.0" width="81.2" height="129.2" fill="#4d5257" stroke="#16191c"/>
-<rect x="140.9" y="71.7" width="81.2" height="100.5" fill="#3fa34d" stroke="#16191c"/>
-<text x="143.9" y="55.0" font-size="9" fill="#e6e8ea">missions.rs</text>
+<g><title>missions.rs: 21 runtime, 6 test/helper functions</title><rect x="140.8" y="43.0" width="81.1" height="128.8" fill="#4d5257" stroke="#16191c"/>
+<rect x="140.8" y="71.6" width="81.1" height="100.2" fill="#3fa34d" stroke="#16191c"/>
+<text x="143.8" y="55.0" font-size="9" fill="#e6e8ea">missions.rs</text>
 </g>
-<g><title>jobs.rs: 19 runtime, 4 test/helper functions</title><rect x="222.1" y="43.0" width="69.2" height="129.2" fill="#4d5257" stroke="#16191c"/>
-<rect x="222.1" y="65.5" width="69.2" height="106.7" fill="#3fa34d" stroke="#16191c"/>
-<text x="225.1" y="55.0" font-size="9" fill="#e6e8ea">jobs.rs</text>
+<g><title>jobs.rs: 19 runtime, 4 test/helper functions</title><rect x="221.8" y="43.0" width="69.1" height="128.8" fill="#4d5257" stroke="#16191c"/>
+<rect x="221.8" y="65.4" width="69.1" height="106.4" fill="#3fa34d" stroke="#16191c"/>
+<text x="224.8" y="55.0" font-size="9" fill="#e6e8ea">jobs.rs</text>
 </g>
-<g><title>races.rs: 16 runtime, 6 test/helper functions</title><rect x="140.9" y="172.2" width="76.9" height="111.1" fill="#4d5257" stroke="#16191c"/>
-<rect x="140.9" y="202.5" width="76.9" height="80.8" fill="#3fa34d" stroke="#16191c"/>
-<text x="143.9" y="184.2" font-size="9" fill="#e6e8ea">races.rs</text>
+<g><title>races.rs: 16 runtime, 6 test/helper functions</title><rect x="140.8" y="171.8" width="76.8" height="110.8" fill="#4d5257" stroke="#16191c"/>
+<rect x="140.8" y="202.1" width="76.8" height="80.6" fill="#3fa34d" stroke="#16191c"/>
+<text x="143.8" y="183.8" font-size="9" fill="#e6e8ea">races.rs</text>
 </g>
-<g><title>safehouse.rs: 16 runtime, 5 test/helper functions</title><rect x="217.8" y="172.2" width="73.4" height="111.1" fill="#4d5257" stroke="#16191c"/>
-<rect x="217.8" y="198.7" width="73.4" height="84.7" fill="#3fa34d" stroke="#16191c"/>
-<text x="220.8" y="184.2" font-size="9" fill="#e6e8ea">safehouse.rs</text>
+<g><title>safehouse.rs: 16 runtime, 5 test/helper functions</title><rect x="217.6" y="171.8" width="73.3" height="110.8" fill="#4d5257" stroke="#16191c"/>
+<rect x="217.6" y="198.2" width="73.3" height="84.4" fill="#3fa34d" stroke="#16191c"/>
+<text x="220.6" y="183.8" font-size="9" fill="#e6e8ea">safehouse.rs</text>
 </g>
-<g><title>collectibles.rs: 11 runtime, 5 test/helper functions</title><rect x="140.9" y="283.3" width="150.3" height="41.4" fill="#4d5257" stroke="#16191c"/>
-<rect x="140.9" y="296.3" width="150.3" height="28.4" fill="#3fa34d" stroke="#16191c"/>
-<text x="143.9" y="295.3" font-size="9" fill="#e6e8ea">collectibles.rs</text>
+<g><title>collectibles.rs: 11 runtime, 5 test/helper functions</title><rect x="140.8" y="282.7" width="150.2" height="41.2" fill="#4d5257" stroke="#16191c"/>
+<rect x="140.8" y="295.5" width="150.2" height="28.3" fill="#3fa34d" stroke="#16191c"/>
+<text x="143.8" y="294.7" font-size="9" fill="#e6e8ea">collectibles.rs</text>
 </g>
-<rect x="2.0" y="26.0" width="290.3" height="299.7" fill="none" stroke="#e6e8ea"/>
+<rect x="2.0" y="26.0" width="289.9" height="298.9" fill="none" stroke="#e6e8ea"/>
 <text x="6.0" y="38.0" font-size="11" fill="#e6e8ea">Missions and activities (167)</text>
-<g><title>actors.rs: 44 runtime, 35 test/helper functions</title><rect x="3.0" y="342.7" width="140.6" height="214.3" fill="#4d5257" stroke="#16191c"/>
-<rect x="3.0" y="437.6" width="140.6" height="119.4" fill="#3fa34d" stroke="#16191c"/>
-<text x="6.0" y="354.7" font-size="9" fill="#e6e8ea">actors.rs</text>
+<g><title>actors.rs: 45 runtime, 35 test/helper functions</title><rect x="3.0" y="341.9" width="141.3" height="215.1" fill="#4d5257" stroke="#16191c"/>
+<rect x="3.0" y="436.0" width="141.3" height="121.0" fill="#3fa34d" stroke="#16191c"/>
+<text x="6.0" y="353.9" font-size="9" fill="#e6e8ea">actors.rs</text>
 </g>
-<g><title>ped.rs: 20 runtime, 5 test/helper functions</title><rect x="143.6" y="342.7" width="80.3" height="118.8" fill="#4d5257" stroke="#16191c"/>
-<rect x="143.6" y="366.5" width="80.3" height="95.0" fill="#3fa34d" stroke="#16191c"/>
-<text x="146.6" y="354.7" font-size="9" fill="#e6e8ea">ped.rs</text>
+<g><title>ped.rs: 20 runtime, 5 test/helper functions</title><rect x="144.3" y="341.9" width="79.7" height="119.2" fill="#4d5257" stroke="#16191c"/>
+<rect x="144.3" y="365.7" width="79.7" height="95.4" fill="#3fa34d" stroke="#16191c"/>
+<text x="147.3" y="353.9" font-size="9" fill="#e6e8ea">ped.rs</text>
 </g>
-<g><title>pavement.rs: 17 runtime, 4 test/helper functions</title><rect x="223.8" y="342.7" width="67.4" height="118.8" fill="#4d5257" stroke="#16191c"/>
-<rect x="223.8" y="365.3" width="67.4" height="96.1" fill="#3fa34d" stroke="#16191c"/>
-<text x="226.8" y="354.7" font-size="9" fill="#e6e8ea">pavement.rs</text>
+<g><title>pavement.rs: 17 runtime, 4 test/helper functions</title><rect x="224.0" y="341.9" width="66.9" height="119.2" fill="#4d5257" stroke="#16191c"/>
+<rect x="224.0" y="364.6" width="66.9" height="96.5" fill="#3fa34d" stroke="#16191c"/>
+<text x="227.0" y="353.9" font-size="9" fill="#e6e8ea">pavement.rs</text>
 </g>
-<g><title>vault.rs: 4 runtime, 14 test/helper functions</title><rect x="143.6" y="461.5" width="71.9" height="95.5" fill="#4d5257" stroke="#16191c"/>
-<rect x="143.6" y="535.8" width="71.9" height="21.2" fill="#3fa34d" stroke="#16191c"/>
-<text x="146.6" y="473.5" font-size="9" fill="#e6e8ea">vault.rs</text>
+<g><title>vault.rs: 4 runtime, 14 test/helper functions</title><rect x="144.3" y="461.1" width="71.3" height="95.9" fill="#4d5257" stroke="#16191c"/>
+<rect x="144.3" y="535.7" width="71.3" height="21.3" fill="#3fa34d" stroke="#16191c"/>
+<text x="147.3" y="473.1" font-size="9" fill="#e6e8ea">vault.rs</text>
 </g>
-<g><title>roll.rs: 6 runtime, 7 test/helper functions</title><rect x="215.4" y="461.5" width="75.8" height="65.4" fill="#4d5257" stroke="#16191c"/>
-<rect x="215.4" y="496.7" width="75.8" height="30.2" fill="#3fa34d" stroke="#16191c"/>
-<text x="218.4" y="473.5" font-size="9" fill="#e6e8ea">roll.rs</text>
+<g><title>roll.rs: 6 runtime, 7 test/helper functions</title><rect x="215.6" y="461.1" width="75.3" height="65.6" fill="#4d5257" stroke="#16191c"/>
+<rect x="215.6" y="496.4" width="75.3" height="30.3" fill="#3fa34d" stroke="#16191c"/>
+<text x="218.6" y="473.1" font-size="9" fill="#e6e8ea">roll.rs</text>
 </g>
-<g><title>ped_paths.rs: 2 runtime, 4 test/helper functions</title><rect x="215.4" y="526.8" width="75.8" height="30.2" fill="#4d5257" stroke="#16191c"/>
-<rect x="215.4" y="546.9" width="75.8" height="10.1" fill="#3fa34d" stroke="#16191c"/>
-<text x="218.4" y="538.8" font-size="9" fill="#e6e8ea">ped_paths.rs</text>
+<g><title>ped_paths.rs: 2 runtime, 4 test/helper functions</title><rect x="215.6" y="526.7" width="75.3" height="30.3" fill="#4d5257" stroke="#16191c"/>
+<rect x="215.6" y="546.9" width="75.3" height="10.1" fill="#3fa34d" stroke="#16191c"/>
+<text x="218.6" y="538.7" font-size="9" fill="#e6e8ea">ped_paths.rs</text>
 </g>
-<rect x="2.0" y="325.7" width="290.3" height="232.3" fill="none" stroke="#e6e8ea"/>
-<text x="6.0" y="337.7" font-size="11" fill="#e6e8ea">People (93)</text>
-<g><title>stats.rs: 126 runtime, 4 test/helper functions</title><rect x="293.3" y="43.0" width="238.2" height="210.7" fill="#4d5257" stroke="#16191c"/>
-<rect x="293.3" y="49.5" width="238.2" height="204.2" fill="#3fa34d" stroke="#16191c"/>
-<text x="296.3" y="55.0" font-size="9" fill="#e6e8ea">stats.rs</text>
+<rect x="2.0" y="324.9" width="289.9" height="233.1" fill="none" stroke="#e6e8ea"/>
+<text x="6.0" y="336.9" font-size="11" fill="#e6e8ea">People (94)</text>
+<g><title>stats.rs: 126 runtime, 4 test/helper functions</title><rect x="292.9" y="43.0" width="237.3" height="210.7" fill="#4d5257" stroke="#16191c"/>
+<rect x="292.9" y="49.5" width="237.3" height="204.2" fill="#3fa34d" stroke="#16191c"/>
+<text x="295.9" y="55.0" font-size="9" fill="#e6e8ea">stats.rs</text>
 </g>
-<g><title>police.rs: 25 runtime, 5 test/helper functions</title><rect x="293.3" y="253.7" width="238.2" height="48.6" fill="#4d5257" stroke="#16191c"/>
-<rect x="293.3" y="261.8" width="238.2" height="40.5" fill="#3fa34d" stroke="#16191c"/>
-<text x="296.3" y="265.7" font-size="9" fill="#e6e8ea">police.rs</text>
+<g><title>police.rs: 25 runtime, 5 test/helper functions</title><rect x="292.9" y="253.7" width="237.3" height="48.6" fill="#4d5257" stroke="#16191c"/>
+<rect x="292.9" y="261.8" width="237.3" height="40.5" fill="#3fa34d" stroke="#16191c"/>
+<text x="295.9" y="265.7" font-size="9" fill="#e6e8ea">police.rs</text>
 </g>
-<rect x="292.3" y="26.0" width="240.2" height="277.3" fill="none" stroke="#e6e8ea"/>
-<text x="296.3" y="38.0" font-size="11" fill="#e6e8ea">Saves and police (151)</text>
-<g><title>pda.rs: 61 runtime, 8 test/helper functions</title><rect x="293.3" y="320.3" width="189.6" height="139.6" fill="#4d5257" stroke="#16191c"/>
-<rect x="293.3" y="336.5" width="189.6" height="123.4" fill="#3fa34d" stroke="#16191c"/>
-<text x="296.3" y="332.3" font-size="9" fill="#e6e8ea">pda.rs</text>
+<rect x="291.9" y="26.0" width="239.3" height="277.3" fill="none" stroke="#e6e8ea"/>
+<text x="295.9" y="38.0" font-size="11" fill="#e6e8ea">Saves and police (151)</text>
+<g><title>pda.rs: 61 runtime, 8 test/helper functions</title><rect x="292.9" y="320.3" width="188.8" height="139.6" fill="#4d5257" stroke="#16191c"/>
+<rect x="292.9" y="336.5" width="188.8" height="123.4" fill="#3fa34d" stroke="#16191c"/>
+<text x="295.9" y="332.3" font-size="9" fill="#e6e8ea">pda.rs</text>
 </g>
-<g><title>gps.rs: 37 runtime, 11 test/helper functions</title><rect x="293.3" y="459.9" width="189.6" height="97.1" fill="#4d5257" stroke="#16191c"/>
-<rect x="293.3" y="482.1" width="189.6" height="74.9" fill="#3fa34d" stroke="#16191c"/>
-<text x="296.3" y="471.9" font-size="9" fill="#e6e8ea">gps.rs</text>
+<g><title>gps.rs: 37 runtime, 11 test/helper functions</title><rect x="292.9" y="459.9" width="188.8" height="97.1" fill="#4d5257" stroke="#16191c"/>
+<rect x="292.9" y="482.1" width="188.8" height="74.9" fill="#3fa34d" stroke="#16191c"/>
+<text x="295.9" y="471.9" font-size="9" fill="#e6e8ea">gps.rs</text>
 </g>
-<g><title>radar.rs: 11 runtime, 3 test/helper functions</title><rect x="482.9" y="320.3" width="48.6" height="110.5" fill="#4d5257" stroke="#16191c"/>
-<rect x="482.9" y="343.9" width="48.6" height="86.8" fill="#3fa34d" stroke="#16191c"/>
+<g><title>radar.rs: 11 runtime, 3 test/helper functions</title><rect x="481.8" y="320.3" width="48.4" height="110.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="481.8" y="343.9" width="48.4" height="86.8" fill="#3fa34d" stroke="#16191c"/>
 </g>
-<g><title>ui.rs: 9 runtime, 0 test/helper functions</title><rect x="482.9" y="430.7" width="48.6" height="71.0" fill="#4d5257" stroke="#16191c"/>
-<rect x="482.9" y="430.7" width="48.6" height="71.0" fill="#3fa34d" stroke="#16191c"/>
-<text x="485.9" y="442.7" font-size="9" fill="#e6e8ea">ui.rs</text>
+<g><title>ui.rs: 9 runtime, 0 test/helper functions</title><rect x="481.8" y="430.7" width="48.4" height="71.0" fill="#4d5257" stroke="#16191c"/>
+<rect x="481.8" y="430.7" width="48.4" height="71.0" fill="#3fa34d" stroke="#16191c"/>
+<text x="484.8" y="442.7" font-size="9" fill="#e6e8ea">ui.rs</text>
 </g>
-<g><title>hud.rs: 6 runtime, 1 test/helper functions</title><rect x="482.9" y="501.8" width="48.6" height="55.2" fill="#4d5257" stroke="#16191c"/>
-<rect x="482.9" y="509.7" width="48.6" height="47.3" fill="#3fa34d" stroke="#16191c"/>
-<text x="485.9" y="513.8" font-size="9" fill="#e6e8ea">hud.rs</text>
+<g><title>hud.rs: 6 runtime, 1 test/helper functions</title><rect x="481.8" y="501.8" width="48.4" height="55.2" fill="#4d5257" stroke="#16191c"/>
+<rect x="481.8" y="509.7" width="48.4" height="47.3" fill="#3fa34d" stroke="#16191c"/>
+<text x="484.8" y="513.8" font-size="9" fill="#e6e8ea">hud.rs</text>
 </g>
-<rect x="292.3" y="303.3" width="240.2" height="254.7" fill="none" stroke="#e6e8ea"/>
-<text x="296.3" y="315.3" font-size="11" fill="#e6e8ea">HUD and navigation (124)</text>
-<g><title>weapons.rs: 119 runtime, 12 test/helper functions</title><rect x="533.5" y="43.0" width="231.6" height="217.0" fill="#4d5257" stroke="#16191c"/>
-<rect x="533.5" y="62.9" width="231.6" height="197.1" fill="#3fa34d" stroke="#16191c"/>
-<text x="536.5" y="55.0" font-size="9" fill="#e6e8ea">weapons.rs</text>
+<rect x="291.9" y="303.3" width="239.3" height="254.7" fill="none" stroke="#e6e8ea"/>
+<text x="295.9" y="315.3" font-size="11" fill="#e6e8ea">HUD and navigation (124)</text>
+<g><title>vehicle.rs: 94 runtime, 9 test/helper functions</title><rect x="532.2" y="43.0" width="232.2" height="169.4" fill="#4d5257" stroke="#16191c"/>
+<rect x="532.2" y="57.8" width="232.2" height="154.6" fill="#3fa34d" stroke="#16191c"/>
+<text x="535.2" y="55.0" font-size="9" fill="#e6e8ea">vehicle.rs</text>
 </g>
-<g><title>explosions.rs: 10 runtime, 2 test/helper functions</title><rect x="533.5" y="260.0" width="231.6" height="19.9" fill="#4d5257" stroke="#16191c"/>
-<rect x="533.5" y="263.3" width="231.6" height="16.6" fill="#3fa34d" stroke="#16191c"/>
-<text x="536.5" y="272.0" font-size="9" fill="#e6e8ea">explosions.rs</text>
+<g><title>traffic.rs: 10 runtime, 15 test/helper functions</title><rect x="532.2" y="212.4" width="141.6" height="67.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="532.2" y="252.9" width="141.6" height="27.0" fill="#3fa34d" stroke="#16191c"/>
+<text x="535.2" y="224.4" font-size="9" fill="#e6e8ea">traffic.rs</text>
 </g>
-<rect x="532.5" y="26.0" width="233.6" height="254.8" fill="none" stroke="#e6e8ea"/>
-<text x="536.5" y="38.0" font-size="11" fill="#e6e8ea">Combat (129)</text>
-<g><title>gpu.rs: 43 runtime, 0 test/helper functions</title><rect x="767.1" y="43.0" width="126.8" height="130.1" fill="#4d5257" stroke="#16191c"/>
-<rect x="767.1" y="43.0" width="126.8" height="130.1" fill="#3fa34d" stroke="#16191c"/>
-<text x="770.1" y="55.0" font-size="9" fill="#e6e8ea">gpu.rs</text>
+<g><title>handling.rs: 12 runtime, 4 test/helper functions</title><rect x="673.8" y="212.4" width="90.6" height="67.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="673.8" y="229.3" width="90.6" height="50.6" fill="#3fa34d" stroke="#16191c"/>
+<text x="676.8" y="224.4" font-size="9" fill="#e6e8ea">handling.rs</text>
 </g>
-<g><title>collision.rs: 27 runtime, 8 test/helper functions</title><rect x="893.8" y="43.0" width="103.2" height="130.1" fill="#4d5257" stroke="#16191c"/>
-<rect x="893.8" y="72.7" width="103.2" height="100.4" fill="#3fa34d" stroke="#16191c"/>
-<text x="896.8" y="55.0" font-size="9" fill="#e6e8ea">collision.rs</text>
+<rect x="531.2" y="26.0" width="234.2" height="254.9" fill="none" stroke="#e6e8ea"/>
+<text x="535.2" y="38.0" font-size="11" fill="#e6e8ea">Vehicles (116)</text>
+<g><title>gpu.rs: 43 runtime, 0 test/helper functions</title><rect x="766.4" y="43.0" width="125.5" height="130.9" fill="#4d5257" stroke="#16191c"/>
+<rect x="766.4" y="43.0" width="125.5" height="130.9" fill="#3fa34d" stroke="#16191c"/>
+<text x="769.4" y="55.0" font-size="9" fill="#e6e8ea">gpu.rs</text>
 </g>
-<g><title>camera.rs: 20 runtime, 10 test/helper functions</title><rect x="767.1" y="173.1" width="107.8" height="106.7" fill="#4d5257" stroke="#16191c"/>
-<rect x="767.1" y="208.7" width="107.8" height="71.2" fill="#3fa34d" stroke="#16191c"/>
-<text x="770.1" y="185.1" font-size="9" fill="#e6e8ea">camera.rs</text>
+<g><title>collision.rs: 28 runtime, 8 test/helper functions</title><rect x="891.9" y="43.0" width="105.1" height="130.9" fill="#4d5257" stroke="#16191c"/>
+<rect x="891.9" y="72.1" width="105.1" height="101.8" fill="#3fa34d" stroke="#16191c"/>
+<text x="894.9" y="55.0" font-size="9" fill="#e6e8ea">collision.rs</text>
 </g>
-<g><title>model.rs: 6 runtime, 4 test/helper functions</title><rect x="874.8" y="173.1" width="68.3" height="56.2" fill="#4d5257" stroke="#16191c"/>
-<rect x="874.8" y="195.6" width="68.3" height="33.7" fill="#3fa34d" stroke="#16191c"/>
-<text x="877.8" y="185.1" font-size="9" fill="#e6e8ea">model.rs</text>
+<g><title>camera.rs: 20 runtime, 10 test/helper functions</title><rect x="766.4" y="173.9" width="108.1" height="106.0" fill="#4d5257" stroke="#16191c"/>
+<rect x="766.4" y="209.2" width="108.1" height="70.7" fill="#3fa34d" stroke="#16191c"/>
+<text x="769.4" y="185.9" font-size="9" fill="#e6e8ea">camera.rs</text>
 </g>
-<g><title>props.rs: 8 runtime, 1 test/helper functions</title><rect x="874.8" y="229.3" width="68.3" height="50.6" fill="#4d5257" stroke="#16191c"/>
-<rect x="874.8" y="234.9" width="68.3" height="44.9" fill="#3fa34d" stroke="#16191c"/>
-<text x="877.8" y="241.3" font-size="9" fill="#e6e8ea">props.rs</text>
+<g><title>model.rs: 6 runtime, 4 test/helper functions</title><rect x="874.5" y="173.9" width="68.5" height="55.8" fill="#4d5257" stroke="#16191c"/>
+<rect x="874.5" y="196.2" width="68.5" height="33.5" fill="#3fa34d" stroke="#16191c"/>
+<text x="877.5" y="185.9" font-size="9" fill="#e6e8ea">model.rs</text>
 </g>
-<g><title>texture.rs: 5 runtime, 4 test/helper functions</title><rect x="943.1" y="173.1" width="53.9" height="64.0" fill="#4d5257" stroke="#16191c"/>
-<rect x="943.1" y="201.5" width="53.9" height="35.6" fill="#3fa34d" stroke="#16191c"/>
+<g><title>props.rs: 8 runtime, 1 test/helper functions</title><rect x="874.5" y="229.7" width="68.5" height="50.2" fill="#4d5257" stroke="#16191c"/>
+<rect x="874.5" y="235.3" width="68.5" height="44.6" fill="#3fa34d" stroke="#16191c"/>
+<text x="877.5" y="241.7" font-size="9" fill="#e6e8ea">props.rs</text>
 </g>
-<g><title>world.rs: 4 runtime, 2 test/helper functions</title><rect x="943.1" y="237.1" width="53.9" height="42.7" fill="#4d5257" stroke="#16191c"/>
-<rect x="943.1" y="251.4" width="53.9" height="28.5" fill="#3fa34d" stroke="#16191c"/>
-<text x="946.1" y="249.1" font-size="9" fill="#e6e8ea">world.rs</text>
+<g><title>texture.rs: 5 runtime, 4 test/helper functions</title><rect x="943.0" y="173.9" width="54.0" height="63.6" fill="#4d5257" stroke="#16191c"/>
+<rect x="943.0" y="202.1" width="54.0" height="35.3" fill="#3fa34d" stroke="#16191c"/>
 </g>
-<rect x="766.1" y="26.0" width="231.9" height="254.8" fill="none" stroke="#e6e8ea"/>
-<text x="770.1" y="38.0" font-size="11" fill="#e6e8ea">World and rendering (113)</text>
-<g><title>vehicle.rs: 94 runtime, 9 test/helper functions</title><rect x="533.5" y="297.8" width="211.2" height="188.0" fill="#4d5257" stroke="#16191c"/>
-<rect x="533.5" y="314.3" width="211.2" height="171.6" fill="#3fa34d" stroke="#16191c"/>
-<text x="536.5" y="309.8" font-size="9" fill="#e6e8ea">vehicle.rs</text>
+<g><title>world.rs: 4 runtime, 2 test/helper functions</title><rect x="943.0" y="237.5" width="54.0" height="42.4" fill="#4d5257" stroke="#16191c"/>
+<rect x="943.0" y="251.6" width="54.0" height="28.3" fill="#3fa34d" stroke="#16191c"/>
+<text x="946.0" y="249.5" font-size="9" fill="#e6e8ea">world.rs</text>
 </g>
-<g><title>traffic.rs: 10 runtime, 13 test/helper functions</title><rect x="533.5" y="485.8" width="124.6" height="71.2" fill="#4d5257" stroke="#16191c"/>
-<rect x="533.5" y="526.1" width="124.6" height="30.9" fill="#3fa34d" stroke="#16191c"/>
-<text x="536.5" y="497.8" font-size="9" fill="#e6e8ea">traffic.rs</text>
+<rect x="765.4" y="26.0" width="232.6" height="254.9" fill="none" stroke="#e6e8ea"/>
+<text x="769.4" y="38.0" font-size="11" fill="#e6e8ea">World and rendering (114)</text>
+<g><title>weapons.rs: 119 runtime, 12 test/helper functions</title><rect x="532.2" y="297.9" width="212.0" height="237.4" fill="#4d5257" stroke="#16191c"/>
+<rect x="532.2" y="319.6" width="212.0" height="215.6" fill="#3fa34d" stroke="#16191c"/>
+<text x="535.2" y="309.9" font-size="9" fill="#e6e8ea">weapons.rs</text>
 </g>
-<g><title>handling.rs: 12 runtime, 4 test/helper functions</title><rect x="658.0" y="485.8" width="86.7" height="71.2" fill="#4d5257" stroke="#16191c"/>
-<rect x="658.0" y="503.6" width="86.7" height="53.4" fill="#3fa34d" stroke="#16191c"/>
-<text x="661.0" y="497.8" font-size="9" fill="#e6e8ea">handling.rs</text>
+<g><title>explosions.rs: 10 runtime, 2 test/helper functions</title><rect x="532.2" y="535.3" width="212.0" height="21.7" fill="#4d5257" stroke="#16191c"/>
+<rect x="532.2" y="538.9" width="212.0" height="18.1" fill="#3fa34d" stroke="#16191c"/>
+<text x="535.2" y="547.3" font-size="9" fill="#e6e8ea">explosions.rs</text>
 </g>
-<rect x="532.5" y="280.8" width="213.2" height="277.2" fill="none" stroke="#e6e8ea"/>
-<text x="536.5" y="292.8" font-size="11" fill="#e6e8ea">Vehicles (116)</text>
-<g><title>gamepad.rs: 12 runtime, 4 test/helper functions</title><rect x="746.7" y="297.8" width="76.4" height="76.5" fill="#4d5257" stroke="#16191c"/>
-<rect x="746.7" y="317.0" width="76.4" height="57.4" fill="#3fa34d" stroke="#16191c"/>
-<text x="749.7" y="309.8" font-size="9" fill="#e6e8ea">gamepad.rs</text>
+<rect x="531.2" y="280.9" width="214.0" height="277.1" fill="none" stroke="#e6e8ea"/>
+<text x="535.2" y="292.9" font-size="11" fill="#e6e8ea">Combat (129)</text>
+<g><title>gamepad.rs: 12 runtime, 4 test/helper functions</title><rect x="746.1" y="297.9" width="75.8" height="76.9" fill="#4d5257" stroke="#16191c"/>
+<rect x="746.1" y="317.1" width="75.8" height="57.7" fill="#3fa34d" stroke="#16191c"/>
+<text x="749.1" y="309.9" font-size="9" fill="#e6e8ea">gamepad.rs</text>
 </g>
-<g><title>car_camera.rs: 6 runtime, 7 test/helper functions</title><rect x="746.7" y="374.4" width="76.4" height="62.2" fill="#4d5257" stroke="#16191c"/>
-<rect x="746.7" y="407.9" width="76.4" height="28.7" fill="#3fa34d" stroke="#16191c"/>
+<g><title>car_camera.rs: 6 runtime, 7 test/helper functions</title><rect x="746.1" y="374.8" width="75.8" height="62.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="746.1" y="408.5" width="75.8" height="28.8" fill="#3fa34d" stroke="#16191c"/>
 </g>
-<g><title>overlays.rs: 8 runtime, 2 test/helper functions</title><rect x="823.1" y="297.8" width="50.1" height="73.0" fill="#4d5257" stroke="#16191c"/>
-<rect x="823.1" y="312.4" width="50.1" height="58.4" fill="#3fa34d" stroke="#16191c"/>
+<g><title>overlays.rs: 8 runtime, 2 test/helper functions</title><rect x="821.9" y="297.9" width="49.7" height="73.4" fill="#4d5257" stroke="#16191c"/>
+<rect x="821.9" y="312.6" width="49.7" height="58.7" fill="#3fa34d" stroke="#16191c"/>
 </g>
-<g><title>iso.rs: 8 runtime, 1 test/helper functions</title><rect x="823.1" y="370.8" width="50.1" height="65.7" fill="#4d5257" stroke="#16191c"/>
-<rect x="823.1" y="378.1" width="50.1" height="58.4" fill="#3fa34d" stroke="#16191c"/>
-<text x="826.1" y="382.8" font-size="9" fill="#e6e8ea">iso.rs</text>
+<g><title>iso.rs: 8 runtime, 1 test/helper functions</title><rect x="821.9" y="371.3" width="49.7" height="66.0" fill="#4d5257" stroke="#16191c"/>
+<rect x="821.9" y="378.6" width="49.7" height="58.7" fill="#3fa34d" stroke="#16191c"/>
+<text x="824.9" y="383.3" font-size="9" fill="#e6e8ea">iso.rs</text>
 </g>
-<g><title>pak.rs: 4 runtime, 4 test/helper functions</title><rect x="873.2" y="297.8" width="61.9" height="47.2" fill="#4d5257" stroke="#16191c"/>
-<rect x="873.2" y="321.4" width="61.9" height="23.6" fill="#3fa34d" stroke="#16191c"/>
-<text x="876.2" y="309.8" font-size="9" fill="#e6e8ea">pak.rs</text>
+<g><title>pak.rs: 4 runtime, 4 test/helper functions</title><rect x="871.6" y="297.9" width="62.7" height="46.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="871.6" y="321.1" width="62.7" height="23.2" fill="#3fa34d" stroke="#16191c"/>
+<text x="874.6" y="309.9" font-size="9" fill="#e6e8ea">pak.rs</text>
 </g>
-<g><title>wad.rs: 5 runtime, 3 test/helper functions</title><rect x="935.1" y="297.8" width="61.9" height="47.2" fill="#4d5257" stroke="#16191c"/>
-<rect x="935.1" y="315.5" width="61.9" height="29.5" fill="#3fa34d" stroke="#16191c"/>
-<text x="938.1" y="309.8" font-size="9" fill="#e6e8ea">wad.rs</text>
+<g><title>wad.rs: 5 runtime, 3 test/helper functions</title><rect x="934.3" y="297.9" width="62.7" height="46.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="934.3" y="315.3" width="62.7" height="29.0" fill="#3fa34d" stroke="#16191c"/>
+<text x="937.3" y="309.9" font-size="9" fill="#e6e8ea">wad.rs</text>
 </g>
-<g><title>play.rs: 5 runtime, 1 test/helper functions</title><rect x="873.2" y="345.1" width="47.9" height="45.8" fill="#4d5257" stroke="#16191c"/>
-<rect x="873.2" y="352.7" width="47.9" height="38.1" fill="#3fa34d" stroke="#16191c"/>
-<text x="876.2" y="357.1" font-size="9" fill="#e6e8ea">play.rs</text>
+<g><title>play.rs: 5 runtime, 1 test/helper functions</title><rect x="871.6" y="344.4" width="47.0" height="46.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="871.6" y="352.1" width="47.0" height="38.7" fill="#3fa34d" stroke="#16191c"/>
+<text x="874.6" y="356.4" font-size="9" fill="#e6e8ea">play.rs</text>
 </g>
-<g><title>texture_pack.rs: 5 runtime, 1 test/helper functions</title><rect x="873.2" y="390.8" width="47.9" height="45.8" fill="#4d5257" stroke="#16191c"/>
-<rect x="873.2" y="398.4" width="47.9" height="38.1" fill="#3fa34d" stroke="#16191c"/>
+<g><title>texture_pack.rs: 5 runtime, 1 test/helper functions</title><rect x="871.6" y="390.8" width="47.0" height="46.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="871.6" y="398.6" width="47.0" height="38.7" fill="#3fa34d" stroke="#16191c"/>
 </g>
-<g><title>locale.rs: 4 runtime, 1 test/helper functions</title><rect x="921.1" y="345.1" width="37.9" height="48.2" fill="#4d5257" stroke="#16191c"/>
-<rect x="921.1" y="354.7" width="37.9" height="38.5" fill="#3fa34d" stroke="#16191c"/>
+<g><title>locale.rs: 4 runtime, 1 test/helper functions</title><rect x="918.6" y="344.4" width="39.2" height="46.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="918.6" y="353.7" width="39.2" height="37.2" fill="#3fa34d" stroke="#16191c"/>
 </g>
-<g><title>main.rs: 5 runtime, 0 test/helper functions</title><rect x="959.1" y="345.1" width="37.9" height="48.2" fill="#4d5257" stroke="#16191c"/>
-<rect x="959.1" y="345.1" width="37.9" height="48.2" fill="#3fa34d" stroke="#16191c"/>
+<g><title>main.rs: 5 runtime, 0 test/helper functions</title><rect x="957.8" y="344.4" width="39.2" height="46.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="957.8" y="344.4" width="39.2" height="46.5" fill="#3fa34d" stroke="#16191c"/>
 </g>
-<g><title>psp.rs: 2 runtime, 2 test/helper functions</title><rect x="921.1" y="393.2" width="33.7" height="43.3" fill="#4d5257" stroke="#16191c"/>
-<rect x="921.1" y="414.9" width="33.7" height="21.7" fill="#3fa34d" stroke="#16191c"/>
+<g><title>psp.rs: 2 runtime, 2 test/helper functions</title><rect x="918.6" y="390.8" width="31.4" height="46.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="918.6" y="414.1" width="31.4" height="23.2" fill="#3fa34d" stroke="#16191c"/>
 </g>
-<g><title>shaders.rs: 3 runtime, 0 test/helper functions</title><rect x="954.8" y="393.2" width="42.2" height="26.0" fill="#4d5257" stroke="#16191c"/>
-<rect x="954.8" y="393.2" width="42.2" height="26.0" fill="#3fa34d" stroke="#16191c"/>
+<g><title>shaders.rs: 3 runtime, 0 test/helper functions</title><rect x="950.0" y="390.8" width="23.5" height="46.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="950.0" y="390.8" width="23.5" height="46.5" fill="#3fa34d" stroke="#16191c"/>
 </g>
-<g><title>driving_audit.rs: 1 runtime, 0 test/helper functions</title><rect x="954.8" y="419.2" width="21.1" height="17.3" fill="#4d5257" stroke="#16191c"/>
-<rect x="954.8" y="419.2" width="21.1" height="17.3" fill="#3fa34d" stroke="#16191c"/>
+<g><title>driving_audit.rs: 1 runtime, 1 test/helper functions</title><rect x="973.5" y="390.8" width="23.5" height="31.0" fill="#4d5257" stroke="#16191c"/>
+<rect x="973.5" y="406.3" width="23.5" height="15.5" fill="#3fa34d" stroke="#16191c"/>
 </g>
-<g><title>test_support.rs: 1 runtime, 0 test/helper functions</title><rect x="975.9" y="419.2" width="21.1" height="17.3" fill="#4d5257" stroke="#16191c"/>
-<rect x="975.9" y="419.2" width="21.1" height="17.3" fill="#3fa34d" stroke="#16191c"/>
+<g><title>test_support.rs: 1 runtime, 0 test/helper functions</title><rect x="973.5" y="421.8" width="23.5" height="15.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="973.5" y="421.8" width="23.5" height="15.5" fill="#3fa34d" stroke="#16191c"/>
 </g>
-<rect x="745.7" y="280.8" width="252.3" height="156.7" fill="none" stroke="#e6e8ea"/>
-<text x="749.7" y="292.8" font-size="11" fill="#e6e8ea">Runtime and tools (69)</text>
-<g><title>audio.rs: 46 runtime, 5 test/helper functions</title><rect x="746.7" y="454.6" width="174.9" height="102.4" fill="#4d5257" stroke="#16191c"/>
-<rect x="746.7" y="464.6" width="174.9" height="92.4" fill="#3fa34d" stroke="#16191c"/>
-<text x="749.7" y="466.6" font-size="9" fill="#e6e8ea">audio.rs</text>
+<rect x="745.1" y="280.9" width="252.9" height="157.4" fill="none" stroke="#e6e8ea"/>
+<text x="749.1" y="292.9" font-size="11" fill="#e6e8ea">Runtime and tools (69)</text>
+<g><title>audio.rs: 46 runtime, 5 test/helper functions</title><rect x="746.1" y="455.3" width="175.3" height="101.7" fill="#4d5257" stroke="#16191c"/>
+<rect x="746.1" y="465.3" width="175.3" height="91.7" fill="#3fa34d" stroke="#16191c"/>
+<text x="749.1" y="467.3" font-size="9" fill="#e6e8ea">audio.rs</text>
 </g>
-<g><title>weather.rs: 10 runtime, 2 test/helper functions</title><rect x="921.6" y="454.6" width="75.4" height="55.9" fill="#4d5257" stroke="#16191c"/>
-<rect x="921.6" y="463.9" width="75.4" height="46.6" fill="#3fa34d" stroke="#16191c"/>
-<text x="924.6" y="466.6" font-size="9" fill="#e6e8ea">weather.rs</text>
+<g><title>weather.rs: 10 runtime, 2 test/helper functions</title><rect x="921.4" y="455.3" width="75.6" height="55.5" fill="#4d5257" stroke="#16191c"/>
+<rect x="921.4" y="464.6" width="75.6" height="46.2" fill="#3fa34d" stroke="#16191c"/>
+<text x="924.4" y="467.3" font-size="9" fill="#e6e8ea">weather.rs</text>
 </g>
-<g><title>radio.rs: 8 runtime, 2 test/helper functions</title><rect x="921.6" y="510.4" width="75.4" height="46.6" fill="#4d5257" stroke="#16191c"/>
-<rect x="921.6" y="519.7" width="75.4" height="37.3" fill="#3fa34d" stroke="#16191c"/>
-<text x="924.6" y="522.4" font-size="9" fill="#e6e8ea">radio.rs</text>
+<g><title>radio.rs: 8 runtime, 2 test/helper functions</title><rect x="921.4" y="510.8" width="75.6" height="46.2" fill="#4d5257" stroke="#16191c"/>
+<rect x="921.4" y="520.0" width="75.6" height="37.0" fill="#3fa34d" stroke="#16191c"/>
+<text x="924.4" y="522.8" font-size="9" fill="#e6e8ea">radio.rs</text>
 </g>
-<rect x="745.7" y="437.6" width="252.3" height="120.4" fill="none" stroke="#e6e8ea"/>
-<text x="749.7" y="449.6" font-size="11" fill="#e6e8ea">Audio and weather (64)</text>
+<rect x="745.1" y="438.3" width="252.9" height="119.7" fill="none" stroke="#e6e8ea"/>
+<text x="749.1" y="450.3" font-size="11" fill="#e6e8ea">Audio and weather (64)</text>
 </svg>

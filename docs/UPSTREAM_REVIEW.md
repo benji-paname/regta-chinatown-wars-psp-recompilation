@@ -76,3 +76,22 @@ Mandatory preflight completed after a restricted-network failure. CTW-Native tip
 Kryo.to GPL-3.0-only carcam.cpp at 95adc327 provides the structural reference, with original PSP/DS/APK binaries supplying independent camera constants and the reverse orbit state machine. The immediate reverse-offset flip in the reference port is incomplete compared with all three originals. Located PSP steering assistance in FillInDrivingYoke at 0x089cb264..0x089cb720: cardinal-axis correction, not lane following. Android Act/UpdateSteering identifies the proportional rack path. Implemented native Rust car_camera.rs and player-only assistance in handling.rs; see [driving camera evidence](reference/DRIVING-CAMERAS.md) for exact addresses, provenance and remaining limits.
 
 Final build: 221 Rust tests passed, zero warnings; three Python source-inventory tests passed. Native PSP/DS/mobile captures were inspected; the three runs retain identical vehicle trajectories. This is not a full emulator comparison or a claim of bit-exact original parity. No proprietary inputs were added to Git.
+
+
+## 28 October 2026 - Traffic deadlocks resolved on routes 197->142, 443->428, 626->1439
+
+Mandatory preflight completed via `python tools/maintenance/check_upstreams.py`: CTW-Native checked at `f7a45b3b7aac9bd9f4662d104d276d421c1fca52`, highcmd at `6562163b6f504a1db93e1be5ce580d8cd6f024a7`. Reviewed `aispline.cpp`, `traffic.cpp`, `vehicle.cpp`, and `roads.cpp`.
+
+Root cause analysis and resolution:
+1. `197->142` (ended at 142->215) and `626->1439` (ended at 1439->1467):
+   - Investigated `src/gps.rs:rail_pose` line-intercept construction. On route `197->142`, nearly collinear North-bound links with lateral offset produced a tiny determinant ($|det| = 0.00311 < 0.05$), ballooning the intersection parameter $t$ to 1945.8m and the Bezier curve to 2009.8m North into building collision boxes. On route `626->1439`, an acute outgoing angle produced $t = -10.3m < 0$ (behind start), placing the control point backwards and creating a fishhook reversing loop into a building.
+   - Adapted upstream `aispline.cpp:218-236` (`AISpline::computeIntercept`): intercept requires $|det| > 0.05$, $dot < 0.985$, forward progress along incoming tangent ($t > 0$), and an approach from behind the outgoing link start ($(icpt - P_2) \cdot d_1 \le 0.05$). Invalid intercepts and collinear offset links fall back to midpoint control with cubic Hermite handles along $d_0$ and $d_1$. Route 1 curve length drops from 2009.8m to ~10m (cleanly on road), and Route 3 curves forward smoothly without backwards reversal.
+2. `443->428` (ended on two-way street link 431->432):
+   - Traced real ISO road geometry and collision data. Link 431->432 travels North in lane 0 at $X = 1508.50$. A static decorative cylinder at $(1511.032, 303.694)$ with radius $2.50m$ sits on the sidewalk curb ($0.53m$ from curb edge), overhanging into the road corridor.
+   - In upstream Chinatown Wars (`traffic.cpp:410`, `vehicle.cpp:185, 910`), on-rail traffic (`cWanderRoads`) follows road splines via `placeOnRail` without per-frame static map box/cylinder sweeps because `ai.bin` links are designed corridors. Furthermore, vehicle collision in `vehicle.cpp:156` uses centerline-aligned spheres (`sphereStep_[0] = 0`), and `vehicle.cpp:910` skips decorative prop cylinders. In contrast, our `move_on_rail` used `car_position_for`, which checked `body_clear` against decorative curb cylinders with a 6-sphere envelope that grazed the canopy by 3.7 centimeters, causing false stops on clear roads and trigger-happy off-rail recovery.
+   - Introduced `rail_position_for` and `rail_body_clear`: preserves strict checks for ground elevation, water exclusion, vertical ledges/drop-offs, solid building boxes (`BoxShape`), and mesh geometry (`triangles`), but avoids false stops against decorative sidewalk canopy cylinders.
+
+Validation:
+- `Compiler.ps1 -Test`: **224 passed, 0 failed, 0 warnings**. 1028 native Rust runtime functions, 250 test/helper functions, 49 modules.
+- Three Python inventory-integrity tests pass.
+- `--driving-audit` on `work/Chinatown-Wars-PSP.iso`: 92 vehicles, 166 real-map routes, **zero world obstructions across all 166 routes** (previously 3). Max step: 0.529 units. Route `197->142` travelled 447.1 units, `443->428` travelled 347.7 units (0 stopped ticks), `626->1439` travelled 546.3 units. No push performed.

@@ -3,19 +3,19 @@
   "measurement": "native Rust function inventory; not original-code coverage",
   "pspParityVerified": false,
   "pspCompletionPercent": null,
-  "sourceSha256": "153afecff6eb4cde38048c4789477425946f1190276c6da2320184ccb5b1bb2c",
-  "runtimeFunctions": 1026,
-  "testFunctions": 247,
+  "sourceSha256": "d9b97a97f30fd489495d8c8376a49bb3dbdc03e43cb3a03c65fb601f355f0e70",
+  "runtimeFunctions": 1028,
+  "testFunctions": 250,
   "modules": 49,
   "subsystems": [
     {
       "name": "People",
-      "runtimeFunctions": 93,
+      "runtimeFunctions": 94,
       "testFunctions": 69,
       "classes": [
         {
           "name": "actors.rs",
-          "runtimeFunctions": 44,
+          "runtimeFunctions": 45,
           "testFunctions": 35,
           "relatedClasses": [
             "cAIGang",
@@ -122,7 +122,7 @@
     },
     {
       "name": "World and rendering",
-      "runtimeFunctions": 113,
+      "runtimeFunctions": 114,
       "testFunctions": 29,
       "classes": [
         {
@@ -138,7 +138,7 @@
         },
         {
           "name": "collision.rs",
-          "runtimeFunctions": 27,
+          "runtimeFunctions": 28,
           "testFunctions": 8,
           "relatedClasses": [
             "CCollision",
@@ -194,7 +194,7 @@
     {
       "name": "Runtime and tools",
       "runtimeFunctions": 69,
-      "testFunctions": 26,
+      "testFunctions": 27,
       "classes": [
         {
           "name": "car_camera.rs",
@@ -207,7 +207,7 @@
         {
           "name": "driving_audit.rs",
           "runtimeFunctions": 1,
-          "testFunctions": 0,
+          "testFunctions": 1,
           "relatedClasses": []
         },
         {
@@ -537,7 +537,7 @@
     {
       "name": "Vehicles",
       "runtimeFunctions": 116,
-      "testFunctions": 26,
+      "testFunctions": 28,
       "classes": [
         {
           "name": "handling.rs",
@@ -552,7 +552,7 @@
         {
           "name": "traffic.rs",
           "runtimeFunctions": 10,
-          "testFunctions": 13,
+          "testFunctions": 15,
           "relatedClasses": [
             "cWanderRoads",
             "cAISpline",
@@ -635,7 +635,7 @@
     }
   ],
   "lastLocalValidation": {
-    "passed": 221,
+    "passed": 224,
     "date": "2026-10-28"
   }
 }

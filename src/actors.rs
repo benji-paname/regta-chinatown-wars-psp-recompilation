@@ -432,6 +432,52 @@ pub(crate) fn car_position_for(
     Some(p)
 }
 
+pub(crate) fn rail_position_for(
+    c: &Collision,
+    mut p: [f32; 3],
+    angle: f32,
+    info_id: usize,
+) -> Option<[f32; 3]> {
+    let ground = c.ground(p[0], p[1], p[2]);
+    if ground.water || (ground.z - p[2]).abs() > 0.55 {
+        return None;
+    }
+    p[2] = ground.z;
+    let f = forward(angle);
+    let side = [f[1], -f[0]];
+    let spec = crate::vehicle::spec(info_id);
+    if spec.is_bike() || info_id == 51 {
+        for longitudinal in [-1.65, 0., 1.65] {
+            for lateral in [-0.20, 0.20] {
+                let q = [
+                    p[0] + f[0] * longitudinal + side[0] * lateral,
+                    p[1] + f[1] * longitudinal + side[1] * lateral,
+                    p[2],
+                ];
+                let g = c.ground(q[0], q[1], p[2]);
+                if g.water || (g.z - p[2]).abs() > 0.55 || !c.rail_body_clear(q, 0.55, CAR_HEIGHT) {
+                    return None;
+                }
+            }
+        }
+        return Some(p);
+    }
+    for longitudinal in [-2.55, 0., 2.55] {
+        for lateral in [-0.42, 0.42] {
+            let q = [
+                p[0] + f[0] * longitudinal + side[0] * lateral,
+                p[1] + f[1] * longitudinal + side[1] * lateral,
+                p[2],
+            ];
+            let g = c.ground(q[0], q[1], p[2]);
+            if g.water || (g.z - p[2]).abs() > 0.55 || !c.rail_body_clear(q, 0.8, CAR_HEIGHT) {
+                return None;
+            }
+        }
+    }
+    Some(p)
+}
+
 fn cargen_position(
     c: &Collision,
     p: [f32; 3],

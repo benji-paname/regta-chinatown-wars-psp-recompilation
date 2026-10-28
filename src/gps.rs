@@ -342,17 +342,35 @@ impl Roads {
         let end = std::array::from_fn::<_, 3, _>(|k| q0[k] + d1[k] * entry);
         let det = d0[0] * d1[1] - d0[1] * d1[0];
         let dot = d0[0] * d1[0] + d0[1] * d1[1];
-        // Use the tangent intersection for a quadratic corner. Collinear lanes
-        // with different widths need a smooth bridge too, not a lateral snap.
-        let control: [f32; 3] = if det.abs() > 0.001 {
+        // Grounded adaptation of AISpline::computeIntercept (aispline.cpp:218-236).
+        // A valid corner intercept requires non-parallel links, forward progress along d0,
+        // and approach from behind end along d1. Collinear lanes and invalid intercepts
+        // fallback to midpoint with cubic tangent handles, avoiding runaway curves.
+        let mut valid_corner = false;
+        let mut control = std::array::from_fn(|k| (start[k] + end[k]) * 0.5);
+        if det.abs() > 0.05 && dot < 0.985 {
             let t = ((end[0] - start[0]) * d1[1] - (end[1] - start[1]) * d1[0]) / det;
-            std::array::from_fn(|k| start[k] + d0[k] * t)
-        } else { std::array::from_fn(|k| (start[k] + end[k]) * 0.5) };
+            let max_extent = (exit + entry + 15.).max(len0 + len1);
+            if t > 0.001 && t < max_extent {
+                let icpt = [start[0] + d0[0] * t, start[1] + d0[1] * t];
+                let proj_end = (icpt[0] - end[0]) * d1[0] + (icpt[1] - end[1]) * d1[1];
+                if proj_end <= 0.05 {
+                    control = [icpt[0], icpt[1], (start[2] + end[2]) * 0.5];
+                    valid_corner = true;
+                }
+            }
+        }
         let handle = distance(start, end) / 3.;
-        let c1: [f32; 3] = if det.abs() > 0.001 { std::array::from_fn(|k| start[k] + (control[k] - start[k]) * (2. / 3.)) }
-            else { std::array::from_fn(|k| start[k] + d0[k] * handle) };
-        let c2: [f32; 3] = if det.abs() > 0.001 { std::array::from_fn(|k| end[k] + (control[k] - end[k]) * (2. / 3.)) }
-            else { std::array::from_fn(|k| end[k] - d1[k] * handle) };
+        let c1: [f32; 3] = if valid_corner {
+            std::array::from_fn(|k| start[k] + (control[k] - start[k]) * (2. / 3.))
+        } else {
+            std::array::from_fn(|k| start[k] + d0[k] * handle)
+        };
+        let c2: [f32; 3] = if valid_corner {
+            std::array::from_fn(|k| end[k] + (control[k] - end[k]) * (2. / 3.))
+        } else {
+            std::array::from_fn(|k| end[k] - d1[k] * handle)
+        };
         let curve = |t: f32| -> [f32; 3] {
             let u = 1. - t;
             std::array::from_fn(|k| u*u*u*start[k] + 3.*u*u*t*c1[k] + 3.*u*t*t*c2[k] + t*t*t*end[k])

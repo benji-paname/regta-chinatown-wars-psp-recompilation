@@ -47,7 +47,7 @@ pub fn run(disc: &mut Disc, pak: &Pak, wad: &Wad, output: &Path) -> Result<()> {
         let (nl,nw) = roads.convert_lane(a,b,next,lane,index as u32);
         let along = distance(roads.nodes[a].p,roads.nodes[b].p)*0.25;
         let (p,angle,_,_) = roads.rail_pose(a,b,next,along,lane,wobble,nl,nw);
-        let Some(p) = crate::actors::car_position_for(&collision,p,angle,0) else { continue; };
+        let Some(p) = crate::actors::rail_position_for(&collision,p,angle,0) else { continue; };
         let mut car = make_vehicle(p,angle,b,a,0,0,false,false);
         car.lane=lane;car.wobble=wobble;car.next_target=next;car.next_lane=nl;car.next_wobble=nw;car.rail_dist=along;
         let mut travelled = 0.;
@@ -73,4 +73,79 @@ pub fn run(disc: &mut Disc, pak: &Pak, wad: &Wad, output: &Path) -> Result<()> {
     println!("Driving audit: {} vehicles, {} real-map routes, {} failures. {}",traces.len(),routes.len(),failures.len(),output.join("driving-audit.json").display());
     if !failures.is_empty() { return Err("Driving audit reported invalid trajectories".into()); }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::path::Path;
+
+    #[test]
+    fn real_map_repaired_routes_have_zero_world_obstructions() {
+        let mut iso_path = Path::new("work/Chinatown-Wars-PSP.iso");
+        let alt = Path::new("../../work/Chinatown-Wars-PSP.iso");
+        if !iso_path.exists() && alt.exists() {
+            iso_path = alt;
+        }
+        if !iso_path.exists() {
+            return;
+        }
+        let mut disc = Disc::open(iso_path).unwrap();
+        let wad = Wad::open(&mut disc).unwrap();
+        let roads = Roads::parse(&wad.read(&mut disc, crate::wad::name_hash("ai.bin")).unwrap()).unwrap();
+        let collision = Collision::parse(&wad.read(&mut disc, crate::wad::name_hash("world.bin")).unwrap()).unwrap();
+
+        // 1. Collinear junction with lateral shift (197 -> 142 -> 215)
+        {
+            let (lane, wobble) = roads.select_lane(197, 142, 0);
+            let next = roads.next_node(197, 142, lane, 0).unwrap_or(142);
+            let (nl, nw) = roads.convert_lane(197, 142, next, lane, 0);
+            let along = distance(roads.nodes[197].p, roads.nodes[142].p) * 0.25;
+            let (p, angle, _, _) = roads.rail_pose(197, 142, next, along, lane, wobble, nl, nw);
+            let mut car = make_vehicle(p, angle, 142, 197, 0, 0, false, false);
+            car.lane = lane; car.wobble = wobble; car.next_target = next; car.next_lane = nl; car.next_wobble = nw; car.rail_dist = along;
+            let mut lights = crate::vehicle::TrafficLightManager::new();
+            for tick in 0..1200 {
+                crate::traffic::step_rail(&mut car, &roads, &collision, &lights, f32::INFINITY, false, 1. / 30., tick);
+                lights.update(1. / 30.);
+                assert!(car.on_rail, "Route 197->142 lost rail at tick {}", tick);
+            }
+            assert!(car.p[1] > 1350., "Route 197->142 progressed past node 142");
+        }
+
+        // 2. Curb decorative cylinder bypass on two-way street (443 -> 428 -> ... -> 431 -> 432)
+        {
+            let (lane, wobble) = roads.select_lane(443, 428, 19);
+            let next = roads.next_node(443, 428, lane, 19).unwrap_or(428);
+            let (nl, nw) = roads.convert_lane(443, 428, next, lane, 19);
+            let along = distance(roads.nodes[443].p, roads.nodes[428].p) * 0.25;
+            let (p, angle, _, _) = roads.rail_pose(443, 428, next, along, lane, wobble, nl, nw);
+            let mut car = make_vehicle(p, angle, 428, 443, 0, 0, false, false);
+            car.lane = lane; car.wobble = wobble; car.next_target = next; car.next_lane = nl; car.next_wobble = nw; car.rail_dist = along;
+            let mut lights = crate::vehicle::TrafficLightManager::new();
+            for tick in 0..1800 {
+                crate::traffic::step_rail(&mut car, &roads, &collision, &lights, f32::INFINITY, false, 1. / 30., 19 + tick);
+                lights.update(1. / 30.);
+                assert!(car.on_rail, "Route 443->428 lost rail at tick {}", tick);
+            }
+        }
+
+        // 3. Acute angle with negative parameter intercept (626 -> 1439 -> 1467)
+        {
+            let (lane, wobble) = roads.select_lane(626, 1439, 0);
+            let next = roads.next_node(626, 1439, lane, 0).unwrap_or(1439);
+            let (nl, nw) = roads.convert_lane(626, 1439, next, lane, 0);
+            let along = distance(roads.nodes[626].p, roads.nodes[1439].p) * 0.25;
+            let (p, angle, _, _) = roads.rail_pose(626, 1439, next, along, lane, wobble, nl, nw);
+            let mut car = make_vehicle(p, angle, 1439, 626, 0, 0, false, false);
+            car.lane = lane; car.wobble = wobble; car.next_target = next; car.next_lane = nl; car.next_wobble = nw; car.rail_dist = along;
+            let mut lights = crate::vehicle::TrafficLightManager::new();
+            for tick in 0..1200 {
+                crate::traffic::step_rail(&mut car, &roads, &collision, &lights, f32::INFINITY, false, 1. / 30., tick);
+                lights.update(1. / 30.);
+                assert!(car.on_rail, "Route 626->1439 lost rail at tick {}", tick);
+            }
+            assert!(car.p[0] < -1030., "Route 626->1439 progressed West past node 1439");
+        }
+    }
 }

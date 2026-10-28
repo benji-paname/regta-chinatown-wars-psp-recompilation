@@ -1,4 +1,52 @@
-# ACTIVE HANDOFF - vehicle cameras and steering assistance
+# ACTIVE HANDOFF - traffic deadlock resolution and junction curve repair
+
+Updated: 2026-10-28 01:30 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini / other models can resume directly from here.
+
+## Resume in 10 seconds
+
+```powershell
+Get-Content outputs/CTW-Rust/AI_HANDOFF_GUIDE.md -TotalCount 75
+Get-Content target/validation/build-report.json
+& ./target/release/ctw-rust.exe --iso work/Chinatown-Wars-PSP.iso --driving-audit --output target/driving-audit
+```
+
+Before a new task, run the mandatory upstream check, review relevant changes and record the conclusion. To rebuild and regenerate treemaps/dashboards: `powershell -ExecutionPolicy Bypass -File .\Compiler.ps1 -Test`.
+
+## Exact delivered state
+
+- Baseline: `2c96a5a`. Resolves the 3 remaining real-map traffic deadlocks on links `197->142`, `443->428`, `626->1439` documented in `docs/GEMINI_DRIVING_NEXT.md`.
+- Build report: **2026-10-28T01:27:24.6767871+01:00**, **224 passed, 0 failed, 0 ignored, 0 warnings** under `-D warnings`. Log: `target/validation/build-report.json`. Three Python progress-inventory tests pass. Pure native Rust treemap, site, README and SVG badges synchronized: 1028 runtime functions, 250 test/helper functions, 49 modules.
+- Delivered executable: `outputs/CTW-Rust/CTW-Rust.exe`; SHA-256 `9b142f579774619d40b3d1b98675f826ee38d83d5a6b67a4519d5dd85e43e769`, verified against build report. No GitHub push performed.
+- Upstream review verified: CTW-Native `f7a45b3b7aac9bd9f4662d104d276d421c1fca52`, highcmd `6562163b6f504a1db93e1be5ce580d8cd6f024a7`. Documented in `docs/UPSTREAM_REVIEW.md` and `docs/upstream-status.json`.
+- Full real-ISO audit (`--driving-audit` on `work/Chinatown-Wars-PSP.iso`): **0 world obstructions across all 166 sampled map routes** (previously 3).
+  - Route `197 -> 142`: travelled 447.1 units cleanly (0 stopped ticks).
+  - Route `443 -> 428`: travelled 347.7 units cleanly (0 stopped ticks).
+  - Route `626 -> 1439`: travelled 546.3 units cleanly (0 stopped ticks).
+
+## Root causes and implementation
+
+1. **Junction curve intercept runaway & fishhook loop (`src/gps.rs` `rail_pose`)**:
+   - Upstream reference: `references/ctw-native/port/game/aispline.cpp:218-236` (`AISpline::computeIntercept`).
+   - Root cause on `197->142`: collinear North-heading links laterally offset by 6.0m had $|det| = 0.00311 < 0.05$. The unbounded line intercept projected 1945.8m North ($t = 1945.8$), ballooning curve length to 2009.8m into building geometry.
+   - Root cause on `626->1439`: acute link angle produced $t = -10.3 < 0$, placing the control point behind the vehicle and forming a backwards fishhook reversing into buildings.
+   - Fix: checks $|det| > 0.05$, $dot < 0.985$, $t > 0.001$, and forward approach towards $end$ ($(icpt - P_2) \cdot d_1 \le 0.05$). Falls back to midpoint control with cubic Hermite tangent handles along link directions for collinear offset corridors and acute turns.
+2. **Sidewalk tree canopy false stops (`src/collision.rs`, `src/actors.rs`, `src/traffic.rs`)**:
+   - Upstream reference: `references/ctw-native/port/game/traffic.cpp:410` (`Traffic::wander`), `vehicle.cpp:156, 331-342, 910`.
+   - Root cause on `443->428`: link 431->432 passes a decorative tree cylinder in `world.bin` section 1 at $(1511.032, 303.694)$ with radius 2.50m. In `world.bin`, decorative curb cylinders have `pad != 0`. The multi-sphere vehicle envelope grazed this canopy cylinder by 3.7 cm on the curb, falsely treating it as a building obstruction and causing the vehicle to halt and detach from rails.
+   - Fix: added `rail_body_clear(p, radius, height)` in `collision.rs` which checks solid building boxes and mesh walls while ignoring sidewalk curb cylinders. Added `rail_position_for` in `actors.rs` (snapping ground elevation, water exclusion, drop-offs, and building clearance). `initialize_rail` and `move_on_rail` in `traffic.rs` now use `rail_position_for`.
+3. **Tests**:
+   - Unit tests: `collinear_lateral_shift_and_acute_angle_curves_remain_bounded` and `curb_decorative_cylinder_does_not_block_rail_travel` in `src/traffic.rs`.
+   - Real-map regression: `real_map_repaired_routes_have_zero_world_obstructions` in `src/driving_audit.rs`.
+
+## Validation and honest limits
+
+- 224 Rust tests passed, 0 warnings.
+- No collision geometry was deleted or bypassed for player/free vehicles; no boat nodes ($z = -7$) used for land cars; no vehicle teleportation.
+- FollowCarCam2, PSP steering assistance, and driving profiles (PSP/DS/Android) from commit `2c96a5a` are fully preserved.
+
+---
+
+# HISTORICAL CHECKPOINT - vehicle cameras and steering assistance
 
 Updated: 2026-10-28 00:20 Europe/Paris. Implemented, compiled and validated locally. This section supersedes the historical checkpoints below. Gemini can resume directly from here.
 

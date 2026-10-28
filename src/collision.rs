@@ -262,6 +262,35 @@ impl Collision {
         }
         true
     }
+    /// Road rail clearance check: validates against solid building boxes and mesh walls,
+    /// while avoiding false stops on sidewalk tree canopies and decorative curb cylinders.
+    pub fn rail_body_clear(&self, p: [f32; 3], radius: f32, height: f32) -> bool {
+        if !p.iter().all(|v| v.is_finite())
+            || Self::cell_xy(p[0] - radius, p[1] - radius).is_none()
+            || Self::cell_xy(p[0] + radius, p[1] + radius).is_none()
+        {
+            return false;
+        }
+        for cell in self.nearby_cells(p[0], p[1]) {
+            for b in &cell.boxes {
+                if p[2] + 0.015 >= b.c[2] + b.h[2] || p[2] + height - 0.015 <= b.c[2] - b.h[2] {
+                    continue;
+                }
+                let q = b.local(p[0], p[1]);
+                let dx = q[0] - q[0].clamp(-b.h[0], b.h[0]);
+                let dy = q[1] - q[1].clamp(-b.h[1], b.h[1]);
+                if dx * dx + dy * dy < (radius - 0.002).powi(2) {
+                    return false;
+                }
+            }
+            for t in &cell.triangles {
+                if triangle_overlaps_body(t, p, radius, height) {
+                    return false;
+                }
+            }
+        }
+        true
+    }
     /// Segment versus oriented boxes expanded by radius. Conservative at rounded corners.
     pub fn trace_boxes(
         &self,
