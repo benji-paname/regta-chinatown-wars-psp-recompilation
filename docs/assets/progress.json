@@ -3,10 +3,10 @@
   "measurement": "native Rust function inventory; not original-code coverage",
   "pspParityVerified": false,
   "pspCompletionPercent": null,
-  "sourceSha256": "0f789fb011237804d2ee0cc9106eb3004c70847df8b453e8ab2d2e53f9976224",
+  "sourceSha256": "358cfca01108a73d25ac781c9648cbfa611ed733e0ae2ed5c866f1b4f7f3c690",
   "runtimeFunctions": 1044,
-  "testFunctions": 266,
-  "modules": 49,
+  "testFunctions": 271,
+  "modules": 50,
   "subsystems": [
     {
       "name": "People",
@@ -194,7 +194,7 @@
     {
       "name": "Runtime and tools",
       "runtimeFunctions": 69,
-      "testFunctions": 27,
+      "testFunctions": 32,
       "classes": [
         {
           "name": "car_camera.rs",
@@ -257,6 +257,14 @@
           "runtimeFunctions": 2,
           "testFunctions": 2,
           "relatedClasses": []
+        },
+        {
+          "name": "psp_prop_physics.rs",
+          "runtimeFunctions": 0,
+          "testFunctions": 5,
+          "relatedClasses": [
+            "cPhysical"
+          ]
         },
         {
           "name": "shaders.rs",
@@ -635,7 +643,7 @@
     }
   ],
   "lastLocalValidation": {
-    "passed": 238,
+    "passed": 241,
     "date": "2026-10-29"
   }
 }

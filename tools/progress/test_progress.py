@@ -6,6 +6,9 @@ import progress
 
 
 class InventoryTests(unittest.TestCase):
+    def test_file_level_test_gate_keeps_staged_physics_out_of_runtime_count(self):
+        self.assertEqual(progress.source_functions('#![cfg(test)]\nfn kernel() {}\n#[test] fn check() {}'), (0, 2))
+
     def test_comments_strings_and_trait_declarations_are_not_functions(self):
         source = '''// fn invented() {}
         /* nested /* fn nope() {} */ comment */

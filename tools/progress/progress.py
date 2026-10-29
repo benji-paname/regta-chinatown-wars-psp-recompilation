@@ -48,6 +48,7 @@ RUST_MODULE_MAP = {
     'collision.rs': ['CCollision', 'CCollisionBox', 'CCollisionMesh'],
     'world.rs': ['WorldImpl', 'cWorldSector', 'Area', 'cPhysicalIntegrator', 'cPhysical'],
     'props.rs': ['cDynamicProp', 'cZoneManager'],
+    'psp_prop_physics.rs': ['cPhysical'],
     'pavement.rs': ['cLocalAreaKnowledge', 'cRoadNetwork'],
     'ped_paths.rs': ['cPedRoute', 'cPedPath'],
     'hud.rs': ['Gui', 'HUDText', 'cMiniHud', 'cInWaterHelpText'],
@@ -182,6 +183,8 @@ def source_functions(text):
                     break
         return definitions
     all_functions = count(code)
+    if re.search(r'#!\s*\[\s*cfg\s*\(\s*test\s*\)\s*\]', code):
+        return 0, all_functions
     chars = list(code)
     for m in re.finditer(r'#\s*\[\s*(?:cfg\s*\(\s*test\s*\)|test)\s*\]', code):
         opening = code.find('{', m.end())

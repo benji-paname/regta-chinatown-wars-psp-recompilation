@@ -1,3 +1,21 @@
+# ACTIVE HANDOFF — PSP force core verified against original executable
+
+Updated 2026-10-29T01:32, Europe/Paris. Goal remains 100% PSP prop physics, NOT completed. No new runtime prop solver enabled yet: the verified force core is test-only pending coupled position/quaternion/contact/stop port.
+
+Native implementation: src/psp_prop_physics.rs; offline original-code comparison: tools/research/psp_prop_oracle.py. 512 deterministic cases execute original Europe 0x089b5960 and match Rust output words exactly. Unicorn is installed in ignored work/physics-oracle-deps, never linked to Rust. Private target/psp-prop-oracle.json holds synthetic state pairs. Public tests without this file do not run the private comparison. See docs/reference/PSP-PROP-PHYSICS.md for scope and encoding accommodation.
+
+Independent PSP evidence now confirms gravity -0x1d000 at initializer 0x089bf620 and speed-cap conversion 0xc8000 -> 0x59524 at 0x088a0078. Inverse inertia matrix is packed signed i16; preserve this, Q12 shifts, wrapping additions, zero-mass/disabled gates and separate accumulator consumption.
+
+Validation: 241 Rust tests passed, 0 warnings; four Python inventory tests passed. Report timestamp 2026-10-29T01:31:34.2128995+01:00; delivered SHA256 5831764e7a1e14bceec0faa9f098e28cc418a46b449f172fc1c807bf62e01071. Gameplay unchanged; avoid presenting this checkpoint as a playable 100% solver. Generator fix prevents test-only staged core being counted as delivered runtime. Status regenerated.
+
+Resume commands:
+python tools/research/psp_prop_oracle.py
+powershell -ExecutionPolicy Bypass -File ./Compiler.ps1 -Test
+
+First run the mandatory upstream review for the next task. Then recover the original position/quaternion integration, contact point forces and FullCollision/FullSprings, expand the oracle to those routines, and only enable the coupled solver after integration/settling tests. Keep the current playable runtime; do not mix the verified damping/core with the old fixed-restitution bounce. No push performed.
+
+---
+
 # ACTIVE HANDOFF — exact PSP prop physics recovery (incomplete)
 
 Updated 2026-10-29T01:21, Europe/Paris. Benjamin explicitly requires 100% PSP physics; do not substitute visual tuning or declare that goal achieved.

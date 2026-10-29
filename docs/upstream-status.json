@@ -1,6 +1,6 @@
 {
-  "checked_at": "2026-10-29T00:15:48+00:00",
-  "task": "Recover exact PSP prop routines",
+  "checked_at": "2026-10-29T00:25:33+00:00",
+  "task": "Port coupled PSP prop physics",
   "repositories": [
     {
       "id": "ctw-native",

@@ -25,6 +25,8 @@ mod ped_paths;
 mod play;
 mod police;
 mod props;
+#[cfg(test)]
+mod psp_prop_physics;
 mod psp;
 mod radar;
 mod radio;

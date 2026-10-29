@@ -227,3 +227,7 @@ Both upstreams checked successfully after restricted-network failure: f7a45b3b7a
 
 ## 29 October — strict PSP prop fidelity
 Both mirrors checked successfully after restricted-network failure; unchanged f7a45b3b7aac9bd9f4662d104d276d421c1fca52 / 6562163b6f504a1db93e1be5ce580d8cd6f024a7. Reviewed rigidbody.cpp RecalcKinematics/integrateStep/damp and highcmd README USA/HLE boundaries. Located independent Europe PSP update/damping code; its angular gates and velocity-cap conversion require more research. Added test-only signed Q12 transcription. Rejected isolated runtime damping replacement after settling regression. No automatic upstream integration. See reference/PSP-PROP-PHYSICS.md.
+
+
+## 29 October — native force core with original-code differential checks
+Upstream preflight succeeded after restricted attempt. Tips remain f7a45b3b7aac9bd9f4662d104d276d421c1fca52 and 6562163b6f504a1db93e1be5ce580d8cd6f024a7. Reviewed rigidbody.h/cpp force integration, inertia, FullCollision and FullSprings, plus highcmd platform boundaries. Independent Europe ELF inspection confirmed the gravity initializer and speed-cap conversion; 512 original kinematics executions match staged native Rust. No runtime CPU emulator or automatic merge. Coupled contact solver remains outstanding.
