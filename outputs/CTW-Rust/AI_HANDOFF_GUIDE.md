@@ -1,3 +1,16 @@
+# ACTIVE HANDOFF — exact PSP prop physics recovery (incomplete)
+
+Updated 2026-10-29T01:21, Europe/Paris. Benjamin explicitly requires 100% PSP physics; do not substitute visual tuning or declare that goal achieved.
+
+Read docs/reference/PSP-PROP-PHYSICS.md first. Located Europe PSP damping/update and candidate kinematics routines; test-only signed Q12 multiplication transcription added. Runtime replacement was tested and REJECTED because mixing it with the old bounce integrator broke settling. Ordinary gameplay physics remains the 8dee4a1 repair; no new exact solver is delivered.
+
+Final validation: 238 tests passed, 0 failed, 0 warnings at 2026-10-29T01:20:13.7794119+01:00. Delivered executable SHA256 2b9671890cc717be5503f7526bdbc15bac8a5e407474be232fe2d00084cbe754. Status visuals regenerated from native Rust. Build log target/psp-prop-recovery.log. Full goal still unfinished. No push.
+
+Next exact command: python work/psp-analysis/inspect_mips.py 089b5960:400 088a0078:180
+Then recover the complete coupled PSP integration/contact/stop path and establish differential original-state fixtures before enabling it. Read the evidence document for unresolved flags, gravity vector and speed-cap conversion. Run mandated upstream check before new tasks. Preserve current playable driving/cameras/props and private data.
+
+---
+
 # ACTIVE HANDOFF — prop contact repair from paired videos
 
 Updated 2026-10-28T23:32, Europe/Paris. Read docs/PROP_CONTACT_REPAIR.md before continuing. Earlier statements of fully authentic prop physics below are NOT supported; this checkpoint supersedes them.

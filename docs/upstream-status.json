@@ -1,6 +1,6 @@
 {
-  "checked_at": "2026-10-28T22:18:27+00:00",
-  "task": "Repair prop destruction against paired original PSP recordings",
+  "checked_at": "2026-10-29T00:15:48+00:00",
+  "task": "Recover exact PSP prop routines",
   "repositories": [
     {
       "id": "ctw-native",

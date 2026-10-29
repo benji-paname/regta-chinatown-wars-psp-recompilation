@@ -11,6 +11,14 @@ use crate::{
 };
 use std::collections::HashMap;
 
+/// PSP Europe 0x088a2fb8..0x088a2ff0 calls 0x08aa3dd8 on
+/// all three signed Q12 velocity components. Preserve the arithmetic shift:
+/// negative products round down, not towards zero.
+#[cfg(test)]
+fn psp_damp_velocity(velocity: [i32; 3]) -> [i32; 3] {
+    velocity.map(|v| ((v as i64 * 0xf3c) >> 12) as i32)
+}
+
 #[allow(dead_code)]
 #[derive(Clone, Debug, PartialEq)]
 pub enum PropShape {
@@ -1152,6 +1160,7 @@ impl PropsManager {
                 prop.p[1] += prop.v[1] * dt;
                 prop.p[2] += prop.v[2] * dt;
                 prop.v[2] -= 29.0 * dt; // gravity
+                // Host approximation pending the complete PSP contact/integration port.
                 prop.v[0] *= (0xf3c as f32 / 4096.).powf(dt * 30.);
                 prop.v[1] *= (0xf3c as f32 / 4096.).powf(dt * 30.);
 
@@ -1191,6 +1200,14 @@ mod tests {
     use crate::actors::make_vehicle;
 
     #[test]
+    fn psp_vector_multiply_preserves_signed_shift_and_vertical_component() {
+        assert_eq!(psp_damp_velocity([4096, -4096, 8192]), [3900, -3900, 7800]);
+        assert_eq!(psp_damp_velocity([1, -1, -4097]), [0, -1, -3901]);
+        assert_eq!(psp_damp_velocity([i32::MAX, i32::MIN, 0]),
+            [2044723199, -2044723200, 0]);
+    }
+
+    #[test]
     fn contact_respects_threshold_height_and_separation() {
         for (speed, z, threshold) in [(2., 0., 100.), (20., 10., 1.), (-20., 0., 1.)] {
             let mut manager = PropsManager::new();
@@ -1225,7 +1242,7 @@ mod tests {
         assert_eq!(particles.len(), 7, "No paper conveyor belt at each ground contact");
         let p = &manager.active[0];
         assert!(p.p[2]+p.centre[2]-p.support_height() >= p.base_z-0.0001);
-        assert!(p.sleep);
+        assert!(p.sleep, "{p:?}");
     }
 
     #[test]
