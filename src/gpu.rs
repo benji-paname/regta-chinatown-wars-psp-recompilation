@@ -73,7 +73,10 @@ pub struct Renderer {
     radar_origin: [f32; 2],
     radar_size: [f32; 2],
     radar_sprites: Vec<crate::radar::Sprite>,
+    always_texture: u32,
+    always_sprites: Vec<crate::radar::Sprite>,
     hud_texture: u32,
+    weapon_sprites: Vec<crate::radar::Sprite>,
     radar_texture: u32,
     font_texture: u32,
     font_size: [f32; 2],
@@ -107,7 +110,10 @@ impl Renderer {
             radar_origin: [0.; 2],
             radar_size: [1.; 2],
             radar_sprites: Vec::new(),
+            always_texture: 0,
+            always_sprites: Vec::new(),
             hud_texture: 0,
+            weapon_sprites: Vec::new(),
             radar_texture: 0,
             font_texture: 0,
             font_size: [512.; 2],
@@ -164,14 +170,15 @@ impl Renderer {
             glBlendFunc(0x0302, 0x0303);
             glTexEnvi(0x2300, 0x2200, 0x2100);
             glClearColor(0.19, 0.29, 0.34, 1.);
-            if std::env::var_os("CTW_DISABLE_SHADERS").as_deref() == Some(std::ffi::OsStr::new("1"))
+            if std::env::var_os("CTW_LEGACY_GRADE").as_deref() != Some(std::ffi::OsStr::new("1"))
+                || std::env::var_os("CTW_DISABLE_SHADERS").as_deref() == Some(std::ffi::OsStr::new("1"))
             {
-                r.shader_status = "Standard rendering / shader pass disabled".into();
+                r.shader_status = "Native rendering / neutral output (PSP lighting incomplete)".into();
             } else {
                 match shaders::Grade::new() {
                     Ok(grade) => {
                         r.grade = Some(grade);
-                        r.shader_status = "GLSL 1.20 / colour grading, contrast, vignette".into();
+                        r.shader_status = "Legacy artistic grade (not PSP reference)".into();
                     }
                     Err(reason) => {
                         r.shader_status = format!("Standard rendering fallback: {reason}");
@@ -228,6 +235,10 @@ impl Renderer {
         self.textures.push(self.terrain_texture);
         self.hud_texture = unsafe { upload_texture(&hud.weapon, false)? };
         self.textures.push(self.hud_texture);
+        self.weapon_sprites = hud.weapon_sprites.clone();
+        self.always_texture = unsafe { upload_texture(&hud.always, false)? };
+        self.textures.push(self.always_texture);
+        self.always_sprites = hud.always_sprites.clone();
         self.radar_texture = unsafe { upload_texture(&hud.radar, false)? };
         unsafe {
             glTexParameteri(0x0de1, 0x2801, 0x2601);
@@ -1997,6 +2008,22 @@ impl Renderer {
                 }
                 glEnd();
             }
+            // Lightning affects the world, never the HUD. The weather timing/intensity
+            // remains a prototype until PSP time-cycle recovery is complete.
+            if let Some(scene) = scene.filter(|s| s.weather.lightning_intensity > 0.) {
+                glDisable(0x0b71);
+                glDisable(0x0de1);
+                glEnable(0x0be2);
+                glMatrixMode(0x1701);
+                glLoadIdentity();
+                glMatrixMode(0x1700);
+                glLoadIdentity();
+                glColor4f(1.,1.,1., (scene.weather.lightning_intensity * 0.45).clamp(0.,1.));
+                glBegin(7);
+                for [x,y] in [[-1.,-1.],[1.,-1.],[1.,1.],[-1.,1.]] { glVertex2f(x,y); }
+                glEnd();
+                glDisable(0x0be2);
+            }
             if let Some(grade) = &mut self.grade {
                 grade.draw(
                     (rect.right - rect.left).max(1),
@@ -2104,105 +2131,6 @@ impl Renderer {
                     2.3,
                     [0.96; 3],
                 );
-                if let Some(scene) = scene {
-                    let cash_str = format!("${}", scene.cash);
-                    self.psp_text(
-                        W as f32 - 180.,
-                        30. + top,
-                        &cash_str,
-                        2.2,
-                        [0.28, 0.88, 0.38],
-                    );
-
-                    // Chinatown Wars authentic Wanted Stars & Cop Takedown Badges HUD
-                    let num_stars = scene.police.stars;
-                    if num_stars > 0 {
-                        let (_stars, takedowns_done, takedowns_req) = scene.police.takedown_progress();
-                        let cooling = scene.police.is_cooling_down();
-                        let flash = scene.police.flash_timer.sin() > 0.0;
-                        let star_y = 54.0 + top;
-                        let star_spacing = 24.0;
-                        let start_x = W as f32 - 180.0;
-
-                        // 1. Draw Golden 5-pointed Wanted Stars
-                        for s_idx in 0..num_stars {
-                            let sx = start_x + (s_idx as f32) * star_spacing;
-                            let star_col = if cooling && flash {
-                                [0.45, 0.45, 0.45, 0.85]
-                            } else {
-                                [1.0, 0.82, 0.08, 1.0]
-                            };
-                            glColor4f(star_col[0], star_col[1], star_col[2], star_col[3]);
-                            glBegin(6);
-                            glVertex2f(sx, star_y);
-                            for pt in 0..=10 {
-                                let a = (pt as f32) * (std::f32::consts::TAU / 10.0) - std::f32::consts::FRAC_PI_2;
-                                let r = if pt % 2 == 0 { 8.5 } else { 3.8 };
-                                glVertex2f(sx + a.cos() * r, star_y + a.sin() * r);
-                            }
-                            glEnd();
-                        }
-
-                        // 2. Draw Chinatown Wars Takedown Cop Badges below stars
-                        let badge_y = star_y + 18.0;
-                        for b_idx in 0..takedowns_req {
-                            let bx = start_x + (b_idx as f32) * 26.0;
-                            let is_crossed = b_idx < takedowns_done;
-                            let is_pulsing = is_crossed && (b_idx + 1 == takedowns_done) && scene.police.recent_takedown_flash > 0.0;
-
-                            // Badge background shield
-                            glColor4f(0.12, 0.18, 0.28, 0.90);
-                            glBegin(7);
-                            glVertex2f(bx - 10.0, badge_y - 7.0);
-                            glVertex2f(bx + 10.0, badge_y - 7.0);
-                            glVertex2f(bx + 10.0, badge_y + 4.0);
-                            glVertex2f(bx - 10.0, badge_y + 4.0);
-                            glEnd();
-                            glBegin(4);
-                            glVertex2f(bx - 10.0, badge_y + 4.0);
-                            glVertex2f(bx + 10.0, badge_y + 4.0);
-                            glVertex2f(bx, badge_y + 11.0);
-                            glEnd();
-
-                            // Police cruiser silhouette icon
-                            glColor4f(0.85, 0.90, 0.95, 0.85);
-                            glBegin(7);
-                            glVertex2f(bx - 6.0, badge_y - 3.0);
-                            glVertex2f(bx + 6.0, badge_y - 3.0);
-                            glVertex2f(bx + 6.0, badge_y + 3.0);
-                            glVertex2f(bx - 6.0, badge_y + 3.0);
-                            glEnd();
-
-                            // Red / blue emergency lightbar atop badge
-                            let bar_color = if b_idx % 2 == 0 { [0.95, 0.15, 0.15, 1.0] } else { [0.2, 0.45, 0.98, 1.0] };
-                            glColor4f(bar_color[0], bar_color[1], bar_color[2], bar_color[3]);
-                            glBegin(7);
-                            glVertex2f(bx - 3.5, badge_y - 5.5);
-                            glVertex2f(bx + 3.5, badge_y - 5.5);
-                            glVertex2f(bx + 3.5, badge_y - 3.5);
-                            glVertex2f(bx - 3.5, badge_y - 3.5);
-                            glEnd();
-
-                            // Iconic Chinatown Wars Thick Red/Black "X" Stamp over disabled cop car!
-                            if is_crossed {
-                                let (xr, xg, xb) = if is_pulsing {
-                                    (1.0, 0.95, 0.85) // white-hot flash on recent takedown
-                                } else {
-                                    (0.92, 0.08, 0.08) // bold crimson red cross
-                                };
-                                glColor4f(xr, xg, xb, 1.0);
-                                glLineWidth(3.0);
-                                glBegin(1); // GL_LINES
-                                glVertex2f(bx - 11.0, badge_y - 8.0);
-                                glVertex2f(bx + 11.0, badge_y + 12.0);
-                                glVertex2f(bx + 11.0, badge_y - 8.0);
-                                glVertex2f(bx - 11.0, badge_y + 12.0);
-                                glEnd();
-                                glLineWidth(1.0);
-                            }
-                        }
-                    }
-                }
                 if let Some((scene, i)) = scene.and_then(|s| s.driving.map(|i| (s, i))) {
                     let vname = scene.cars[i].name;
                     let x = (W as f32 - 30. - vname.len() as f32 * 22.).min(W as f32 - 190.);
@@ -2216,81 +2144,38 @@ impl Renderer {
                 }
 
                 if let Some(scene) = scene {
-                    let w_opt = scene.weapons.as_ref().and_then(|wm| wm.current());
-                    let (wname, ammo_str, is_melee) = if let Some(w) = w_opt {
-                        let name = match w.type_id {
-                            0 => "POINGS",
-                            1 => "BATTE DE BASEBALL",
-                            2 => "PISTOLET 9MM",
-                            3 => "DOUBLE PISTOLET",
-                            4 => "FUSIL A POMPE",
-                            5 => "DOUBLE CANON",
-                            6 => "SMG",
-                            7 => "FUSIL D ASSAUT",
-                            8 => "CARABINE M4",
-                            9 => "FUSIL SNIPER",
-                            10 => "LANCE-ROQUETTES",
-                            11 => "LANCE-FLAMMES",
-                            12 => "MINIGUN",
-                            13 => "GRENADES",
-                            14 => "COCKTAIL MOLOTOV",
-                            15 => "MINES",
-                            16 => "TASER",
-                            17 => "KATANA",
-                            18 => "TRONCONNEUSE",
-                            19 => "MATRAQUE",
-                            20 => "GRENADE FLASH",
-                            21 => "MOLOTOV",
-                            _ => "ARME",
-                        };
-                        let ammo = if w.is_melee() {
-                            "--".to_string()
-                        } else if w.state == crate::weapons::WeaponState::Reloading {
-                            "RECHARGE...".to_string()
-                        } else if w.ammo < 0 {
-                            format!("{}/INF", w.clip)
-                        } else {
-                            format!("{}/{}", w.clip, w.ammo)
-                        };
-                        (name, ammo, w.is_melee())
-                    } else {
-                        ("POINGS", "--".to_string(), true)
-                    };
+                    let weapon = scene.weapons.as_ref().and_then(|wm| wm.current());
+                    let type_id = weapon.map_or(0, |w| w.type_id);
+                    let wanted = scene.police.stars > 0;
+                    let wy = if wanted { 138. + top } else { 49. + top };
+                    if let Some(sprite) = crate::hud::weapon_sprite(type_id)
+                        .and_then(|id| self.weapon_sprites.iter().find(|s| s.id == id)) {
+                        // Footage-based placement; original PSP sprite dimensions/anchor.
+                        let scale = [2.4, 2.4];
+                        ui_sprite(self.hud_texture, [512.,256.], sprite.source,
+                            sprite.target([1204., wy + 38.], scale), [1.,1.,1.,0.65]);
+                    }
+                    if let Some(w) = weapon.filter(|w| !w.is_melee() && w.ammo >= 0) {
+                        self.psp_text(1164., wy + 80., &format!("{}-{}", w.clip, (w.ammo-i16::from(w.clip)).max(0)),
+                            1.6, [0.96;3]);
+                    }
+                    if bands {
+                        self.psp_text(20., 65., &format!("${}",scene.cash), 2., [0.28,0.88,0.38]);
+                    }
 
-                    let wx = W as f32 - 195.;
-                    let wy = 40. + top;
-                    rounded([wx, wy, 180., 44.], 3., [0.06, 0.08, 0.09]);
-                    self.psp_text(wx + 8., wy + 4., wname, 1.8, [0.95, 0.90, 0.80]);
-                    self.psp_text(
-                        wx + 8.,
-                        wy + 22.,
-                        &ammo_str,
-                        2.1,
-                        if is_melee { [0.70, 0.75, 0.72] } else { [0.98, 0.85, 0.20] },
-                    );
-                    label(wx + 105., wy + 24., "TAB / MOLETTE", 0.9, [0.55, 0.60, 0.58]);
-
-                    if scene.police.stars > 0 {
-                        let sx = W as f32 - 195.;
-                        let sy = wy + 48.;
-                        let num_stars = (scene.police.stars as usize).min(6);
-                        rounded([sx, sy, 180., 36.], 3., [0.10, 0.04, 0.05]);
-
-                        let flash_on = (ticks / 6) % 2 == 0;
-                        let star_color = [1.0, 0.85, 0.12, if flash_on { 1.0 } else { 0.45 }];
-
-                        for s_idx in 0..num_stars {
-                            let star_cx = sx + 14. + (s_idx as f32) * 26.;
-                            let star_cy = sy + 12.;
-                            draw_star(star_cx, star_cy, 7.5, star_color);
+                    if wanted {
+                        let (stars, done, required) = scene.police.takedown_progress();
+                        let scale = crate::radar::scale().map(|s| s * 0.5);
+                        let alpha = if scene.police.is_cooling_down() && (ticks / 6) % 2 != 0 {0.35} else {1.};
+                        for i in 0..stars.min(6) {
+                            self.always_sprite(40, [1225. - i as f32 * 43., 49. + top], scale, alpha);
                         }
-
-                        let req = (scene.police.takedowns_required as usize).min(6);
-                        let done = scene.police.takedowns_done as usize;
-                        for k in 0..req {
-                            let bx = sx + 8. + (k as f32) * 22.;
-                            let by = sy + 21.;
-                            draw_takedown_badge(bx, by, k < done, ticks);
+                        for i in 0..required.min(6) {
+                            let anchor = [1240. - i as f32 * 43., 110. + top];
+                            self.always_sprite(39, anchor, scale, 1.);
+                            if i < done {
+                                self.always_sprite(20, [anchor[0]-8.,anchor[1]], scale, 1.);
+                            }
                         }
                     }
 
@@ -2301,17 +2186,6 @@ impl Renderer {
                         rounded([rx, ry, 260., 38.], 3., [0.08, 0.12, 0.18]);
                         self.psp_text(rx + 10., ry + 4., scene.radio.display_name(), 2.0, [0.98, 0.88, 0.22]);
                         label(rx + 10., ry + 24., "RADIO: N / B (DPAD HAUT / BAS)", 0.85, [0.70, 0.78, 0.82]);
-                    }
-
-                    // Dynamic Weather Lightning Flash effect overlay
-                    if scene.weather.lightning_intensity > 0.0 {
-                        glColor4f(1.0, 1.0, 1.0, scene.weather.lightning_intensity * 0.45);
-                        glBegin(7);
-                        glVertex2f(0.0, 0.0);
-                        glVertex2f(W as f32, 0.0);
-                        glVertex2f(W as f32, H as f32);
-                        glVertex2f(0.0, H as f32);
-                        glEnd();
                     }
 
                     // Chinatown Wars authentic Sniper Rifle Optical Scope Overlay (cSniperCam)
@@ -2988,6 +2862,12 @@ impl Renderer {
             }
         }
         Ok(())
+    }
+    unsafe fn always_sprite(&self, id: u16, anchor: [f32;2], scale: [f32;2], alpha: f32) {
+        if let Some(sprite) = self.always_sprites.iter().find(|s| s.id == id) {
+            ui_sprite(self.always_texture, [512.,256.], sprite.source,
+                sprite.target(anchor, scale), [1.,1.,1.,alpha]);
+        }
     }
     /// PSP_Hel12x12.bin + PSP PAK261. Original glyph widths, ASCII mapping and
     /// advance of width-1, with the dark displaced shadow visible in PSP footage.

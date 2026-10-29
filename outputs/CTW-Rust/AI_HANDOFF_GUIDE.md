@@ -1,3 +1,15 @@
+# ACTIVE HANDOFF — PSP HUD and visual parity (incomplete)
+
+Updated 2026-10-29T23:04+01:00. Current user priority is original PSP menus/HUD and graphics/shadows/lighting/color, NOT continuing prop physics. First runtime repair delivered; do NOT claim full parity.
+
+Implemented ISO weapon and always-loaded sprite directory parsing, native weapon icons, original wanted star/car artwork, removal of duplicate invented panels, neutral default rendering (legacy artistic grade opt-in), and lightning before HUD with proper blending. Sprite placement/fading remains footage-based, not recovered PSP control flow. Custom PDA/menus and approximate lighting/shadows still remain. See docs/reference/PSP-VISUAL-PARITY.md for the exact outstanding list. Preserve signature, keyboard/Xbox controls, HD texture priority.
+
+Validation: 242 tests passed, 0 warnings. Build report 2026-10-29T23:03:58.7579423+01:00; delivered executable SHA256 b48a1238aa7bcc67e9706aa56c10ab423a7b8eb651d348afb7a9f0788eaa979b. Native smoke captures with original textures/bands off and default textures/bands on succeeded, no GL error. Private outputs target/hud-psp-check and target/hud-pack-check; captures target/hud-psp-after.bmp and target/hud-pack-after.bmp. Hardware controller and all wanted states not interactively tested.
+
+Resume: run mandatory upstream preflight, then inspect docs/reference/PSP-VISUAL-PARITY.md and src/gpu.rs. Recover actual PSP menu layouts and timecycle bindings before cosmetic tuning. Build: powershell -ExecutionPolicy Bypass -File .\Compiler.ps1 -Test. Android timecycle.cpp is a research lead only; USA GE renderer is not an acceptable emulated runtime import. Physics staged work below remains preserved. No push.
+
+---
+
 # ACTIVE HANDOFF — PSP force core verified against original executable
 
 Updated 2026-10-29T01:32, Europe/Paris. Goal remains 100% PSP prop physics, NOT completed. No new runtime prop solver enabled yet: the verified force core is test-only pending coupled position/quaternion/contact/stop port.

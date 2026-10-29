@@ -1,6 +1,6 @@
 {
-  "checked_at": "2026-10-29T00:25:33+00:00",
-  "task": "Port coupled PSP prop physics",
+  "checked_at": "2026-10-29T00:46:23+00:00",
+  "task": "Align in-game HUD menus and rendering with PSP original",
   "repositories": [
     {
       "id": "ctw-native",

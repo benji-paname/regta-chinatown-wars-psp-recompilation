@@ -27,6 +27,9 @@ pub fn contains(r: [f32; 4], p: [f32; 2]) -> bool {
 /// Original PSP UI resources, read from the user's ISO at runtime.
 pub struct Assets {
     pub weapon: crate::texture::Texture,
+    pub weapon_sprites: Vec<crate::radar::Sprite>,
+    pub always: crate::texture::Texture,
+    pub always_sprites: Vec<crate::radar::Sprite>,
     pub radar: crate::texture::Texture,
     pub radar_sprites: Vec<crate::radar::Sprite>,
     pub radar_map: crate::radar::Map,
@@ -68,6 +71,9 @@ impl Assets {
         )?;
         Ok(Self {
             weapon: crate::texture::decode(374, &pak.read(disc, 374)?.0)?,
+            weapon_sprites: weapon_sprites(&wad.read(disc, crate::wad::name_hash("SS_Weapons.bin"))?)?,
+            always: crate::texture::decode(382, &pak.read(disc, 382)?.0)?,
+            always_sprites: sprite_directory(&wad.read(disc, crate::wad::name_hash("SS_AlwaysLoaded.bin"))?, 42, 8)?,
             radar,
             radar_sprites,
             radar_map: crate::radar::Map::load(disc, pak)?,
@@ -229,5 +235,52 @@ mod tests {
         std::fs::write(&path, b"invalid").unwrap();
         assert_eq!(Settings::load(&path), Settings::default());
         std::fs::remove_file(&path).unwrap();
+    }
+}
+
+/// PSP SS_Weapons.bin uses inclusive extents and signed anchor offsets.
+fn weapon_sprites(data: &[u8]) -> crate::iso::Result<Vec<crate::radar::Sprite>> {
+    sprite_directory(data, 34, 0)
+}
+fn sprite_directory(data: &[u8], count: usize, sheet: u16) -> crate::iso::Result<Vec<crate::radar::Sprite>> {
+    use crate::iso::{u16le, u32le};
+    if u32le(data, 0)? as usize != count || data.len() != 4 + count * 16 {
+        return Err("Invalid PSP weapon sprite directory".into());
+    }
+    let mut out = Vec::new();
+    for row in data[4..].chunks_exact(16) {
+        let id = u16le(row, 0)?;
+        let x = u16le(row, 4)? as usize;
+        let y = u16le(row, 6)? as usize;
+        let w = u16le(row, 12)? as usize + 1;
+        let h = u16le(row, 14)? as usize + 1;
+        if id as usize >= count || u16le(row, 2)? != sheet || x + w > 512 || y + h > 256
+            || out.iter().any(|s: &crate::radar::Sprite| s.id == id) {
+            return Err("Invalid PSP weapon sprite rectangle".into());
+        }
+        out.push(crate::radar::Sprite { id, source: [x as f32,y as f32,w as f32,h as f32],
+            offset: [u16le(row,8)? as i16 as f32,u16le(row,10)? as i16 as f32] });
+    }
+    Ok(out)
+}
+/// Visually identified PSP atlas icons, indexed by the game's weapon types.
+/// Android sprite IDs differ and must not be reused here.
+pub fn weapon_sprite(type_id: u8) -> Option<u16> {
+    const IDS: [u16; 24] = [14,22,2,29,5,23,12,9,32,21,26,27,8,0,6,19,15,25,28,31,18,20,16,24];
+    IDS.get(type_id as usize).copied()
+}
+#[cfg(test)]
+mod sprite_tests {
+    use super::*;
+    #[test]
+    fn invalid_weapon_directories_are_rejected() {
+        assert!(weapon_sprites(&[]).is_err());
+        let mut data = vec![0; 4 + 34*16];
+        data[..4].copy_from_slice(&34u32.to_le_bytes());
+        assert!(weapon_sprites(&data).is_err()); // duplicate IDs
+        for i in 0..34 { data[4+i*16..6+i*16].copy_from_slice(&(i as u16).to_le_bytes()); }
+        assert_eq!(weapon_sprites(&data).unwrap().len(),34);
+        data[8..10].copy_from_slice(&512u16.to_le_bytes());
+        assert!(weapon_sprites(&data).is_err());
     }
 }

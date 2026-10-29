@@ -3,9 +3,9 @@
   "measurement": "native Rust function inventory; not original-code coverage",
   "pspParityVerified": false,
   "pspCompletionPercent": null,
-  "sourceSha256": "358cfca01108a73d25ac781c9648cbfa611ed733e0ae2ed5c866f1b4f7f3c690",
-  "runtimeFunctions": 1044,
-  "testFunctions": 271,
+  "sourceSha256": "4b5eb3013e438b8e872511718a40f929d78104d9d56d03a6f5cc36cf9a84b18a",
+  "runtimeFunctions": 1048,
+  "testFunctions": 272,
   "modules": 50,
   "subsystems": [
     {
@@ -122,7 +122,7 @@
     },
     {
       "name": "World and rendering",
-      "runtimeFunctions": 128,
+      "runtimeFunctions": 129,
       "testFunctions": 42,
       "classes": [
         {
@@ -148,7 +148,7 @@
         },
         {
           "name": "gpu.rs",
-          "runtimeFunctions": 43,
+          "runtimeFunctions": 44,
           "testFunctions": 0,
           "relatedClasses": [
             "cWaterRenderBlock",
@@ -485,8 +485,8 @@
     },
     {
       "name": "HUD and navigation",
-      "runtimeFunctions": 124,
-      "testFunctions": 23,
+      "runtimeFunctions": 127,
+      "testFunctions": 24,
       "classes": [
         {
           "name": "gps.rs",
@@ -499,8 +499,8 @@
         },
         {
           "name": "hud.rs",
-          "runtimeFunctions": 6,
-          "testFunctions": 1,
+          "runtimeFunctions": 9,
+          "testFunctions": 2,
           "relatedClasses": [
             "Gui",
             "HUDText",
@@ -643,7 +643,7 @@
     }
   ],
   "lastLocalValidation": {
-    "passed": 241,
+    "passed": 242,
     "date": "2026-10-29"
   }
 }

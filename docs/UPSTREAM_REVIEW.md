@@ -231,3 +231,8 @@ Both mirrors checked successfully after restricted-network failure; unchanged f7
 
 ## 29 October — native force core with original-code differential checks
 Upstream preflight succeeded after restricted attempt. Tips remain f7a45b3b7aac9bd9f4662d104d276d421c1fca52 and 6562163b6f504a1db93e1be5ce580d8cd6f024a7. Reviewed rigidbody.h/cpp force integration, inertia, FullCollision and FullSprings, plus highcmd platform boundaries. Independent Europe ELF inspection confirmed the gravity initializer and speed-cap conversion; 512 original kinematics executions match staged native Rust. No runtime CPU emulator or automatic merge. Coupled contact solver remains outstanding.
+
+
+## 2026-10-29 — PSP HUD and rendering regression repair
+Both mirrors fetched successfully after a restricted-network failure. Pins: Android f7a45b3b7aac9bd9f4662d104d276d421c1fca52; PSP USA 6562163b6f504a1db93e1be5ce580d8cd6f024a7. Read Android weaponhud.cpp/weapons.h and world/timecycle.cpp/worldrenderer.cpp, plus PSP runtime/ge_render.cpp/ge_gl.cpp. GPL-3.0-only references; no CPU/HLE code imported.
+Android recently added weapon/cash HUD routines, but its sprite IDs and viewport differ. PSP ISO SS_Weapons.bin has 34 sprites (fists ID14), versus Android fists ID13. Use PSP directories and visually identified PSP icons, never Android indices. PSP reference executes GE state; our constant face lighting is still an approximation. Android timecycle data/formulas are research leads, not certified PSP lighting. Removed default artistic grading rather than inventing another filter. Full menus, timecycle, shadow projection and original display timing remain unfinished; see reference/PSP-VISUAL-PARITY.md.
