@@ -309,17 +309,9 @@ impl Renderer {
                     glBegin(4);
                     self.triangles += tris.len();
                     for t in tris {
-                        let a = std::array::from_fn::<_, 3, _>(|i| t.v[1].p[i] - t.v[0].p[i]);
-                        let b = std::array::from_fn::<_, 3, _>(|i| t.v[2].p[i] - t.v[0].p[i]);
-                        let n = [
-                            a[1] * b[2] - a[2] * b[1],
-                            a[2] * b[0] - a[0] * b[2],
-                            a[0] * b[1] - a[1] * b[0],
-                        ];
-                        let len = (n.iter().map(|v| v * v).sum::<f32>()).sqrt().max(1e-6);
-                        glNormal3f(n[0]/len,n[1]/len,n[2]/len);
                         glColor4f(1.,1.,1.,alpha as f32/255.);
                         for v in t.v {
+                            glNormal3f(v.normal[0],v.normal[1],v.normal[2]);
                             glTexCoord2f(v.uv[0], v.uv[1]);
                             glVertex3f(v.p[0], v.p[1], v.p[2]);
                         }
@@ -487,7 +479,7 @@ impl Renderer {
             // second-light parity are incomplete; this is not the entire PSP pipeline.
             if let Some(tc) = &self.timecycle {
                 let (current,next)=scene.map(|s|(s.weather.current as usize,s.weather.next as usize)).unwrap_or((0,0));
-                let time=((8*60 + ticks/30)%1440) as u32*4096/60;
+                let time=crate::timecycle::minutes(ticks) as u32*4096/60;
                 glLightModelfv(0x0b53,[0.,0.,0.,1.].as_ptr());
                 glLightfv(0x4000,0x1200,tc.rgb(13,current,next,time).as_ptr());
                 glLightfv(0x4000,0x1201,tc.rgb(0,current,next,time).as_ptr());
@@ -2145,7 +2137,7 @@ impl Renderer {
             }
             if !map_ui.open {
                 let top = if bands { 60. } else { 0. };
-                let minutes = (8 * 60 + ticks / 30) % 1440;
+                let minutes = crate::timecycle::minutes(ticks);
                 self.psp_text(
                     W as f32 - 180.,
                     6. + top,
@@ -3376,7 +3368,7 @@ impl Renderer {
         // 2. Status Bar Header
         rounded([px + 8., py + 8., pw - 16., 34.], 4., [0.12, 0.15, 0.20]);
         self.psp_text(px + 16., py + 14., "PDA - LIBERTY CITY OS", 2.0, [0.95, 0.90, 0.70]);
-        let minutes = (8 * 60 + ticks / 30) % 1440;
+        let minutes = crate::timecycle::minutes(ticks);
         let time_str = format!("MAR {:02}:{:02}", minutes / 60, minutes % 60);
         self.psp_text(px + pw - 130., py + 14., &time_str, 2.0, [0.85, 0.92, 0.88]);
 

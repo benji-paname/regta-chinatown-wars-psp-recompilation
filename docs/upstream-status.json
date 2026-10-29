@@ -1,6 +1,6 @@
 {
-  "checked_at": "2026-10-29T22:10:31+00:00",
-  "task": "Recover PSP timecycle and improve world lighting",
+  "checked_at": "2026-10-29T22:26:33+00:00",
+  "task": "Compare PSP footage and correct unverified lighting integration",
   "repositories": [
     {
       "id": "ctw-native",

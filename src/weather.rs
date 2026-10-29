@@ -138,7 +138,7 @@ impl WeatherManager {
 
     /// Updates clock time from frame ticks (30 ticks per game second).
     pub fn update_time(&mut self, ticks: usize) {
-        let total_minutes = (8 * 60 + ticks / 30) % 1440;
+        let total_minutes = crate::timecycle::minutes(ticks);
         let new_hour = (total_minutes / 60) as u8;
         let new_minute = (total_minutes % 60) as u8;
 

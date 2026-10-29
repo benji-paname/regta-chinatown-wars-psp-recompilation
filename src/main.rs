@@ -186,6 +186,7 @@ fn run() -> Result<()> {
                     _ => return Err("--language expects fr or en".into()),
                 })
             }
+            "--start-time" => timecycle::set_start(&args.next().ok_or("Missing HH:MM")?)?,
             "--slice" => play_options.slice = true,
             "--driving-audit" => driving_audit = true,
             "--armour" | "--health" => {

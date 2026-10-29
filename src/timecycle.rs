@@ -73,3 +73,22 @@ mod tests {
         assert_eq!(t.sample(0,0,0,2049),100.);
     }
 }
+
+static START: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
+pub fn parse_start(value: &str)->Result<usize> {
+    let (h,m)=value.split_once(':').ok_or("--start-time expects HH:MM")?;
+    let h:usize=h.parse()?; let m:usize=m.parse()?;
+    if h>23 || m>59 {return Err("--start-time outside 00:00..23:59".into());}
+    Ok(h*60+m)
+}
+pub fn set_start(value: &str)->Result<()> {
+    START.set(parse_start(value)?).map_err(|_|"Start time already specified".into())
+}
+pub fn minutes(ticks:usize)->usize {(*START.get_or_init(||8*60)+ticks/30)%1440}
+#[cfg(test)]
+mod clock_tests {
+    #[test] fn validates_start_time() {
+        assert_eq!(super::parse_start("13:52").unwrap(),832);
+        for s in ["24:00","12:60","13","-1:00"] {assert!(super::parse_start(s).is_err());}
+    }
+}

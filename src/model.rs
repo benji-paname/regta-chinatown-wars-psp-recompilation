@@ -21,6 +21,9 @@ impl Matrix {
             self.r[a][0] * p[0] + self.r[a][1] * p[1] + self.r[a][2] * p[2] + self.t[a]
         })
     }
+    fn direction(&self, v: [f32;3]) -> [f32;3] {
+        std::array::from_fn(|a| (0..3).map(|k| self.r[a][k]*v[k]).sum())
+    }
     fn compose(&self, b: Self) -> Self {
         Self {
             r: std::array::from_fn(|a| {
@@ -47,6 +50,7 @@ pub struct Mesh {
 }
 #[derive(Clone, Copy)]
 pub struct Vertex {
+    pub normal: [f32;3],
     pub p: [f32; 3],
     pub uv: [f32; 2],
 }
@@ -145,6 +149,9 @@ pub fn parse(d: &[u8]) -> Result<Mesh> {
                 *x = i16::from_le_bytes(bytes(d, p + 6 + a * 2, 2)?.try_into()?) as f32 * scale;
             }
             strip.push(Vertex {
+                // PSP GE signed-byte normals at +2..+4; +5 is alignment padding.
+                // Normals are vectors: apply node rotation without translation.
+                normal: transforms[node].direction(std::array::from_fn(|a| d[p+2+a] as i8 as f32/128.)),
                 p: transforms[node].point(xyz),
                 uv: std::array::from_fn(|a| d[p + a] as f32 / 128. * uv_scale[a] - uv_offset[a]),
             });
@@ -293,6 +300,15 @@ mod tests {
             }
         }
         d
+    }
+    #[test]
+    fn preserves_signed_vertex_normals_and_ignores_padding() {
+        let mut d=triangle();
+        d[102..106].copy_from_slice(&[128,0,127,247]);
+        let n=parse(&d).unwrap().surfaces[0].v[0].normal;
+        assert_eq!(n,[-1.,0.,127./128.]);
+        let m=Matrix {r:[[0.,-1.,0.],[1.,0.,0.],[0.,0.,1.]],t:[20.,30.,40.]};
+        assert_eq!(m.direction([1.,0.,0.]),[0.,1.,0.]);
     }
     #[test]
     fn verifies_strips_and_bounds() {

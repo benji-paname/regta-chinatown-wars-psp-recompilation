@@ -1,3 +1,15 @@
+# ACTIVE HANDOFF — visual match rejected; normals fixed, parity still absent
+
+Updated 2026-10-29T23:30+01:00. Benjamin explicitly says graphics/colors/shaders/shadows are NOT like PSP. Full-resolution video recheck confirms this. Do not repeat earlier optimistic claims. Original first frame13:52, old Rust08:41; own new13:52 capture remains too grey and lacks directional prop shadows. Comparison private target/visual-comparison/psp-versus-native.jpg. Different viewpoint/weather, not pixel-aligned.
+
+Implemented actual vertex normal decoding (signed bytes+2..4 /128, +5padding, rotation without translation), used per-vertex world GL normals. Added --start-time HH:MM for shared HUD/PDA/weather/timecycle clock comparisons. Default08:00 preserved. Rendering still incomplete: projected prop/building shadows missing, vehicle/ped lighting approximate, second light/materials/specular unresolved, source day/weather not matched. See docs/reference/PSP-VISUAL-PARITY.md.
+
+Validation 246 tests, 0 warnings; report 2026-10-29T23:28:44.2539184+01:00, exeSHA256 c21f2032c34e526d7e60eb33d9feef2ed004ead6da532b396340d88f921a920b. Native smoke original-textures13:52 successful; visually checked, NOT judged matching. Status regenerated. No push.
+
+Resume with mandatory upstream preflight, then original PSP GE light/material/shadow-state recovery. Do not keep tuning colour by eye. Build powershell -ExecutionPolicy Bypass -File .\Compiler.ps1 -Test. Preserve earlier HUD and physics work below.
+
+---
+
 # ACTIVE HANDOFF — PSP timecycle connected to world lighting, partial
 
 Updated 2026-10-29T23:14+01:00. Latest request: continue towards original PSP visual rendering. New src/timecycle.rs reads user's ISO timecycle.dat (42240 bytes, 8x55x24 i32), fills missing hours, gamma-transforms RGB as PSP does, and samples half-Q12 float interpolation. Renderer world meshes now use PSP ambient/sun RGB and table-driven sun direction. No arbitrary grade. Exact addresses, evidence and limitations in docs/reference/PSP-VISUAL-PARITY.md.

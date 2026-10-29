@@ -3,9 +3,9 @@
   "measurement": "native Rust function inventory; not original-code coverage",
   "pspParityVerified": false,
   "pspCompletionPercent": null,
-  "sourceSha256": "a49b20305c3468e63a802ffa094cd7d4d2c00e12c414df078ffb5fefae93800f",
-  "runtimeFunctions": 1053,
-  "testFunctions": 274,
+  "sourceSha256": "7dabc5537a4acf3e208a2d528c9e90544b5da199a22dcbf8c4b3af771f5bba64",
+  "runtimeFunctions": 1057,
+  "testFunctions": 276,
   "modules": 51,
   "subsystems": [
     {
@@ -122,8 +122,8 @@
     },
     {
       "name": "World and rendering",
-      "runtimeFunctions": 129,
-      "testFunctions": 42,
+      "runtimeFunctions": 130,
+      "testFunctions": 43,
       "classes": [
         {
           "name": "camera.rs",
@@ -158,8 +158,8 @@
         },
         {
           "name": "model.rs",
-          "runtimeFunctions": 6,
-          "testFunctions": 4,
+          "runtimeFunctions": 7,
+          "testFunctions": 5,
           "relatedClasses": []
         },
         {
@@ -193,8 +193,8 @@
     },
     {
       "name": "Runtime and tools",
-      "runtimeFunctions": 74,
-      "testFunctions": 34,
+      "runtimeFunctions": 77,
+      "testFunctions": 35,
       "classes": [
         {
           "name": "car_camera.rs",
@@ -286,8 +286,8 @@
         },
         {
           "name": "timecycle.rs",
-          "runtimeFunctions": 5,
-          "testFunctions": 2,
+          "runtimeFunctions": 8,
+          "testFunctions": 3,
           "relatedClasses": [
             "cTimeCycle",
             "cCycleElement"
@@ -652,7 +652,7 @@
     }
   ],
   "lastLocalValidation": {
-    "passed": 244,
+    "passed": 246,
     "date": "2026-10-29"
   }
 }

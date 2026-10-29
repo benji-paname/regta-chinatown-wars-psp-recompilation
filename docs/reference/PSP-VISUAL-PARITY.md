@@ -32,3 +32,13 @@ Original ULES01347 evidence (ELF SHA256 9eaf850f09d743e5ecfc8d1c6a0a8c2903991423
 - 0x08a8dfd4 normalizes colours using float bits 0x36008081; 0x088d2618 selects ambient slot13, 0x088d2644 diffuse slot0, 0x088d2670 specular slot16 for GE light commands. The current GL bridge omits specular.
 
 Validation: 244 unit tests, zero warnings; deterministic native capture target/timecycle-after.bmp, same camera/location as target/hud-psp-after.bmp. New tests cover midnight fill, angle wrap, absent data, incompatible Android size, full-intensity RGB, and PSP odd-fraction quantization. Capture demonstrates runtime hookup, NOT pixel-exact parity with the user's video (different time/weather).
+
+
+## User correction and full-resolution video check
+Benjamin rejected the previous visual match. Full-resolution samples extracted privately at0,18,54s from OG PSP.mp4 and Recomp Rust .exe.mp4. Visible differences: original lamp/mobility-cart silhouettes cast directional ground shadows; native lacks these, uses oval vehicle/ped shadows, has grey paving/road versus brighter warm PSP surfaces, different vehicle highlights and harsher sprite presentation. Original first frame13:52 versus old native08:41. A new native capture at13:52 remains grey: time mismatch alone does NOT explain it. Different viewpoint and unknown original weather preclude numerical pixel parity or inferring a color filter.
+
+Correction: src/model.rs now retains signed-byte normals at vertex+2..4 (/128), skips padding+5 and transforms direction by node rotation without translation. The world GL lists submit these per vertex instead of cross-product face normals. Two regressions tested: signed values/padding, rotation independent of translation. This is a concrete decoder fix, not completion of lighting or shadows.
+
+New --start-time HH:MM synchronizes the existing HUD/PDA clock, weather clock and timecycle lighting start, with validated00:00..23:59 bounds; normal default08:00 preserved. This is a comparison aid, not original clock fidelity. Weather transition remains prototype and is NOT matched to footage.
+
+Current public build:246 tests,0 warnings. Private comparison target/visual-comparison/psp-versus-native.jpg; original-frame PNGs and native check-1352 report alongside. No game frames committed. Existing paragraph saying world normals reconstructed is superseded for world meshes only; dynamic rendering is still incomplete. Priority remains recovering original light/material/shadow passes, not additional aesthetic tuning. Do not tell Benjamin the result is already similar merely because tables are connected.
