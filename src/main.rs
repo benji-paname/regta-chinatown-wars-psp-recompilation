@@ -47,6 +47,7 @@ mod driving_audit;
 mod wad;
 mod weapons;
 mod weather;
+mod timecycle;
 mod world;
 use iso::{Disc, Result};
 use serde_json::json;

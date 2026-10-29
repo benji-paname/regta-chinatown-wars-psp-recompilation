@@ -58,6 +58,7 @@ RUST_MODULE_MAP = {
     'pda.rs': ['PDAImpl', 'cPda', 'cEmailApp', 'cPhoneApp', 'cIPhonePad', 'cContextHelp', 'cContainerWnd', 'cWnd', 'cListBox'],
     'audio.rs': ['cAudio', 'cAudioManager', 'cAudioBase', 'SoundImpl', 'cSoundEvents'],
     'radio.rs': ['cRadioApp', 'cSoundStream', 'cAudioBaseOAL'],
+    'timecycle.rs': ['cTimeCycle', 'cCycleElement'],
     'weather.rs': ['cWeather', 'cTimeCycle', 'cLightManager', 'Fire', 'cFire', 'cParticleEmitterFire'],
     'races.rs': ['CRaces_Algon', 'CRaces_East', 'CRaces_North', 'cRace', 'cCheckpointTT'],
     'collectibles.rs': ['CRampage', 'CTurretRampage', 'cSecurityCamera'],

@@ -26,6 +26,7 @@ pub fn contains(r: [f32; 4], p: [f32; 2]) -> bool {
 }
 /// Original PSP UI resources, read from the user's ISO at runtime.
 pub struct Assets {
+    pub timecycle: crate::timecycle::TimeCycle,
     pub weapon: crate::texture::Texture,
     pub weapon_sprites: Vec<crate::radar::Sprite>,
     pub always: crate::texture::Texture,
@@ -70,6 +71,7 @@ impl Assets {
             [radar.info.width, radar.info.height],
         )?;
         Ok(Self {
+            timecycle: crate::timecycle::TimeCycle::parse(&wad.read(disc, crate::wad::name_hash("timecycle.dat"))?)?,
             weapon: crate::texture::decode(374, &pak.read(disc, 374)?.0)?,
             weapon_sprites: weapon_sprites(&wad.read(disc, crate::wad::name_hash("SS_Weapons.bin"))?)?,
             always: crate::texture::decode(382, &pak.read(disc, 382)?.0)?,

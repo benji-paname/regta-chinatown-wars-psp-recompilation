@@ -82,6 +82,7 @@ pub struct Renderer {
     font_size: [f32; 2],
     font_height: f32,
     glyphs: Vec<[u16; 3]>,
+    timecycle: Option<crate::timecycle::TimeCycle>,
     grade: Option<shaders::Grade>,
     pub shader_status: String,
     pub driver: String,
@@ -119,6 +120,7 @@ impl Renderer {
             font_size: [512.; 2],
             font_height: 12.,
             glyphs: Vec::new(),
+            timecycle: None,
             grade: None,
             shader_status: String::new(),
             driver: String::new(),
@@ -235,6 +237,7 @@ impl Renderer {
         self.textures.push(self.terrain_texture);
         self.hud_texture = unsafe { upload_texture(&hud.weapon, false)? };
         self.textures.push(self.hud_texture);
+        self.timecycle = Some(hud.timecycle.clone());
         self.weapon_sprites = hud.weapon_sprites.clone();
         self.always_texture = unsafe { upload_texture(&hud.always, false)? };
         self.textures.push(self.always_texture);
@@ -314,9 +317,8 @@ impl Renderer {
                             a[0] * b[1] - a[1] * b[0],
                         ];
                         let len = (n.iter().map(|v| v * v).sum::<f32>()).sqrt().max(1e-6);
-                        let light =
-                            0.67 + 0.33 * ((n[0] * 0.3 + n[1] * 0.5 + n[2] * 0.81) / len).abs();
-                        glColor4f(light, light, light, alpha as f32 / 255.);
+                        glNormal3f(n[0]/len,n[1]/len,n[2]/len);
+                        glColor4f(1.,1.,1.,alpha as f32/255.);
                         for v in t.v {
                             glTexCoord2f(v.uv[0], v.uv[1]);
                             glVertex3f(v.p[0], v.p[1], v.p[2]);
@@ -481,6 +483,22 @@ impl Renderer {
             glDisable(0x0be2);
             glDisable(0x0bc0);
 
+            // PSP tables supply ambient/diffuse colours. Material/normal and
+            // second-light parity are incomplete; this is not the entire PSP pipeline.
+            if let Some(tc) = &self.timecycle {
+                let (current,next)=scene.map(|s|(s.weather.current as usize,s.weather.next as usize)).unwrap_or((0,0));
+                let time=((8*60 + ticks/30)%1440) as u32*4096/60;
+                glLightModelfv(0x0b53,[0.,0.,0.,1.].as_ptr());
+                glLightfv(0x4000,0x1200,tc.rgb(13,current,next,time).as_ptr());
+                glLightfv(0x4000,0x1201,tc.rgb(0,current,next,time).as_ptr());
+                glLightfv(0x4000,0x1203,tc.sun(current,next,time).as_ptr());
+                glMaterialfv(0x0408,0x1200,[1.;4].as_ptr());
+                glMaterialfv(0x0408,0x1202,[0.;4].as_ptr());
+                glColorMaterial(0x0408,0x1201);
+                glEnable(0x4000);
+                glEnable(0x0ba1);
+            }
+
             // 1. Broad distant ocean base
             glColor3f(0.08, 0.18, 0.24);
             glBegin(7);
@@ -585,7 +603,11 @@ impl Renderer {
                             } else {
                                 glDisable(0x0de1);
                             }
+                            glEnable(0x0b50);
+                            glEnable(0x0b57);
                             glCallList(b.list);
+                            glDisable(0x0b57);
+                            glDisable(0x0b50);
                         }
                         glPopMatrix();
                     }
@@ -4326,6 +4348,11 @@ extern "system" {
     fn glLineWidth(width: f32);
     fn glBegin(mode: u32);
     fn glEnd();
+    fn glNormal3f(x:f32,y:f32,z:f32);
+    fn glLightfv(light:u32,param:u32,value:*const f32);
+    fn glLightModelfv(param:u32,value:*const f32);
+    fn glMaterialfv(face:u32,param:u32,value:*const f32);
+    fn glColorMaterial(face:u32,mode:u32);
     fn glColor3f(r: f32, g: f32, b: f32);
     fn glColor4f(r: f32, g: f32, b: f32, a: f32);
     fn glTexCoord2f(u: f32, v: f32);

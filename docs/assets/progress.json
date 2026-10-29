@@ -3,10 +3,10 @@
   "measurement": "native Rust function inventory; not original-code coverage",
   "pspParityVerified": false,
   "pspCompletionPercent": null,
-  "sourceSha256": "4b5eb3013e438b8e872511718a40f929d78104d9d56d03a6f5cc36cf9a84b18a",
-  "runtimeFunctions": 1048,
-  "testFunctions": 272,
-  "modules": 50,
+  "sourceSha256": "a49b20305c3468e63a802ffa094cd7d4d2c00e12c414df078ffb5fefae93800f",
+  "runtimeFunctions": 1053,
+  "testFunctions": 274,
+  "modules": 51,
   "subsystems": [
     {
       "name": "People",
@@ -193,8 +193,8 @@
     },
     {
       "name": "Runtime and tools",
-      "runtimeFunctions": 69,
-      "testFunctions": 32,
+      "runtimeFunctions": 74,
+      "testFunctions": 34,
       "classes": [
         {
           "name": "car_camera.rs",
@@ -283,6 +283,15 @@
           "runtimeFunctions": 5,
           "testFunctions": 1,
           "relatedClasses": []
+        },
+        {
+          "name": "timecycle.rs",
+          "runtimeFunctions": 5,
+          "testFunctions": 2,
+          "relatedClasses": [
+            "cTimeCycle",
+            "cCycleElement"
+          ]
         },
         {
           "name": "wad.rs",
@@ -643,7 +652,7 @@
     }
   ],
   "lastLocalValidation": {
-    "passed": 242,
+    "passed": 244,
     "date": "2026-10-29"
   }
 }

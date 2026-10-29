@@ -1,3 +1,15 @@
+# ACTIVE HANDOFF — PSP timecycle connected to world lighting, partial
+
+Updated 2026-10-29T23:14+01:00. Latest request: continue towards original PSP visual rendering. New src/timecycle.rs reads user's ISO timecycle.dat (42240 bytes, 8x55x24 i32), fills missing hours, gamma-transforms RGB as PSP does, and samples half-Q12 float interpolation. Renderer world meshes now use PSP ambient/sun RGB and table-driven sun direction. No arbitrary grade. Exact addresses, evidence and limitations in docs/reference/PSP-VISUAL-PARITY.md.
+
+Important: NOT 100% PSP rendering. Sun direction convention adapted from Android, host powf not exhaustively oracle-verified, triangle normals reconstructed, second light/specular/material flags incomplete. Dynamic vehicles/peds/props and water/shadows remain prior approximations. Current clock/weather scheduler is prototype. Do not import Android's 38-channel file layout or its integer interpolation into this PSP path.
+
+Validation: 244 tests passed, 0 warnings; report 2026-10-29T23:13:37.5896121+01:00; delivered exe SHA256 bc0fa739956428f7ec348492758d89bb8ccd07321eef03aa2d685d197b39dc94. Native GL original-texture smoke succeeded, capture target/timecycle-after.bmp (private), visually reviewed against same-view prechange capture. Status regenerated. No push.
+
+Resume: mandatory upstream preflight; read visual-parity evidence; recover PSP second light and material/normal/shadow bindings. Build command: powershell -ExecutionPolicy Bypass -File .\Compiler.ps1 -Test. Keep existing menu/HUD repair and all physics staged work below.
+
+---
+
 # ACTIVE HANDOFF — PSP HUD and visual parity (incomplete)
 
 Updated 2026-10-29T23:04+01:00. Current user priority is original PSP menus/HUD and graphics/shadows/lighting/color, NOT continuing prop physics. First runtime repair delivered; do NOT claim full parity.
