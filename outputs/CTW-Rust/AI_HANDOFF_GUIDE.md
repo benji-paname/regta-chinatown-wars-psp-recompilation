@@ -1,3 +1,21 @@
+# ACTIVE HANDOFF — visible first-pass world shadows; sunlight still unresolved
+
+Updated 2026-10-30T22:18+01:00. Implemented native planar shadows for opaque world meshes and Standing props, using cached ISO triangles, table sun/channel19 alpha, collision ground plane, stencil once per pixel. Visual capture target/visual-comparison/shadows-1352.bmp confirms lamp silhouettes. NOT original PSP algorithm: no foliage alpha, uneven receiver splitting, loose/tilted or car/ped projected shadows. No new yellow filter/material guess. Sunlight/colours remain wrong. See docs/reference/PSP-VISUAL-PARITY.md.
+
+Preserved prior uncommitted WeatherManager starting-clock correction. Previous commit attempt was blocked by exhausted automatic-approval quota; source/docs were saved. Current validation 246 tests, 0 warnings; report 2026-10-30T22:17:16.8070075+01:00; exeSHA256 4fc5624164a41dbd660bdffe8ed98a9641e14f115a011752d90823c1998c12b5. Native smoke at13:52 succeeded, reviewed. Generated progress refreshed.
+
+Resume mandatory upstream check, recover actual world GE material/light state and original shadow receiver/caster rules.0x0885fde0 is allocator poison, not material evidence.0x08982090 belongs to another pass, not proof for world lighting. Build powershell -ExecutionPolicy Bypass -File .\Compiler.ps1 -Test. No push.
+
+---
+
+# ACTIVE HANDOFF — sunlight/shadows still NOT fixed
+
+Updated 2026-10-29T23:36+01:00. User still rejects grey rendering/no sun/no projected shadows. Only small fix this turn: WeatherManager initial hour/minute now match --start-time, avoiding false initial hour change. New target/visual-comparison/sunny-1352.bmp remains grey. Do not sell this as visual improvement. 246 tests pass, 0 warnings. Build 2026-10-29T23:35:59.6865694+01:00, SHA256 8dbaa7fec16d76dadcd39486933c39dcaae62d97d92eb854932a35dcfa75a4cd.
+
+Next investigate GL material coefficients and saturation: ambient material hardcoded white plus sunny diffuse can clamp all channels to white; original PSP material/GE state must be recovered. Android worldrenderer uses0.4ambient but not certified PSP. Directional silhouette shadows have NOT been implemented. Mandatory upstream checks done, review recorded. Continue PSP GE/material/shadow evidence rather than another colour-filter patch. Build: powershell -ExecutionPolicy Bypass -File .\Compiler.ps1 -Test.
+
+---
+
 # ACTIVE HANDOFF — visual match rejected; normals fixed, parity still absent
 
 Updated 2026-10-29T23:30+01:00. Benjamin explicitly says graphics/colors/shaders/shadows are NOT like PSP. Full-resolution video recheck confirms this. Do not repeat earlier optimistic claims. Original first frame13:52, old Rust08:41; own new13:52 capture remains too grey and lacks directional prop shadows. Comparison private target/visual-comparison/psp-versus-native.jpg. Different viewpoint/weather, not pixel-aligned.

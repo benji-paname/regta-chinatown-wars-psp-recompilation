@@ -62,6 +62,7 @@ pub struct Renderer {
     dc: Handle,
     context: Handle,
     models: HashMap<u16, Vec<Batch>>,
+    shadow_meshes: HashMap<u16, Vec<[[f32;3];3]>>,
     textures: Vec<u32>,
     texture_ids: HashMap<u16, u32>,
     ped_textures: HashMap<(u16, u8), u32>,
@@ -100,6 +101,7 @@ impl Renderer {
             dc: null_mut(),
             context: null_mut(),
             models: HashMap::new(),
+            shadow_meshes: HashMap::new(),
             textures: Vec::new(),
             texture_ids: HashMap::new(),
             ped_textures: HashMap::new(),
@@ -142,6 +144,7 @@ impl Renderer {
                 color_bits: 32,
                 alpha_bits: 8,
                 depth_bits: 24,
+                stencil_bits: 8,
                 ..Default::default()
             };
             if GetPixelFormat(r.dc) == 0 {
@@ -285,6 +288,12 @@ impl Renderer {
                     self.textures.push(tex);
                     self.prop_textures.insert(id, tex);
                 }
+            }
+            for (&id, mesh) in world.meshes.iter().chain(props.into_iter().flat_map(|p|p.models.iter())) {
+                // Cutout foliage is excluded until alpha-tested shadow rendering exists.
+                self.shadow_meshes.insert(id, mesh.surfaces.iter()
+                    .filter(|s| s.alpha == 255 && s.flags & 0x30 == 0)
+                    .map(|s|s.v.map(|v|v.p)).collect());
             }
             for (id, m) in world
                 .meshes
@@ -764,6 +773,7 @@ impl Renderer {
                     glDepthFunc(0x0203);
                 }
             }
+            self.draw_sun_shadows(world, scene, collision, ticks);
             glDepthMask(1);
             glDisable(0x0de1);
             glDisable(0x0bc0);
@@ -2877,6 +2887,41 @@ impl Renderer {
         }
         Ok(())
     }
+    /// Native first-pass projection, NOT recovered PSP shadow routine.
+    /// Stencil prevents stacked triangles darkening the same ground pixel repeatedly.
+    unsafe fn draw_sun_shadows(&self, world: &World, scene: Option<&crate::actors::Scene>, collision: &Collision, ticks: usize) {
+        let Some(tc)=&self.timecycle else {return};
+        let (w,n)=scene.map(|s|(s.weather.current as usize,s.weather.next as usize)).unwrap_or((0,0));
+        let time=crate::timecycle::minutes(ticks) as u32*4096/60;
+        let sun=tc.sun(w,n,time);
+        let alpha=(tc.sample(19,w,n,time)/255.).clamp(0.,1.);
+        if sun[2]<=0.15 || alpha<=0. {return;}
+        glClear(0x0400);
+        glEnable(0x0b90); glStencilFunc(0x0202,0,255); glStencilOp(0x1e00,0x1e00,0x1e02);
+        glDisable(0x0b50);glDisable(0x0b44);glDisable(0x0de1);glDisable(0x0bc0);
+        glEnable(0x0be2);glDepthMask(0);
+        glColor4f(0.,0.,0.,alpha);
+        let instances=world.visible.iter().map(|&i| {let p=world.instances[i];(p.model,p.p,p.angle)})
+            .chain(scene.into_iter().flat_map(|s|s.props.active.iter())
+                .filter(|p|p.state == crate::props::PropState::Standing)
+                .map(|p|(p.model_id,p.p,p.angle)));
+        glBegin(4);
+        for (id,p,angle) in instances {
+            let Some(tris)=self.shadow_meshes.get(&id) else {continue};
+            let ground=collision.ground(p[0],p[1],p[2]+0.1);
+            if ground.water {continue;}
+            let (sn,cs)=angle.sin_cos();
+            for tri in tris {
+                let points=tri.map(|v|[p[0]+v[0]*cs-v[1]*sn,p[1]+v[0]*sn+v[1]*cs,p[2]+v[2]]);
+                if points.iter().all(|v|v[2]<=ground.z+0.1) {continue;}
+                for v in points {
+                    let height=(v[2]-ground.z).max(0.);
+                    glVertex3f(v[0]-height*sun[0]/sun[2],v[1]-height*sun[1]/sun[2],ground.z+0.025);
+                }
+            }
+        }
+        glEnd();glDisable(0x0b90);glDepthMask(1);glEnable(0x0b44);
+    }
     unsafe fn always_sprite(&self, id: u16, anchor: [f32;2], scale: [f32;2], alpha: f32) {
         if let Some(sprite) = self.always_sprites.iter().find(|s| s.id == id) {
             ui_sprite(self.always_texture, [512.,256.], sprite.source,
@@ -4340,6 +4385,8 @@ extern "system" {
     fn glLineWidth(width: f32);
     fn glBegin(mode: u32);
     fn glEnd();
+    fn glStencilFunc(func:u32,reference:i32,mask:u32);
+    fn glStencilOp(fail:u32,zfail:u32,pass:u32);
     fn glNormal3f(x:f32,y:f32,z:f32);
     fn glLightfv(light:u32,param:u32,value:*const f32);
     fn glLightModelfv(param:u32,value:*const f32);

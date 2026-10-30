@@ -56,7 +56,7 @@ From the repository root, in PowerShell:
 .\outputs\CTW-Rust\CTW-Rust.exe --iso "D:\Games\Chinatown-Wars-PSP.iso" --slice
 ```
 
-The compiler runs with warnings treated as errors, tests the workspace, and updates the executable only after success. Unit tests use generated synthetic fixtures and do not require an ISO or extracted game tables. Local validation on **2026-10-29: 246 passed, 0 failed, 0 ignored, 0 compiler warnings**. This is a local result, not a hosted CI badge.
+The compiler runs with warnings treated as errors, tests the workspace, and updates the executable only after success. Unit tests use generated synthetic fixtures and do not require an ISO or extracted game tables. Local validation on **2026-10-30: 246 passed, 0 failed, 0 ignored, 0 compiler warnings**. This is a local result, not a hosted CI badge.
 
 For desktop launchers, set `CTW_ISO` in the launching environment or pass `--iso` to a launcher:
 

@@ -3,8 +3,8 @@
   "measurement": "native Rust function inventory; not original-code coverage",
   "pspParityVerified": false,
   "pspCompletionPercent": null,
-  "sourceSha256": "7dabc5537a4acf3e208a2d528c9e90544b5da199a22dcbf8c4b3af771f5bba64",
-  "runtimeFunctions": 1057,
+  "sourceSha256": "f25aaca58f48a0e85b2e253039aae09ad1f35f420e7791e78d80294dc219ef25",
+  "runtimeFunctions": 1058,
   "testFunctions": 276,
   "modules": 51,
   "subsystems": [
@@ -122,7 +122,7 @@
     },
     {
       "name": "World and rendering",
-      "runtimeFunctions": 130,
+      "runtimeFunctions": 131,
       "testFunctions": 43,
       "classes": [
         {
@@ -148,7 +148,7 @@
         },
         {
           "name": "gpu.rs",
-          "runtimeFunctions": 44,
+          "runtimeFunctions": 45,
           "testFunctions": 0,
           "relatedClasses": [
             "cWaterRenderBlock",
@@ -653,6 +653,6 @@
   ],
   "lastLocalValidation": {
     "passed": 246,
-    "date": "2026-10-29"
+    "date": "2026-10-30"
   }
 }

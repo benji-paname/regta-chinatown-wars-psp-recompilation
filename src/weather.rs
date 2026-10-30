@@ -131,8 +131,8 @@ impl WeatherManager {
             thunder_pending: None,
             strike_timer: 12.0,
             rain_intensity: 0.0,
-            hour: 8,
-            minute: 0,
+            hour: (crate::timecycle::minutes(0)/60) as u8,
+            minute: (crate::timecycle::minutes(0)%60) as u8,
         }
     }
 
