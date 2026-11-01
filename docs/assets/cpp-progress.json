@@ -1,0 +1,293 @@
+{
+  "raw_records": 256,
+  "selected_imports": 252,
+  "mapped": 203,
+  "missing": 49,
+  "percent": 80.56,
+  "groups": {
+    "Audio": [
+      {
+        "library": "sceAtrac3plus",
+        "mapped": 14,
+        "total": 14
+      },
+      {
+        "library": "sceAudio",
+        "mapped": 11,
+        "total": 11
+      },
+      {
+        "library": "sceSasCore",
+        "mapped": 27,
+        "total": 27
+      }
+    ],
+    "Files & media": [
+      {
+        "library": "IoFileMgrForUser",
+        "mapped": 15,
+        "total": 15
+      },
+      {
+        "library": "StdioForUser",
+        "mapped": 3,
+        "total": 3
+      },
+      {
+        "library": "scePspNpDrm_user",
+        "mapped": 2,
+        "total": 2
+      },
+      {
+        "library": "sceUmdUser",
+        "mapped": 6,
+        "total": 7
+      }
+    ],
+    "Graphics & display": [
+      {
+        "library": "sceDisplay",
+        "mapped": 4,
+        "total": 6
+      },
+      {
+        "library": "sceGe_user",
+        "mapped": 6,
+        "total": 6
+      }
+    ],
+    "Input & system": [
+      {
+        "library": "UtilsForUser",
+        "mapped": 6,
+        "total": 6
+      },
+      {
+        "library": "sceCtrl",
+        "mapped": 3,
+        "total": 3
+      },
+      {
+        "library": "sceImpose",
+        "mapped": 1,
+        "total": 1
+      },
+      {
+        "library": "scePower",
+        "mapped": 1,
+        "total": 3
+      },
+      {
+        "library": "sceRtc",
+        "mapped": 5,
+        "total": 5
+      },
+      {
+        "library": "sceSuspendForUser",
+        "mapped": 5,
+        "total": 5
+      },
+      {
+        "library": "sceUtility",
+        "mapped": 15,
+        "total": 16
+      }
+    ],
+    "Kernel & threads": [
+      {
+        "library": "InterruptManager",
+        "mapped": 3,
+        "total": 3
+      },
+      {
+        "library": "Kernel_Library",
+        "mapped": 3,
+        "total": 3
+      },
+      {
+        "library": "LoadExecForUser",
+        "mapped": 2,
+        "total": 2
+      },
+      {
+        "library": "ModuleMgrForUser",
+        "mapped": 5,
+        "total": 5
+      },
+      {
+        "library": "SysMemUserForUser",
+        "mapped": 7,
+        "total": 7
+      },
+      {
+        "library": "ThreadManForUser",
+        "mapped": 41,
+        "total": 44
+      }
+    ],
+    "Network": [
+      {
+        "library": "sceNet",
+        "mapped": 3,
+        "total": 4
+      },
+      {
+        "library": "sceNetAdhoc",
+        "mapped": 2,
+        "total": 6
+      },
+      {
+        "library": "sceNetAdhocMatching",
+        "mapped": 7,
+        "total": 9
+      },
+      {
+        "library": "sceNetAdhocctl",
+        "mapped": 6,
+        "total": 10
+      },
+      {
+        "library": "sceNetApctl",
+        "mapped": 0,
+        "total": 5
+      },
+      {
+        "library": "sceNetInet",
+        "mapped": 0,
+        "total": 18
+      },
+      {
+        "library": "sceNetResolver",
+        "mapped": 0,
+        "total": 5
+      },
+      {
+        "library": "sceWlanDrv",
+        "mapped": 0,
+        "total": 1
+      }
+    ]
+  },
+  "method": "Selected PSP imports with exact (library, name) source providers; not game completion or implementation correctness",
+  "evidence": {
+    "private_import_table_sha256": "afb0144b5a1bdda7a20b6be21bec2f14eb8842eae8acc4a9445235e7119516d8",
+    "runtime_sources": [
+      {
+        "file": "runtime/sas/sas_glue.cpp",
+        "sha256": "bac20bebabd600a549ec5d7c0a8123eeec02ff2c5f79ea395459deac7a756927"
+      },
+      {
+        "file": "runtime/sas/SasAudio.cpp",
+        "sha256": "a71eed5ddcff17bdc70d84b21a2a84c388e9ba0703b51586d725bafc707589bc"
+      },
+      {
+        "file": "runtime/sas/SasReverb.cpp",
+        "sha256": "390bfce44cde3add2bae87973463cf40f19cab165e90a58e44ad4d0d03fe9b76"
+      },
+      {
+        "file": "runtime/src/core.cpp",
+        "sha256": "80f4a26b2761d5f767e3703c2ee527c3c6c33833ea9fd2c12b28f9a199b3761e"
+      },
+      {
+        "file": "runtime/src/game_hooks.cpp",
+        "sha256": "fd53aaff51e484816ff3c926f718b6c38b8a58b9cb46a5f64f3939f799de1677"
+      },
+      {
+        "file": "runtime/src/ge_gl.cpp",
+        "sha256": "8146438f01687809b8e9f77c08a78388134ff4312b342600f196f064c31f309b"
+      },
+      {
+        "file": "runtime/src/ge_render.cpp",
+        "sha256": "a0a7cf7e437b4e84207fd0b152c0dc697e08b15f44e4ec644f3c2614fe0eb8ea"
+      },
+      {
+        "file": "runtime/src/gl_funcs.cpp",
+        "sha256": "9c9315f5c3e50c1aa1906c179db37f2e0548816ec2ee8a40fa3652b30c64b80b"
+      },
+      {
+        "file": "runtime/src/hle_audio.cpp",
+        "sha256": "9d40d6db76a4180dc347590b9dc408ab97ea9287b3bfabd354ba012b1cdd1d38"
+      },
+      {
+        "file": "runtime/src/hle_display.cpp",
+        "sha256": "5ffaa3636331d75522c01a8152231731bdf5726ac5669bc5472a4078c5ca2564"
+      },
+      {
+        "file": "runtime/src/hle_extra.cpp",
+        "sha256": "f0a4034bd7daff9a46afc82fc93f3cb75a3038ba81deb9a4270ff4e8e58b992e"
+      },
+      {
+        "file": "runtime/src/hle_ge.cpp",
+        "sha256": "7a08edc7686b412d7dd3d6c148a169d77e12de7f607e530c2bb760533e1932df"
+      },
+      {
+        "file": "runtime/src/hle_intr.cpp",
+        "sha256": "4153172d41ac0845b70e89487622c899314a54f61b436ff0224c98b137b3ed1c"
+      },
+      {
+        "file": "runtime/src/hle_io.cpp",
+        "sha256": "289fe4a4810ad2df32f49f4614aaee54e8fdd61b92655e390b4283a08f523045"
+      },
+      {
+        "file": "runtime/src/hle_misc.cpp",
+        "sha256": "8d36166179dfe33d183749f11f0522a812a40eedc3de1d27138b4be7191c07d4"
+      },
+      {
+        "file": "runtime/src/hle_mpeg.cpp",
+        "sha256": "bd082cfa932fa6116bde6397ca0ba783e3f7a80971c69447f4365b2384bd5e21"
+      },
+      {
+        "file": "runtime/src/hle_net.cpp",
+        "sha256": "d05c37d818caf1d6ea19b71f9697a4f46ca42ce10bc90a981933743ab78f4b95"
+      },
+      {
+        "file": "runtime/src/hle_savedata.cpp",
+        "sha256": "bfcef5c174598e0a00b28b60a911fafb28c4207ff2cf613d22a9a33065d97d99"
+      },
+      {
+        "file": "runtime/src/kernel_misc.cpp",
+        "sha256": "ccdcb4fd2df4263341803dc18b313db88e3524cb754dbeefd17b2639709132af"
+      },
+      {
+        "file": "runtime/src/kernel_thread.cpp",
+        "sha256": "b84b1f0325449e86507fb1f2576cf7ef6f5c4f83bf93cf099a76311d274bb757"
+      },
+      {
+        "file": "runtime/src/main.cpp",
+        "sha256": "97797578d472879efe4c56b04edf064696307677d06f524e8f17fad1837eb959"
+      },
+      {
+        "file": "runtime/src/osd.cpp",
+        "sha256": "ab160275528f2fdabd6c92000b5039e2ab32d3b4d9520629b2ca3d7daffc199a"
+      },
+      {
+        "file": "runtime/src/platform.cpp",
+        "sha256": "0a3d9f980c68cfd1690aedb7b28ac68b92c38e67771ee01d42b85ac8dac37c8c"
+      },
+      {
+        "file": "runtime/src/savestate.cpp",
+        "sha256": "9f936c8dd6205ba203d626c7cede3c34661c844ec46b86fc9918cb15884ab06d"
+      },
+      {
+        "file": "runtime/src/settings.cpp",
+        "sha256": "fe206391b7784462b08a4b99fcd1c7b848e5cdd40e85cf90872077afc35b0c35"
+      },
+      {
+        "file": "runtime/vfpu/MIPSIntVFPU.cpp",
+        "sha256": "093c5dfdb51a318e81fed1372c2d48931743cd7463017e192305a2c5d4166de8"
+      },
+      {
+        "file": "runtime/vfpu/MIPSVFPUFallbacks.cpp",
+        "sha256": "2d7f0c9e71537c1ebb712161799a7f70ae30b806872e6495c6ec786780df9385"
+      },
+      {
+        "file": "runtime/vfpu/MIPSVFPUUtils.cpp",
+        "sha256": "c4e3b792bc1978b4b353581320f892562397a7517cf59db1c80eb322bb57185f"
+      },
+      {
+        "file": "runtime/vfpu/vfpu_glue.cpp",
+        "sha256": "45e960f7f1d66a11aca374274cfd111c0074724a8df0e2fabfbeae63a74049d1"
+      }
+    ]
+  }
+}

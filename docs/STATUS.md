@@ -12,3 +12,7 @@ The active implementation is native C++20 for Windows x64, targeting PSP Europe 
 Known: drops toward 20 FPS and uneven frametimes in dense driving scenes. Remaining campaign, compatibility and performance require testing. Unverified USA hooks/cheats must not be enabled on Europe. Mouse-driven mini-games are a future option, not implemented.
 
 No public download or completion percentage. No gameplay captures published. [Migration evidence](CPP_MAINLINE_MIGRATION.md) · [Historical Rust inventory](legacy/progress.html).
+
+## Visual source-mapping progress
+
+The [C++ treemap](CPP_PROGRESS.md) is restored: **80.56% (203/252)** selected PSP imports have exact source providers. Green means a provider declaration exists, including potentially partial implementations/stubs; grey means absent. This does not certify those services or score completion of the game. Counts regenerate from the current canonical runtime and private Europe import inventory. Historical Rust metrics remain separate.

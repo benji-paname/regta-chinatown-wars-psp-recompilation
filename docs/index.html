@@ -3,7 +3,7 @@
 <title>ReGTA Chinatown Wars — Native PC Recomp</title>
 <meta name="description" content="Chinatown Wars PSP recompiled natively for Windows x64 in C++20. Two missions completed in an owner playtest; performance and campaign validation continue.">
 <meta name="theme-color" content="#0b0d11"><meta property="og:title" content="ReGTA CTW — Native PC Recomp"><meta property="og:description" content="A playable private C++20 Playtest. PSP Europe, Windows x64. Still in development; no public download."><meta property="og:type" content="website">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js?v=cpp-mainline-20261102" defer></script></head><body>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css?v=full-title-20261102"><script src="assets/site.js?v=full-title-20261102" defer></script></head><body>
 
 <a class="skip" href="#main" data-en="Skip to content" data-fr="Aller au contenu" data-es="Saltar al contenido">Skip to content</a>
 <header><nav class="wrap nav" aria-label="Main navigation"><a class="brand" href="#main"><img src="assets/favicon.svg" alt="" width="38" height="38">ReGTA CTW</a><div class="nav-links">
@@ -13,7 +13,7 @@
 <a href="#support" data-en="Support" data-fr="Soutenir" data-es="Apoyar">Support</a>
 <a href="https://github.com/benji-paname/regta-chinatown-wars-pc-port">GitHub</a><div class="languages" role="group" aria-label="Language / Langue / Idioma"><button type="button" data-language="en" aria-pressed="true" lang="en">EN</button><button type="button" data-language="fr" aria-pressed="false" lang="fr">FR</button><button type="button" data-language="es" aria-pressed="false" lang="es">ES</button></div></div></nav></header><main id="main"><section class="hero"><div class="wrap">
 <p class="eyebrow" data-en="Native C++20 · Windows x64 · PSP Europe" data-fr="C++20 natif · Windows x64 · PSP Europe" data-es="C++20 nativo · Windows x64 · PSP Europa">Native C++20 · Windows x64 · PSP Europe</p>
-<img class="main-logo" src="assets/logo.svg" alt="ReGTA CTW — PC Recomp" width="900" height="540">
+<img class="main-logo" src="assets/logo-chinatown-wars.svg" alt="ReGTA Chinatown Wars — PSP Recompilation" width="900" height="625">
 <h1  data-en="ReGTA Chinatown Wars — Native PC Recomp" data-fr="ReGTA Chinatown Wars — Recompilation PC native" data-es="ReGTA Chinatown Wars — Recompilación nativa para PC">ReGTA Chinatown Wars — Native PC Recomp</h1>
 <p class="intro" data-en="Experience the original PSP game, recompiled natively for Windows. A playable local Playtest, with optimization and broader validation underway." data-fr="Retrouvez le jeu PSP original, recompilé nativement pour Windows. Un Playtest local jouable, dont l’optimisation et la validation se poursuivent." data-es="Disfruta del juego original de PSP, recompilado de forma nativa para Windows. Un Playtest local jugable, con optimización y validación más amplia en curso.">Experience the original PSP game, recompiled natively for Windows. A playable local Playtest, with optimization and broader validation underway.</p>
 <p class="credit">by <span>Benji Paname</span></p><div class="actions">
@@ -59,14 +59,20 @@
 </div></section><section id="status" class="content wrap"><div class="section-top">
 <h2  data-en="Playable does not mean finished." data-fr="Jouable ne signifie pas terminé." data-es="Jugable no significa terminado.">Playable does not mean finished.</h2>
 <p  data-en="The next priority is consistent performance." data-fr="La prochaine priorité : des performances régulières." data-es="La siguiente prioridad es un rendimiento estable.">The next priority is consistent performance.</p>
-</div><div class="grid">
+</div><div class="cpp-progress-panel">
+<div class="cpp-progress-heading"><div><strong data-import-percent>80.56%</strong><p data-en="PSP import source mappings" data-fr="Imports PSP associés dans les sources" data-es="Imports PSP asociados en el código">PSP import source mappings</p></div><code data-import-count>203 / 252</code></div>
+<p data-en="Green: a matching C++ source provider exists. Grey: no provider found. A provider may be partial or a stub; this percentage measures import mappings, not how much of the game is finished." data-fr="Vert : une fonction C++ correspondante est déclarée. Gris : aucune correspondance trouvée. Une fonction peut être partielle ou provisoire ; ce pourcentage mesure les imports associés, pas l’achèvement du jeu." data-es="Verde: existe una función C++ correspondiente. Gris: no se ha encontrado. Una función puede ser parcial o provisional; el porcentaje mide las correspondencias de imports, no la finalización del juego.">Green: a matching C++ source provider exists. Grey: no provider found. A provider may be partial or a stub; this percentage measures import mappings, not how much of the game is finished.</p>
+<a class="treemap-card" href="https://github.com/benji-paname/regta-chinatown-wars-pc-port/blob/main/docs/CPP_PROGRESS.md"><img src="assets/cpp-progress.svg" width="1100" height="690" alt="PSP import source mappings: green and grey treemap" data-en="PSP import source mappings: green and grey treemap" data-fr="Cartographie des imports PSP : blocs verts et gris" data-es="Mapa de imports PSP: bloques verdes y grises"></a>
+<p><a href="https://github.com/benji-paname/regta-chinatown-wars-pc-port/blob/main/docs/CPP_PROGRESS.md" data-en="How this percentage is calculated" data-fr="Comment ce pourcentage est calculé" data-es="Cómo se calcula este porcentaje">How this percentage is calculated</a></p>
+</div>
+<div class="grid">
 <article class="card">
 <span class="tag" data-en="Known limitation" data-fr="Limitation connue" data-es="Limitación conocida">Known limitation</span>
 <h3  data-en="FPS &amp; frametimes" data-fr="FPS et frametimes" data-es="FPS y tiempos de fotograma">FPS &amp; frametimes</h3>
 <p  data-en="Gameplay can drop toward 20 FPS, with uneven frame pacing, particularly when driving through dense traffic and pedestrian areas. Optimization is ongoing." data-fr="Le gameplay peut chuter vers 20 FPS, avec des frametimes irréguliers, surtout en conduite dans les zones riches en véhicules et piétons. L’optimisation se poursuit." data-es="El juego puede bajar hasta unos 20 FPS, con tiempos de fotograma irregulares, especialmente al conducir en zonas con mucho tráfico y peatones. La optimización continúa.">Gameplay can drop toward 20 FPS, with uneven frame pacing, particularly when driving through dense traffic and pedestrian areas. Optimization is ongoing.</p>
 </article><article class="card">
 <span class="tag" data-en="Engineering evidence" data-fr="Preuves techniques" data-es="Evidencia técnica">Engineering evidence</span>
-<h3  data-en="35 checks. No invented percentage." data-fr="35 contrôles. Aucun pourcentage inventé." data-es="35 pruebas. Sin porcentajes inventados.">35 checks. No invented percentage.</h3>
+<h3 data-en="35 kernel checks passed" data-fr="35 contrôles kernel réussis" data-es="35 pruebas del kernel superadas">35 kernel checks passed</h3>
 <p  data-en="The migration rebuilt 29 runtime components and passed 35 kernel checks. Existing Bink and FIFO/priority fixes are retained. Compiler warnings and untested cases remain." data-fr="La migration a recompilé 29 composants runtime et validé 35 contrôles kernel. Les correctifs Bink et FIFO/priorité sont conservés. Des avertissements de compilation et des cas non testés subsistent." data-es="La migración recompiló 29 componentes del runtime y superó 35 pruebas del kernel. Se conservan las correcciones de Bink y FIFO/prioridad. Persisten advertencias de compilación y casos sin probar.">The migration rebuilt 29 runtime components and passed 35 kernel checks. Existing Bink and FIFO/priority fixes are retained. Compiler warnings and untested cases remain.</p>
 </article><article class="card">
 <span class="tag" data-en="Private game data" data-fr="Données du jeu privées" data-es="Datos del juego privados">Private game data</span>

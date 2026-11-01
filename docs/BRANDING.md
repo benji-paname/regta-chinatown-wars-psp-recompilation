@@ -4,6 +4,14 @@ Project: **ReGTA CTW**. Full name: **ReGTA CTW PC Recomp**. Credit: **by Benji P
 
 The website and GitHub presentation use English as their primary language. The website also offers French and Spanish.
 
+## Primary full-title version — 2 November 2026
+
+The main website and README now use `docs/assets/logo-chinatown-wars.svg`, with the full **CHINATOWN / WARS** below **ReGTA**, and **PSP RECOMPILATION**, in large Pricedown lettering, as the subtitle. ReGTA reuses the exact approved Pricedown outlines, including the lowercase e. The full title uses the owner-supplied `BRUCM___.TTF` (Harold Lohner / Bruce Mikita) from the private Downloads/font folder. Its SHA256 matches the historical input fingerprint below. C and the final N are enlarged to follow the supplied cover's composition; WARS is centered on a narrower second line. Red #d90000, yellow #ffda22 and a black keyline are retained.
+
+The old font is the engraved variant: the artwork generator omits its decorative inline highlights while preserving the actual outer contours and the A/O/R counters to create solid cover-style red lettering. The font file itself is never modified or distributed. This is independently typeset project artwork, not a scan or extraction of the official wordmark, and not a claim of pixel identity with the printed cover.
+
+New exports: main/transparent SVG, black-background SVG, transparent PNG and black PNG (1800 × 1250). The older CTW horizontal/vertical, transparent/black versions remain unchanged and available. Reproduce with `tools/research/generate_full_title_logo.py --bruce-mikita <private BRUCM___.TTF path> --pricedown <private Pricedown Bl.otf path>` and `tools/research/render_brand_svg.ps1` (Windows WPF, no downloaded renderer). Owner authorization already confirmed on 2026-11-02 applies to the supplied font artwork; no font software is published.
+
 ## Requested final typography
 
 - **GTA:** Pricedown, in the heavy/Black style associated with the series. [Raymond Larabie's history](https://typodermicfonts.com/between-the-lines/stories/pricedown/) confirms its use by Rockstar. [Publisher page](https://typodermicfonts.com/pricedown/) describes desktop licenses for logos and static graphics.

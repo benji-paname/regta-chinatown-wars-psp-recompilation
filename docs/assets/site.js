@@ -7,7 +7,8 @@
     document.querySelectorAll('[data-en]').forEach((element) => {
       const text = element.dataset[lang] || element.getAttribute('data-' + lang) || element.dataset.en;
       if (text) {
-        element.textContent = text;
+        if (element.tagName === 'IMG') element.alt = text;
+        else element.textContent = text;
       }
     });
     document.querySelectorAll('[data-language]').forEach((button) => {

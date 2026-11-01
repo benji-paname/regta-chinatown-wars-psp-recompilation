@@ -14,7 +14,12 @@
     "docs/assets/logo-transparent.svg": "b08b96795615357d551890c5d511706a2150c0d840eb341438daa94577de0daf",
     "docs/assets/logo.png": "88644e5cc8c041129dbd47e25e6e0ad53bc5eb676129679f3f6420e9445c89d5",
     "docs/assets/logo.svg": "b08b96795615357d551890c5d511706a2150c0d840eb341438daa94577de0daf",
-    "docs/assets/favicon.svg": "dfcca5f1565547785f0b7172cbdbd2ae706bb2936992b855913c213d5e801d14"
+    "docs/assets/favicon.svg": "dfcca5f1565547785f0b7172cbdbd2ae706bb2936992b855913c213d5e801d14",
+    "docs/assets/logo-chinatown-wars-black.png": "85bcbe2c0c18c6d5a7ed5761e795313dd36bbc24416864b048387b6e1d5ac5e7",
+    "docs/assets/logo-chinatown-wars-black.svg": "242a4b139ff5d48b72cfab1f5bba556557647b843af624819a70c6611eda933d",
+    "docs/assets/logo-chinatown-wars-transparent.svg": "f3feec49c16dc6f994ed34cadd554a7b087b70fc3997fcb2723baf5f5476b233",
+    "docs/assets/logo-chinatown-wars.png": "b87fb0788f87b543c6281ea010a4663f5a5ca6de02080704edf86dbd22e0aabb",
+    "docs/assets/logo-chinatown-wars.svg": "f3feec49c16dc6f994ed34cadd554a7b087b70fc3997fcb2723baf5f5476b233"
   },
   "hash_basis": "SHA256 of exact Git blob bytes (SVG line endings normalized by Git); local artwork is unchanged."
 }

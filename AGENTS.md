@@ -37,7 +37,7 @@ Keep compiler diagnostics. Current C++ builds have inherited warnings: do not cl
 
 ## Status, website and handoff
 
-`python tools/progress/cpp_status.py` generates C++ evidence status from actual local validation, without a completion percentage. Rust's `tools/progress/progress.py` writes only `docs/legacy/`; never put Rust metrics back on the main site or README. Never hand-edit generated status SVGs.
+`python tools/progress/cpp_status.py` generates C++ evidence status and the green/grey PSP-import treemap from actual local validation and current source providers. The displayed percentage is exact source mappings / selected PSP imports, never a game-completion percentage; providers may be partial or stubs. `tools/progress/cpp_treemap.py` selects the last record per stub exactly as the runtime does. Rust's `tools/progress/progress.py` writes only `docs/legacy/`; never put Rust metrics back on the main site or README. Never hand-edit generated status SVGs.
 
 Public name: ReGTA CTW — Native PC Recomp; credit: by Benji Paname. README English; site English/French/Spanish. Keep translations consistent. No public download until redistribution rights/package are verified. Preserve GitHub, Discord and support links. Owner reports and automated test results must be separately labelled.
 

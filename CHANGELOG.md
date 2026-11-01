@@ -1,5 +1,11 @@
 # C++ mainline migration — 2026-11-02 (development milestone)
 
+## 2026-11-02 — Full-title primary logo and C++ progress
+
+- Added CHINATOWN / WARS beneath the approved ReGTA lettering; existing CTW variants retained.
+- Restored a generated green/grey C++ status treemap and 80.56% PSP-import source-mapping metric (203/252), explicitly separate from game completion.
+- Added mapping-integrity tests and preserved all private game data.
+
 - Make native C++20 PSP Europe/Windows x64 the canonical implementation; retain the Rust implementation and archive history.
 - Promote the integrated Bink and mutex/mailbox FIFO-priority runtime; rebuild29 runtime units and pass35 covered kernel checks.
 - Record Benjamin's completion of the first two story missions as a user playtest, with20FPS/frametime issues still open.

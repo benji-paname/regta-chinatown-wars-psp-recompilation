@@ -1,5 +1,7 @@
 # Mainline migration handoff — 2026-11-02
 
+Current presentation: full-title logo-chinatown-wars.svg is primary; CTW variants retained. C++ treemap shows source mappings only: 203/252 = 80.56%. Read docs/CPP_PROGRESS.md; this is not overall game completion.
+
 C++20 is now canonical: runtime/. Rust sources are preserved in legacy/rust/src/. Read docs/AI_HANDOFF.md and docs/CPP_MAINLINE_MIGRATION.md first. Resume validation with .\Compiler.ps1 -Check. The rebuilt 29 runtime components link against 250 preserved generated objects; 35 kernel checks pass. Existing Playtest binary and saves were not replaced. No test captures may be published. Benjamin confirms logo font authorization. The local directory rename is blocked by a Windows lock; do not force it.
 
 Migration 5ce70a6 is published; GitHub Pages run 41362702257 succeeded. C++ is active, 35 kernel checks pass, original Playtest is unchanged. Root rename remains pending Windows lock release. Read the canonical migration report for final follow-up status.

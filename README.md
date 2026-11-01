@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/assets/logo.svg" alt="ReGTA CTW — PC Recomp" width="440"></p>
+<p align="center"><img src="docs/assets/logo-chinatown-wars.svg" alt="ReGTA Chinatown Wars — PSP Recompilation" width="440"></p>
 
 # ReGTA CTW — Native PC Recomp
 
@@ -9,6 +9,16 @@ C++20 is now the mainline of this independent project by **Benji Paname**, targe
 [Website](https://benji-paname.github.io/regta-chinatown-wars-pc-port/) · [Status](docs/STATUS.md) · [Local build](docs/BUILD_CPP.md) · [Playtest guide](docs/PLAYTEST.md) · [Contributing](CONTRIBUTING.md)
 
 ![C++ kernel checks](docs/assets/badge-cpp.svg)
+
+## Progress
+
+<!-- CPP_IMPORT_PROGRESS_START -->
+![PSP import mappings](docs/assets/badge-cpp-imports.svg)
+
+**80.56% of selected PSP imports have exact source providers (203/252).** Green blocks show source mappings; grey blocks show missing providers. Mappings can be incomplete or stubs: this is not a percentage of the game finished or a gameplay-fidelity certificate.
+
+[![PSP import source mappings](docs/assets/cpp-progress.svg)](docs/CPP_PROGRESS.md)
+<!-- CPP_IMPORT_PROGRESS_END -->
 
 ## Playable progress, with clear limits
 

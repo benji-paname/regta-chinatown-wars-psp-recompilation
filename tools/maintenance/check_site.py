@@ -27,6 +27,6 @@ def main():
         if not p.path and p.fragment:assert p.fragment in page.ids, 'Broken anchor: '+link
     assert page.languages=={'en','fr','es'}
     assert page.translated>=40
-    assert all(Path(image).name in {'favicon.svg','logo.svg','badge-cpp.svg'} for image in page.images), 'Unapproved image'
+    assert all(Path(image).name in {'favicon.svg','logo-chinatown-wars.svg','badge-cpp.svg','cpp-progress.svg'} for image in page.images), 'Unapproved image'
     print(f'Site: {page.translated} translated elements; EN/FR/ES; local links and approved media checked')
 if __name__=='__main__':main()

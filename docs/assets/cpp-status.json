@@ -7,6 +7,12 @@
     "failed": 0,
     "known_differences_in_covered_tests": 0
   },
+  "psp_import_source_mappings": {
+    "mapped": 203,
+    "selected_imports": 252,
+    "missing": 49,
+    "percent": 80.56
+  },
   "runtime_units_compiled": 29,
   "generated_units_reused": 250,
   "overlay_count": 166,
