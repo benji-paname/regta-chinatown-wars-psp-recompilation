@@ -1,149 +1,115 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ReGTA CTW — PC Recomp by Benji Paname</title>
-<meta name="description" content="Bringing Chinatown Wars PSP to native PC with Rust. Explore the ReGTA CTW research project, development progress and ways to support Benji Paname.">
-<meta name="theme-color" content="#0b0d11">
-<meta property="og:title" content="ReGTA CTW — PC Recomp">
-<meta property="og:description" content="A native PC future for Chinatown Wars PSP. Independent research and development by Benji Paname. Pre-alpha; no playable download available.">
-<meta property="og:type" content="website">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/site.css"><script src="assets/site.js?v=1.0.2" defer></script>
-</head><body>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ReGTA Chinatown Wars — Native PC Recomp</title>
+<meta name="description" content="Chinatown Wars PSP recompiled natively for Windows x64 in C++20. Two missions completed in an owner playtest; performance and campaign validation continue.">
+<meta name="theme-color" content="#0b0d11"><meta property="og:title" content="ReGTA CTW — Native PC Recomp"><meta property="og:description" content="A playable private C++20 Playtest. PSP Europe, Windows x64. Still in development; no public download."><meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js?v=cpp-mainline-20261102" defer></script></head><body>
+
 <a class="skip" href="#main" data-en="Skip to content" data-fr="Aller au contenu" data-es="Saltar al contenido">Skip to content</a>
-<header><nav class="wrap nav" aria-label="Main navigation">
-<a class="brand" href="#main"><img src="assets/favicon.svg" alt="" width="38" height="38">ReGTA CTW</a><div class="nav-links">
+<header><nav class="wrap nav" aria-label="Main navigation"><a class="brand" href="#main"><img src="assets/favicon.svg" alt="" width="38" height="38">ReGTA CTW</a><div class="nav-links">
 <a href="#project" data-en="The project" data-fr="Le projet" data-es="El proyecto">The project</a>
 <a href="#status" data-en="Status" data-fr="Statut" data-es="Estado">Status</a>
 <a href="#roadmap" data-en="Roadmap" data-fr="Feuille de route" data-es="Hoja de ruta">Roadmap</a>
 <a href="#support" data-en="Support" data-fr="Soutenir" data-es="Apoyar">Support</a>
-<a class="repo-link" hidden>GitHub</a><div class="languages" role="group" aria-label="Language / Langue / Idioma" hidden><button type="button" data-language="en" aria-pressed="true" lang="en">EN</button><button type="button" data-language="fr" aria-pressed="false" lang="fr">FR</button><button type="button" data-language="es" aria-pressed="false" lang="es">ES</button></div></div></nav></header>
-<main id="main"><section class="hero"><div class="wrap">
-<p class="eyebrow" data-en="Independent fan project · Native PC · Rust" data-fr="Projet de fans indépendant · PC natif · Rust" data-es="Proyecto fan independiente · PC nativo · Rust">Independent fan project · Native PC · Rust</p>
+<a href="https://github.com/benji-paname/regta-chinatown-wars-pc-port">GitHub</a><div class="languages" role="group" aria-label="Language / Langue / Idioma"><button type="button" data-language="en" aria-pressed="true" lang="en">EN</button><button type="button" data-language="fr" aria-pressed="false" lang="fr">FR</button><button type="button" data-language="es" aria-pressed="false" lang="es">ES</button></div></div></nav></header><main id="main"><section class="hero"><div class="wrap">
+<p class="eyebrow" data-en="Native C++20 · Windows x64 · PSP Europe" data-fr="C++20 natif · Windows x64 · PSP Europe" data-es="C++20 nativo · Windows x64 · PSP Europa">Native C++20 · Windows x64 · PSP Europe</p>
 <img class="main-logo" src="assets/logo.svg" alt="ReGTA CTW — PC Recomp" width="900" height="540">
-<h1  data-en="Chinatown Wars. A native PC future." data-fr="Chinatown Wars. Un avenir natif sur PC." data-es="Chinatown Wars. Un futuro nativo en PC.">Chinatown Wars. A native PC future.</h1>
-<p class="intro" data-en="Rebuilding the PSP experience in Rust: its streets, its movement, its unmistakable top-down world. A long-term reverse-engineering project, developed in the open." data-fr="Reconstruire l’expérience PSP en Rust : ses rues, ses mouvements, son monde en vue de dessus. Un projet d’ingénierie inverse de longue haleine, documenté ouvertement." data-es="Reconstruyendo la experiencia PSP en Rust: sus calles, su movimiento y su inconfundible mundo cenital. Un proyecto de ingeniería inversa a largo plazo, desarrollado en abierto.">Rebuilding the PSP experience in Rust: its streets, its movement, its unmistakable top-down world. A long-term reverse-engineering project, developed in the open.</p>
+<h1  data-en="ReGTA Chinatown Wars — Native PC Recomp" data-fr="ReGTA Chinatown Wars — Recompilation PC native" data-es="ReGTA Chinatown Wars — Recompilación nativa para PC">ReGTA Chinatown Wars — Native PC Recomp</h1>
+<p class="intro" data-en="Experience the original PSP game, recompiled natively for Windows. A playable local Playtest, with optimization and broader validation underway." data-fr="Retrouvez le jeu PSP original, recompilé nativement pour Windows. Un Playtest local jouable, dont l’optimisation et la validation se poursuivent." data-es="Disfruta del juego original de PSP, recompilado de forma nativa para Windows. Un Playtest local jugable, con optimización y validación más amplia en curso.">Experience the original PSP game, recompiled natively for Windows. A playable local Playtest, with optimization and broader validation underway.</p>
 <p class="credit">by <span>Benji Paname</span></p><div class="actions">
 <a class="button primary" href="https://fr.tipeee.com/benji-paname/" data-en="Support on Tipeee" data-fr="Soutenir sur Tipeee" data-es="Apoyar en Tipeee">Support on Tipeee</a>
-<a class="button" style="background:#5865F2;border-color:#5865F2;color:#fff;" href="https://discord.com/users/601648068277960714" target="_blank" rel="noopener noreferrer" title="Discord: benjamin060936" data-en="Discord: benjamin060936" data-fr="Discord : benjamin060936" data-es="Discord: benjamin060936">Discord: benjamin060936</a>
-<a class="button" href="#project" data-en="Explore the progress" data-fr="Découvrir les avancées" data-es="Explorar los avances">Explore the progress</a>
-</div><aside class="notice">
-<strong  data-en="Pre-alpha. No playable download available." data-fr="Pré-alpha. Aucune version jouable disponible au téléchargement." data-es="Pre-alpha. Ninguna versión jugable disponible para descargar.">Pre-alpha. No playable download available.</strong>
-<p  data-en="No game executable, ROM, ISO or proprietary game assets are offered here. The project is unfinished, and no release date is announced. Running a local build requires your own supported PSP game copy." data-fr="Aucun exécutable du jeu, ROM, ISO ou asset propriétaire n’est proposé ici. Le projet est inachevé et aucune date de sortie n’est annoncée. Une compilation locale nécessite votre propre copie PSP compatible." data-es="Aquí no se ofrece ningún ejecutable del juego, ROM, ISO ni recursos propietarios. El proyecto está en desarrollo y no hay fecha de lanzamiento anunciada. Ejecutar una versión local requiere tu propia copia legal de PSP.">No game executable, ROM, ISO or proprietary game assets are offered here. The project is unfinished, and no release date is announced. Running a local build requires your own supported PSP game copy.</p>
+<a class="button" href="#project" data-en="Explore the playable milestone" data-fr="Découvrir le jalon jouable" data-es="Explorar el hito jugable">Explore the playable milestone</a>
+<a class="button" href="https://github.com/benji-paname/regta-chinatown-wars-pc-port">GitHub</a></div><aside class="notice">
+<strong  data-en="In development. No public download yet." data-fr="En développement. Aucun téléchargement public pour le moment." data-es="En desarrollo. Todavía no hay descarga pública.">In development. No public download yet.</strong>
+<p  data-en="The private Playtest is not a cleared public release. You need your own supported PSP copy. No ROM, ISO, game assets or saves are distributed here, and no release date is promised." data-fr="Le Playtest privé n’est pas une version publique validée. Votre propre copie PSP compatible est nécessaire. Aucun ROM, ISO, asset ou sauvegarde du jeu n’est distribué ici et aucune date de sortie n’est promise." data-es="El Playtest privado no es una versión pública autorizada para distribución. Necesitas tu propia copia compatible de PSP. No se distribuyen ROM, ISO, recursos ni partidas guardadas, y no se promete una fecha de lanzamiento.">The private Playtest is not a cleared public release. You need your own supported PSP copy. No ROM, ISO, game assets or saves are distributed here, and no release date is promised.</p>
 </aside><div class="metrics">
-<div class="metric"><strong>v0.1.4</strong>
-<span  data-en="Alpha milestone" data-fr="Jalon alpha" data-es="Hito alpha">Alpha milestone</span>
+<div class="metric"><strong>2</strong>
+<span  data-en="Missions completed — owner report" data-fr="Missions terminées — test de Benjamin" data-es="Misiones completadas — informe del autor">Missions completed — owner report</span>
 </div>
-<div class="metric"><strong>246</strong>
-<span  data-en="Unit tests passed" data-fr="Tests unitaires réussis" data-es="Pruebas unitarias superadas">Unit tests passed</span>
+<div class="metric"><strong>35</strong>
+<span  data-en="Kernel checks passed" data-fr="Contrôles kernel réussis" data-es="Pruebas del kernel superadas">Kernel checks passed</span>
 </div>
-<div class="metric"><strong>0</strong>
-<span  data-en="Compiler warnings" data-fr="Avertissements du compilateur" data-es="Advertencias del compilador">Compiler warnings</span>
+<div class="metric"><strong>C++20</strong>
+<span  data-en="Canonical native runtime" data-fr="Runtime natif principal" data-es="Runtime nativo principal">Canonical native runtime</span>
 </div>
-<div class="metric"><strong>166</strong>
-<span  data-en="PSP code overlays indexed" data-fr="Overlays de code PSP indexés" data-es="Overlays de código PSP indexados">PSP code overlays indexed</span>
+<div class="metric"><strong>x64</strong>
+<span  data-en="Windows target" data-fr="Cible Windows" data-es="Plataforma Windows">Windows target</span>
 </div>
 </div>
-<p class="metric-note" data-en="Local validation: 25 October 2026. Tests validate covered code paths; indexed overlays are not completed gameplay systems." data-fr="Validation locale : 25 octobre 2026. Les tests vérifient les cas couverts ; les overlays indexés ne sont pas des systèmes de jeu terminés." data-es="Validación local: 25 de octubre de 2026. Las pruebas verifican las rutas de código cubiertas; los overlays indexados no son sistemas de juego completos.">Local validation: 25 October 2026. Tests validate covered code paths; indexed overlays are not completed gameplay systems.</p>
+<p class="metric-note" data-en="Evidence updated 2 November 2026. A passing test suite is not a full-game fidelity certificate." data-fr="État mis à jour le 2 novembre 2026. Une suite de tests réussie ne certifie pas la fidélité du jeu entier." data-es="Evidencia actualizada el 2 de noviembre de 2026. Superar las pruebas no certifica la fidelidad del juego completo.">Evidence updated 2 November 2026. A passing test suite is not a full-game fidelity certificate.</p>
 </div></section><section id="project" class="content wrap"><div class="section-top">
-<h2  data-en="The world is taking shape." data-fr="Le monde prend forme." data-es="El mundo va tomando forma.">The world is taking shape.</h2>
-<p  data-en="A playable local prototype is the starting point. Matching the original PSP game remains the work ahead." data-fr="Un prototype local jouable constitue le point de départ. Reproduire le jeu PSP original reste le travail à accomplir." data-es="Un prototipo local jugable es el punto de partida. Igualar el juego original de PSP sigue siendo el trabajo por delante.">A playable local prototype is the starting point. Matching the original PSP game remains the work ahead.</p>
+<h2  data-en="A new foundation. Real playable progress." data-fr="Une nouvelle base. Des avancées jouables concrètes." data-es="Una nueva base. Avances jugables reales.">A new foundation. Real playable progress.</h2>
+<p  data-en="C++ is now the mainline. The previous Rust implementation is preserved as project history." data-fr="Le C++ devient la base principale. L’ancienne implémentation Rust est conservée dans l’historique du projet." data-es="C++ es ahora la base principal. La implementación anterior en Rust se conserva como parte de la historia del proyecto.">C++ is now the mainline. The previous Rust implementation is preserved as project history.</p>
 </div><div class="grid">
 <article class="card">
-<span class="tag" data-en="PSP resources" data-fr="Ressources PSP" data-es="Recursos de PSP">PSP resources</span>
-<h3  data-en="A world from your disc" data-fr="Un monde issu de votre disque" data-es="Un mundo desde tu disco">A world from your disc</h3>
-<p  data-en="ISO readers, world geometry, textures and collision data form the foundation. Game content stays with its owner." data-fr="Lecture ISO, géométrie, textures et collisions constituent la base. Les données du jeu restent chez leur propriétaire." data-es="Lectores de ISO, geometría del mundo, texturas y datos de colisión forman la base. El contenido del juego pertenece a su propietario.">ISO readers, world geometry, textures and collision data form the foundation. Game content stays with its owner.</p>
+<span class="tag" data-en="Owner playtest" data-fr="Test de Benjamin" data-es="Prueba del autor">Owner playtest</span>
+<h3  data-en="Two story missions completed" data-fr="Deux missions terminées" data-es="Dos misiones completadas">Two story missions completed</h3>
+<p  data-en="Benjamin completed the first two missions using normal controls. Cinematics, dialogue and mission scripts worked in those tested sequences." data-fr="Benjamin a terminé les deux premières missions avec les commandes normales. Cinématiques, dialogues et scripts ont fonctionné dans ces séquences testées." data-es="Benjamin completó las dos primeras misiones con controles normales. Las cinemáticas, los diálogos y los scripts funcionaron en esas secuencias probadas.">Benjamin completed the first two missions using normal controls. Cinematics, dialogue and mission scripts worked in those tested sequences.</p>
 </article>
 <article class="card">
-<span class="tag" data-en="Prototype" data-fr="Prototype" data-es="Prototipo">Prototype</span>
-<h3  data-en="Movement &amp; cameras" data-fr="Mouvements et caméras" data-es="Movimiento y cámaras">Movement &amp; cameras</h3>
-<p  data-en="Walking, running, rolling and obstacle traversal, with PSP, mobile and DS camera profiles. Behaviour is still being compared with the originals." data-fr="Marche, course, roulade et franchissement, avec des profils de caméra PSP, mobile et DS. Le comportement reste à comparer aux originaux." data-es="Caminar, correr, rodar y superar obstáculos, con perfiles de cámara de PSP, móvil y DS. El comportamiento se sigue comparando con los originales.">Walking, running, rolling and obstacle traversal, with PSP, mobile and DS camera profiles. Behaviour is still being compared with the originals.</p>
+<span class="tag" data-en="On foot &amp; on the road" data-fr="À pied et sur la route" data-es="A pie y en la carretera">On foot &amp; on the road</span>
+<h3  data-en="Liberty City in motion" data-fr="Liberty City en mouvement" data-es="Liberty City en movimiento">Liberty City in motion</h3>
+<p  data-en="Walking, swimming, driving, traffic, police and NPC interactions were observed in the owner playtest. The rest of the campaign still needs validation." data-fr="Marche, nage, conduite, circulation, police et interactions avec les PNJ ont été observées pendant ce test. Le reste de la campagne doit encore être validé." data-es="Caminar, nadar, conducir, el tráfico, la policía y las interacciones con PNJ se observaron en la prueba del autor. El resto de la campaña sigue pendiente de validación.">Walking, swimming, driving, traffic, police and NPC interactions were observed in the owner playtest. The rest of the campaign still needs validation.</p>
 </article>
 <article class="card">
-<span class="tag" data-en="Prototype" data-fr="Prototype" data-es="Prototipo">Prototype</span>
-<h3  data-en="The city in motion" data-fr="La ville en mouvement" data-es="La ciudad en movimiento">The city in motion</h3>
-<p  data-en="Driving, pedestrians, traffic, combat and police provide a first slice of the city. AI, physics and interactions need further validation." data-fr="Conduite, piétons, trafic, combat et police donnent un premier aperçu de la ville. IA, physique et interactions restent à valider." data-es="Conducción, peatones, tráfico, combate y policía ofrecen un primer vistazo de la ciudad. La IA, física e interacciones requieren mayor validación.">Driving, pedestrians, traffic, combat and police provide a first slice of the city. AI, physics and interactions need further validation.</p>
+<span class="tag" data-en="Classic PSP interaction" data-fr="Interactions PSP classiques" data-es="Interacción clásica de PSP">Classic PSP interaction</span>
+<h3  data-en="Mini-games, HUD &amp; controller" data-fr="Mini-jeux, HUD et manette" data-es="Minijuegos, HUD y mando">Mini-games, HUD &amp; controller</h3>
+<p  data-en="Window-breaking and vehicle-start mini-games, HUD, map and controller input worked in the tested sequences. Keyboard controls remain available." data-fr="Les mini-jeux de bris de vitre et de démarrage de véhicule, le HUD, la carte et la manette ont fonctionné dans les séquences testées. Les commandes clavier restent disponibles." data-es="Los minijuegos de romper la ventanilla y arrancar vehículos, el HUD, el mapa y el mando funcionaron en las secuencias probadas. También hay controles de teclado.">Window-breaking and vehicle-start mini-games, HUD, map and controller input worked in the tested sequences. Keyboard controls remain available.</p>
 </article>
+</div></section><section id="status" class="content wrap"><div class="section-top">
+<h2  data-en="Playable does not mean finished." data-fr="Jouable ne signifie pas terminé." data-es="Jugable no significa terminado.">Playable does not mean finished.</h2>
+<p  data-en="The next priority is consistent performance." data-fr="La prochaine priorité : des performances régulières." data-es="La siguiente prioridad es un rendimiento estable.">The next priority is consistent performance.</p>
+</div><div class="grid">
 <article class="card">
-<span class="tag" data-en="Prototype" data-fr="Prototype" data-es="Prototipo">Prototype</span>
-<h3  data-en="Find your way" data-fr="Trouver son chemin" data-es="Encuentra tu camino">Find your way</h3>
-<p  data-en="Minimap, health and armour, GPS routes and a larger map. Keyboard and Xbox controller support, with English, French and Spanish interfaces." data-fr="Minicarte, vie, armure, itinéraires GPS et grande carte. Clavier et manette Xbox, interface française, anglaise et espagnole." data-es="Minimapa, salud y blindaje, rutas GPS y mapa grande. Soporte para teclado y mando de Xbox, con interfaz en español, inglés y francés.">Minimap, health and armour, GPS routes and a larger map. Keyboard and Xbox controller support, with English, French and Spanish interfaces.</p>
-</article>
-<article class="card">
-<span class="tag" data-en="Research" data-fr="Recherche" data-es="Investigación">Research</span>
-<h3  data-en="Understand the PSP code" data-fr="Comprendre le code PSP" data-es="Comprender el código PSP">Understand the PSP code</h3>
-<p  data-en="166 code overlays indexed from the original archive. Native implementation and comparison with PSP behaviour are separate, ongoing steps." data-fr="166 overlays de code indexés depuis l’archive originale. Leur implémentation native et leur comparaison avec la PSP restent des étapes distinctes." data-es="166 overlays de código indexados del archivo original. La implementación nativa y la comparación con el comportamiento de PSP son etapas independientes en curso.">166 code overlays indexed from the original archive. Native implementation and comparison with PSP behaviour are separate, ongoing steps.</p>
-</article>
-<article class="card">
-<span class="tag" data-en="In progress" data-fr="En cours" data-es="En desarrollo">In progress</span>
-<h3  data-en="Build toward the full game" data-fr="Construire le jeu complet" data-es="Avanzar hacia el juego completo">Build toward the full game</h3>
-<p  data-en="Mission systems, mini-games and side activities are under development. The campaign, save compatibility and full-game parity are not complete." data-fr="Missions, mini-jeux et activités annexes sont en développement. Campagne, sauvegardes compatibles et fidélité complète ne sont pas terminées." data-es="Los sistemas de misiones, minijuegos y actividades secundarias están en desarrollo. La campaña, compatibilidad de guardado y paridad total no están terminadas.">Mission systems, mini-games and side activities are under development. The campaign, save compatibility and full-game parity are not complete.</p>
-</article>
-</div></section><!-- BEGIN STATUS SECTION -->
-<section id="status" class="content wrap"><div class="section-top"><h2 data-en="Native Rust status" data-fr="État du code Rust natif" data-es="Estado del código Rust nativo">Native Rust status</h2><p>Green counts runtime function definitions in src/**/*.rs; grey counts test and test-helper definitions. Area represents function count, not original binary size. No C++ code or Android routine totals enter these measurements. These source counts do not prove gameplay fidelity or a percentage of the PSP game completed. Related class names are research navigation hints, not verified routine matches.</p></div><div class="status-badges"><img src="assets/badge-overall.svg" alt="PSP fidelity unverified"> <img src="assets/badge-routines.svg" alt="Rust runtime function count"></div><div class="treemap-card"><a href="progress.html"><img src="assets/progress.svg" width="1000" height="560" alt="Native Rust inventory"></a></div><div class="progress-table-wrap"><table><thead><tr><th>Subsystem</th><th>Modules</th><th>Runtime functions</th><th>Test/helper functions</th></tr></thead><tbody><tr><td>Missions and activities</td><td>7</td><td>167</td><td>42</td></tr><tr><td>Saves and police</td><td>2</td><td>151</td><td>9</td></tr><tr><td>World and rendering</td><td>7</td><td>131</td><td>43</td></tr><tr><td>Combat</td><td>2</td><td>129</td><td>14</td></tr><tr><td>HUD and navigation</td><td>5</td><td>127</td><td>24</td></tr><tr><td>Vehicles</td><td>3</td><td>117</td><td>30</td></tr><tr><td>People</td><td>6</td><td>95</td><td>70</td></tr><tr><td>Runtime and tools</td><td>16</td><td>77</td><td>35</td></tr><tr><td>Audio and weather</td><td>3</td><td>64</td><td>9</td></tr></tbody></table></div><p><a href="progress.html">Measurement details</a> · <a href="DRIVING_TRAFFIC_REPAIR.md">Driving and traffic validation</a></p></section>
-<!-- END STATUS SECTION -->
-<section id="roadmap" class="content wrap"><div class="section-top">
-<h2  data-en="One verified step at a time." data-fr="Une étape vérifiée à la fois." data-es="Paso a paso, con verificación.">One verified step at a time.</h2>
-<p  data-en="Milestones guide the work. They are not release-date promises." data-fr="Les jalons guident le travail. Ils ne constituent pas des promesses de date de sortie." data-es="Los hitos guían el trabajo. No son promesas de fechas de lanzamiento.">Milestones guide the work. They are not release-date promises.</p>
-</div><div class="roadmap">
-<article class="milestone">
-<span class="tag" data-en="01 / Foundation" data-fr="01 / Fondations" data-es="01 / Cimientos">01 / Foundation</span>
-<h3  data-en="Read, render, explore" data-fr="Lire, afficher, explorer" data-es="Leer, renderizar, explorar">Read, render, explore</h3>
-<p  data-en="Resource readers, native Rust runtime and a local world prototype are in place." data-fr="Lecteurs de ressources, moteur Rust natif et prototype local du monde sont en place." data-es="Lectores de recursos, motor nativo en Rust y un prototipo local del mundo ya están en marcha.">Resource readers, native Rust runtime and a local world prototype are in place.</p>
-</article>
-<article class="milestone current">
-<span class="tag" data-en="02 / Next focus" data-fr="02 / Prochain objectif" data-es="02 / Próximo objetivo">02 / Next focus</span>
-<h3  data-en="Make the details count" data-fr="Soigner les détails" data-es="Cuidar cada detalle">Make the details count</h3>
-<p  data-en="Refine PSP fidelity and presentation. Next gameplay priorities: precision tattooing and street races, grounded in original-code research." data-fr="Affiner la fidélité PSP et la présentation. Prochaines priorités : tatouage de précision et courses de rue, fondés sur l’étude du code original." data-es="Afinar la fidelidad con PSP y la presentación. Próximas prioridades: tatuajes de precisión y carreras callejeras, fundamentados en la investigación del código original.">Refine PSP fidelity and presentation. Next gameplay priorities: precision tattooing and street races, grounded in original-code research.</p>
-</article>
-<article class="milestone">
-<span class="tag" data-en="03 / Longer term" data-fr="03 / À plus long terme" data-es="03 / Largo plazo">03 / Longer term</span>
-<h3  data-en="Connect the whole game" data-fr="Relier le jeu complet" data-es="Conectar todo el juego">Connect the whole game</h3>
-<p  data-en="Complete progression, saves, missions and broader compatibility testing before considering a public playable release." data-fr="Compléter progression, sauvegardes et missions, puis élargir les tests avant d’envisager une version publique jouable." data-es="Completar progresión, partidas guardadas y misiones, y ampliar las pruebas de compatibilidad antes de plantear una versión pública jugable.">Complete progression, saves, missions and broader compatibility testing before considering a public playable release.</p>
-</article>
-</div></section><section id="support" class="content wrap"><div class="support">
-<p class="eyebrow" data-en="Support independent development" data-fr="Soutenir un développement indépendant" data-es="Apoyar el desarrollo independiente">Support independent development</p>
-<h2  data-en="Help bring the PSP experience to PC." data-fr="Aidez à porter l’expérience PSP sur PC." data-es="Ayuda a traer la experiencia de PSP al PC.">Help bring the PSP experience to PC.</h2>
-<p  data-en="Every behaviour has to be understood, rebuilt and checked. Supporting Benji Paname helps sustain that patient work: reverse engineering, native development and clear documentation of what works and what still needs attention." data-fr="Chaque comportement doit être compris, reconstruit et vérifié. Soutenir Benji Paname aide à poursuivre ce travail patient : ingénierie inverse, développement natif et documentation claire des réussites comme des points à améliorer." data-es="Cada comportamiento debe entenderse, reconstruirse y comprobarse. Apoyar a Benji Paname ayuda a mantener este paciente trabajo: ingeniería inversa, desarrollo nativo y documentación clara de lo que funciona y lo que aún requiere atención.">Every behaviour has to be understood, rebuilt and checked. Supporting Benji Paname helps sustain that patient work: reverse engineering, native development and clear documentation of what works and what still needs attention.</p>
-<div class="support-list">
-<div>
-<h3  data-en="Understand" data-fr="Comprendre" data-es="Comprender">Understand</h3>
-<p  data-en="Investigate the original PSP formats and code." data-fr="Étudier les formats et le code PSP originaux." data-es="Investigar los formatos y el código original de PSP.">Investigate the original PSP formats and code.</p>
-</div>
-<div>
-<h3  data-en="Rebuild" data-fr="Reconstruire" data-es="Reconstruir">Rebuild</h3>
-<p  data-en="Turn verified findings into native Rust systems." data-fr="Transformer les résultats vérifiés en systèmes Rust natifs." data-es="Convertir hallazgos verificados en sistemas nativos de Rust.">Turn verified findings into native Rust systems.</p>
-</div>
-<div>
-<h3  data-en="Compare" data-fr="Comparer" data-es="Comparar">Compare</h3>
-<p  data-en="Test against the original and document the differences." data-fr="Tester face à l’original et documenter les différences." data-es="Probar frente al original y documentar las diferencias.">Test against the original and document the differences.</p>
-</div>
-</div><div class="actions">
-<a class="button gold" href="https://fr.tipeee.com/benji-paname/" data-en="Support on Tipeee" data-fr="Soutenir sur Tipeee" data-es="Apoyar en Tipeee">Support on Tipeee</a>
-<a class="button" href="https://paypal.me/BenjiLsg" data-en="Support via PayPal" data-fr="Soutenir via PayPal" data-es="Apoyar en PayPal">Support via PayPal</a>
-<a class="button" style="background:#5865F2;border-color:#5865F2;color:#fff;" href="https://discord.com/users/601648068277960714" target="_blank" rel="noopener noreferrer" data-en="Discord: benjamin060936" data-fr="Discord : benjamin060936" data-es="Discord: benjamin060936">Discord: benjamin060936</a>
-</div>
-<p class="disclosure" data-en="Support is optional. It does not buy the game, early access or game assets, and does not guarantee a release date or completion." data-fr="Le soutien est facultatif. Il n’achète ni le jeu, ni un accès anticipé, ni des assets, et ne garantit ni date de sortie ni achèvement." data-es="El apoyo es voluntario. No compra el juego, acceso anticipado ni recursos, y no garantiza una fecha de lanzamiento ni su finalización.">Support is optional. It does not buy the game, early access or game assets, and does not guarantee a release date or completion.</p>
-</div></section><section class="content wrap"><div class="section-top">
-<h2  data-en="Before you jump in." data-fr="Avant de vous lancer." data-es="Antes de empezar.">Before you jump in.</h2>
-</div>
-<details>
-<summary  data-en="Is this an emulator?" data-fr="Est-ce un émulateur ?" data-es="¿Es esto un emulador?">Is this an emulator?</summary>
-<p  data-en="The goal is a native Windows x64 implementation in Rust, with no PSP CPU emulator in the runtime. It is not yet a complete static translation or a finished replacement for the original game." data-fr="L’objectif est une implémentation native Windows x64 en Rust, sans émulation du CPU PSP dans le moteur. Ce n’est pas encore une traduction statique complète ni un remplacement terminé du jeu original." data-es="El objetivo es una implementación nativa en Rust para Windows x64, sin emulador de CPU de PSP en el motor. Aún no es una traducción estática completa ni un reemplazo final del juego original.">The goal is a native Windows x64 implementation in Rust, with no PSP CPU emulator in the runtime. It is not yet a complete static translation or a finished replacement for the original game.</p>
-</details>
-<details>
-<summary  data-en="Which game copy is supported?" data-fr="Quelle copie du jeu est compatible ?" data-es="¿Qué copia del juego es compatible?">Which game copy is supported?</summary>
-<p  data-en="Research targets the European PSP release ULES-01347, version 1.01. Supply your own legally obtained ISO. No game files or texture packs are distributed with the project." data-fr="Les recherches ciblent la version PSP européenne ULES-01347, version 1.01. Fournissez votre propre ISO obtenue légalement. Aucun fichier du jeu ni pack de textures n’est distribué avec le projet." data-es="La investigación se centra en la versión europea de PSP ULES-01347, versión 1.01. Proporciona tu propia ISO legal. No se distribuyen archivos del juego ni paquetes de texturas con el proyecto.">Research targets the European PSP release ULES-01347, version 1.01. Supply your own legally obtained ISO. No game files or texture packs are distributed with the project.</p>
-</details>
-<details>
-<summary  data-en="When can I play it?" data-fr="Quand pourrai-je y jouer ?" data-es="¿Cuándo podré jugarlo?">When can I play it?</summary>
-<p  data-en="There is no public playable download or announced release date. The current milestone is a local development prototype, with substantial work remaining." data-fr="Il n’y a ni téléchargement public jouable ni date de sortie annoncée. Le jalon actuel est un prototype local de développement, avec un travail important restant à accomplir." data-es="No hay ninguna versión jugable disponible públicamente ni fecha de lanzamiento anunciada. El hito actual es un prototipo local de desarrollo, con un importante trabajo pendiente.">There is no public playable download or announced release date. The current milestone is a local development prototype, with substantial work remaining.</p>
-</details>
-<details>
-<summary  data-en="Is this an official Rockstar project?" data-fr="Est-ce un projet officiel Rockstar ?" data-es="¿Es este un proyecto oficial de Rockstar?">Is this an official Rockstar project?</summary>
-<p  data-en="No. ReGTA CTW is an independent fan research project, not affiliated with or endorsed by Rockstar Games or Take-Two Interactive." data-fr="Non. ReGTA CTW est un projet de recherche indépendant de fans, sans affiliation ni approbation de Rockstar Games ou Take-Two Interactive." data-es="No. ReGTA CTW es un proyecto de investigación fan independiente, sin afiliación ni respaldo de Rockstar Games o Take-Two Interactive.">No. ReGTA CTW is an independent fan research project, not affiliated with or endorsed by Rockstar Games or Take-Two Interactive.</p>
-</details>
-</section></main><footer class="footer wrap"><div class="footer-top"><strong>ReGTA CTW PC Recomp · by Benji Paname</strong><a class="repo-link" hidden>GitHub</a></div>
-<p  data-en="Independent fan research. Game assets and trademarks belong to their respective owners. Source code: GPL-3.0-only; see the repository for third-party credits." data-fr="Recherche indépendante de fans. Les assets du jeu et les marques appartiennent à leurs propriétaires respectifs. Code source : GPL-3.0-only ; crédits tiers dans le dépôt." data-es="Investigación fan independiente. Los recursos del juego y marcas comerciales pertenecen a sus respectivos dueños. Código fuente: GPL-3.0-only; consulta el repositorio para créditos de terceros.">Independent fan research. Game assets and trademarks belong to their respective owners. Source code: GPL-3.0-only; see the repository for third-party credits.</p>
-</footer></body></html>
+<span class="tag" data-en="Known limitation" data-fr="Limitation connue" data-es="Limitación conocida">Known limitation</span>
+<h3  data-en="FPS &amp; frametimes" data-fr="FPS et frametimes" data-es="FPS y tiempos de fotograma">FPS &amp; frametimes</h3>
+<p  data-en="Gameplay can drop toward 20 FPS, with uneven frame pacing, particularly when driving through dense traffic and pedestrian areas. Optimization is ongoing." data-fr="Le gameplay peut chuter vers 20 FPS, avec des frametimes irréguliers, surtout en conduite dans les zones riches en véhicules et piétons. L’optimisation se poursuit." data-es="El juego puede bajar hasta unos 20 FPS, con tiempos de fotograma irregulares, especialmente al conducir en zonas con mucho tráfico y peatones. La optimización continúa.">Gameplay can drop toward 20 FPS, with uneven frame pacing, particularly when driving through dense traffic and pedestrian areas. Optimization is ongoing.</p>
+</article><article class="card">
+<span class="tag" data-en="Engineering evidence" data-fr="Preuves techniques" data-es="Evidencia técnica">Engineering evidence</span>
+<h3  data-en="35 checks. No invented percentage." data-fr="35 contrôles. Aucun pourcentage inventé." data-es="35 pruebas. Sin porcentajes inventados.">35 checks. No invented percentage.</h3>
+<p  data-en="The migration rebuilt 29 runtime components and passed 35 kernel checks. Existing Bink and FIFO/priority fixes are retained. Compiler warnings and untested cases remain." data-fr="La migration a recompilé 29 composants runtime et validé 35 contrôles kernel. Les correctifs Bink et FIFO/priorité sont conservés. Des avertissements de compilation et des cas non testés subsistent." data-es="La migración recompiló 29 componentes del runtime y superó 35 pruebas del kernel. Se conservan las correcciones de Bink y FIFO/prioridad. Persisten advertencias de compilación y casos sin probar.">The migration rebuilt 29 runtime components and passed 35 kernel checks. Existing Bink and FIFO/priority fixes are retained. Compiler warnings and untested cases remain.</p>
+</article><article class="card">
+<span class="tag" data-en="Private game data" data-fr="Données du jeu privées" data-es="Datos del juego privados">Private game data</span>
+<h3  data-en="Your copy stays on your PC" data-fr="Votre copie reste sur votre PC" data-es="Tu copia se queda en tu PC">Your copy stays on your PC</h3>
+<p  data-en="250 generated translation units and 166 overlays support the local build. Original game content, saves and test captures stay private. The public repository contains licensed runtime source and tooling." data-fr="250 unités générées et 166 overlays servent à la compilation locale. Les données originales, sauvegardes et captures de test restent privées. Le dépôt public contient les sources autorisées du runtime et les outils." data-es="250 unidades generadas y 166 overlays forman parte de la compilación local. El contenido original, las partidas y las capturas de prueba son privados. El repositorio público contiene código del runtime con licencia y herramientas.">250 generated translation units and 166 overlays support the local build. Original game content, saves and test captures stay private. The public repository contains licensed runtime source and tooling.</p>
+</article></div><p>
+<a href="https://github.com/benji-paname/regta-chinatown-wars-pc-port/blob/main/docs/STATUS.md" data-en="Read the detailed status" data-fr="Lire le statut détaillé" data-es="Leer el estado detallado">Read the detailed status</a>
+</p></section><section id="roadmap" class="content wrap"><div class="section-top">
+<h2  data-en="What comes next" data-fr="La suite" data-es="Próximos pasos">What comes next</h2>
+<p  data-en="Evidence before promises. No release date announced." data-fr="Des preuves avant les promesses. Aucune date de sortie annoncée." data-es="Evidencia antes que promesas. No se anuncia una fecha de lanzamiento.">Evidence before promises. No release date announced.</p>
+</div><ol class="roadmap">
+<li>
+<h3  data-en="01 · Performance" data-fr="01 · Performances" data-es="01 · Rendimiento">01 · Performance</h3>
+<p  data-en="Profile FPS and frametimes, focusing on dense driving scenes." data-fr="Mesurer les FPS et frametimes, en priorité dans les scènes de conduite denses." data-es="Analizar FPS y tiempos de fotograma, priorizando la conducción en zonas densas.">Profile FPS and frametimes, focusing on dense driving scenes.</p>
+</li>
+<li>
+<h3  data-en="02 · Campaign" data-fr="02 · Campagne" data-es="02 · Campaña">02 · Campaign</h3>
+<p  data-en="Validate the story progressively, mission by mission." data-fr="Valider progressivement l’histoire, mission après mission." data-es="Validar la historia progresivamente, misión por misión.">Validate the story progressively, mission by mission.</p>
+</li>
+<li>
+<h3  data-en="03 · Compatibility" data-fr="03 · Compatibilité" data-es="03 · Compatibilidad">03 · Compatibility</h3>
+<p  data-en="Investigate remaining PSP service, rendering and hardware-specific issues." data-fr="Étudier les problèmes restants de services PSP, de rendu et de compatibilité matérielle." data-es="Investigar problemas pendientes de servicios PSP, gráficos y compatibilidad de hardware.">Investigate remaining PSP service, rendering and hardware-specific issues.</p>
+</li>
+<li>
+<h3  data-en="04 · PC usability" data-fr="04 · Confort PC" data-es="04 · Comodidad en PC">04 · PC usability</h3>
+<p  data-en="Improve the launcher, configuration and reliable local updates." data-fr="Améliorer le lanceur, la configuration et les mises à jour locales fiables." data-es="Mejorar el lanzador, la configuración y las actualizaciones locales fiables.">Improve the launcher, configuration and reliable local updates.</p>
+</li>
+<li>
+<h3  data-en="05 · Mouse mini-games — planned" data-fr="05 · Mini-jeux à la souris — prévus" data-es="05 · Minijuegos con ratón — previstos">05 · Mouse mini-games — planned</h3>
+<p  data-en="Explore optional mouse-driven interactions inspired by Android. Not implemented yet." data-fr="Étudier des interactions facultatives à la souris inspirées d’Android. Elles ne sont pas encore implémentées." data-es="Explorar interacciones opcionales con ratón inspiradas en Android. Todavía no están implementadas.">Explore optional mouse-driven interactions inspired by Android. Not implemented yet.</p>
+</li>
+<li>
+<h3  data-en="06 · Keep classic controls" data-fr="06 · Conserver les contrôles classiques" data-es="06 · Mantener los controles clásicos">06 · Keep classic controls</h3>
+<p  data-en="Retain the choice of classic PSP controls alongside future PC interactions when available." data-fr="Conserver le choix des contrôles PSP classiques à côté des futures interactions PC lorsqu’elles seront disponibles." data-es="Conservar la opción de controles clásicos de PSP junto con futuras interacciones de PC cuando estén disponibles.">Retain the choice of classic PSP controls alongside future PC interactions when available.</p>
+</li>
+</ol></section><section id="support" class="content wrap"><div class="support">
+<p class="eyebrow" data-en="Support independent development" data-fr="Soutenir le développement indépendant" data-es="Apoya el desarrollo independiente">Support independent development</p>
+<h2  data-en="Help turn a playable milestone into a stronger port." data-fr="Aidez ce jalon jouable à devenir un portage plus solide." data-es="Ayuda a convertir este hito jugable en un port más sólido.">Help turn a playable milestone into a stronger port.</h2>
+<p  data-en="Your support gives Benjamin more time for profiling, reverse engineering, testing and documentation. The immediate focus is performance and validating more of the game." data-fr="Votre soutien permet à Benjamin de consacrer davantage de temps au profilage, à l’ingénierie inverse, aux tests et à la documentation. La priorité immédiate est la performance et la validation de nouvelles parties du jeu." data-es="Tu apoyo permite a Benjamin dedicar más tiempo al análisis de rendimiento, la ingeniería inversa, las pruebas y la documentación. La prioridad inmediata es el rendimiento y validar más partes del juego.">Your support gives Benjamin more time for profiling, reverse engineering, testing and documentation. The immediate focus is performance and validating more of the game.</p>
+<div class="actions">
+<a class="button primary" href="https://fr.tipeee.com/benji-paname/" data-en="Support on Tipeee" data-fr="Soutenir sur Tipeee" data-es="Apoyar en Tipeee">Support on Tipeee</a>
+<a class="button" href="https://paypal.me/BenjiLsg">PayPal.Me</a><a class="button" href="https://discord.com/users/601648068277960714">Discord: benjamin060936</a></div>
+<p class="disclosure" data-en="Donations are voluntary. They do not buy the original game, copyrighted content, a release date or guaranteed completion." data-fr="Les dons sont facultatifs. Ils n’achètent ni le jeu original, ni du contenu protégé, ni une date de sortie, ni une garantie d’achèvement." data-es="Las donaciones son voluntarias. No compran el juego original, contenido protegido, una fecha de lanzamiento ni una garantía de finalización.">Donations are voluntary. They do not buy the original game, copyrighted content, a release date or guaranteed completion.</p>
+</div></section></main><footer class="footer wrap"><div class="footer-top"><strong>ReGTA CTW — by Benji Paname</strong><a href="https://github.com/benji-paname/regta-chinatown-wars-pc-port">GitHub</a></div>
+<p  data-en="With thanks to highcmd, Kryo.to / CTW-Native and the PPSSPP contributors. An independent fan project, not affiliated with Rockstar Games or Take-Two Interactive. Game names and content belong to their respective rights holders." data-fr="Merci à highcmd, Kryo.to / CTW-Native et aux contributeurs PPSSPP. Projet de fans indépendant, sans affiliation avec Rockstar Games ou Take-Two Interactive. Les noms et contenus du jeu appartiennent à leurs ayants droit." data-es="Gracias a highcmd, Kryo.to / CTW-Native y a los colaboradores de PPSSPP. Proyecto fan independiente, sin afiliación con Rockstar Games ni Take-Two Interactive. Los nombres y contenidos del juego pertenecen a sus titulares.">With thanks to highcmd, Kryo.to / CTW-Native and the PPSSPP contributors. An independent fan project, not affiliated with Rockstar Games or Take-Two Interactive. Game names and content belong to their respective rights holders.</p>
+<p><a href="https://github.com/benji-paname/regta-chinatown-wars-pc-port/blob/main/THIRD_PARTY.md">Licenses &amp; credits</a> · <a href="legacy/progress.html">Historical Rust inventory</a></p></footer></body></html>

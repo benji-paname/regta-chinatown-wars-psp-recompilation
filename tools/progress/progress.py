@@ -9,7 +9,7 @@ import math
 import re
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE_DIR = ROOT / 'src'
+SOURCE_DIR = ROOT / 'legacy/rust/src'
 
 RUST_MODULE_MAP = {
     'handling.rs': ['CEngine', 'CTyre', 'cWheeledVehicle'],
@@ -264,7 +264,7 @@ def treemap(result, width=1000, height=560):
     return '\n'.join(parts) + '\n</svg>\n'
 
 
-NOTE = ('Green counts runtime function definitions in src/**/*.rs; grey counts test and test-helper definitions. '
+NOTE = ('Green counts runtime function definitions in legacy/rust/src/**/*.rs; grey counts test and test-helper definitions. '
         'Area represents function count, not original binary size. No C++ code or Android routine totals enter these measurements. '
         'These source counts do not prove gameplay fidelity or a percentage of the PSP game completed. '
         'Related class names are research navigation hints, not verified routine matches.')
@@ -287,7 +287,9 @@ def validation():
     return None, None
 
 
-def write_all(result, out_assets, out_docs, sync_docs=True):
+def write_all(result, out_assets, out_docs, sync_docs=False):
+    # Historical metrics must never overwrite C++ mainline documentation.
+    sync_docs = False
     out_assets.mkdir(parents=True, exist_ok=True)
     out_docs.mkdir(parents=True, exist_ok=True)
     passed, date = validation()
@@ -296,7 +298,7 @@ def write_all(result, out_assets, out_docs, sync_docs=True):
     (out_assets/'badge-overall.svg').write_text(badge('PSP fidelity','unverified','#777'),encoding='utf-8')
     (out_assets/'badge-routines.svg').write_text(badge('Rust runtime functions',str(result['runtimeFunctions']),GREEN),encoding='utf-8')
     (out_assets/'progress.svg').write_text(treemap(result),encoding='utf-8')
-    page = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ReGTA CTW — Native Rust status</title><style>body{background:#16191c;color:#e6e8ea;font:16px/1.6 system-ui;max-width:1100px;margin:40px auto;padding:0 20px}a{color:#ffc45e}img{max-width:100%;height:auto}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:10px;border-bottom:1px solid #555}p{color:#bfc3c7}</style><a href="index.html">Back to ReGTA CTW</a><h1>Native Rust status</h1><p>' + NOTE + '</p><img src="assets/progress.svg" alt="Native Rust function inventory">' + table(result) + '<p>Raw data: <a href="assets/progress.json">progress.json</a>. Local validation: ' + (f'{passed} tests passed, zero compiler warnings ({date}).' if passed else 'not available on this machine.') + '</p></html>\n'
+    page = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ReGTA CTW â€” Historical Rust inventory</title><style>body{background:#16191c;color:#e6e8ea;font:16px/1.6 system-ui;max-width:1100px;margin:40px auto;padding:0 20px}a{color:#ffc45e}img{max-width:100%;height:auto}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:10px;border-bottom:1px solid #555}p{color:#bfc3c7}</style><a href="../index.html">Back to ReGTA CTW</a><h1>Historical Rust inventory</h1><p>' + NOTE + '</p><img src="assets/progress.svg" alt="Native Rust function inventory">' + table(result) + '<p>Raw data: <a href="assets/progress.json">progress.json</a>. Local validation: ' + (f'{passed} tests passed, zero compiler warnings ({date}).' if passed else 'not available on this machine.') + '</p></html>\n'
     (out_docs/'progress.html').write_text(page,encoding='utf-8')
     if sync_docs:
         readme = ROOT/'README.md'
@@ -310,7 +312,7 @@ def write_all(result, out_assets, out_docs, sync_docs=True):
         readme.write_text(text,encoding='utf-8')
         index = ROOT/'docs/index.html'
         text = index.read_text(encoding='utf-8')
-        block = '<!-- BEGIN STATUS SECTION -->\n<section id="status" class="content wrap"><div class="section-top"><h2 data-en="Native Rust status" data-fr="État du code Rust natif" data-es="Estado del código Rust nativo">Native Rust status</h2><p>' + NOTE + '</p></div><div class="status-badges"><img src="assets/badge-overall.svg" alt="PSP fidelity unverified"> <img src="assets/badge-routines.svg" alt="Rust runtime function count"></div><div class="treemap-card"><a href="progress.html"><img src="assets/progress.svg" width="1000" height="560" alt="Native Rust inventory"></a></div><div class="progress-table-wrap">' + table(result) + '</div><p><a href="progress.html">Measurement details</a> · <a href="DRIVING_TRAFFIC_REPAIR.md">Driving and traffic validation</a></p></section>\n<!-- END STATUS SECTION -->'
+        block = '<!-- BEGIN STATUS SECTION -->\n<section id="status" class="content wrap"><div class="section-top"><h2 data-en="Historical Rust inventory" data-fr="Ã‰tat du code Rust natif" data-es="Estado del cÃ³digo Rust nativo">Historical Rust inventory</h2><p>' + NOTE + '</p></div><div class="status-badges"><img src="assets/badge-overall.svg" alt="PSP fidelity unverified"> <img src="assets/badge-routines.svg" alt="Rust runtime function count"></div><div class="treemap-card"><a href="progress.html"><img src="assets/progress.svg" width="1000" height="560" alt="Native Rust inventory"></a></div><div class="progress-table-wrap">' + table(result) + '</div><p><a href="progress.html">Measurement details</a> Â· <a href="DRIVING_TRAFFIC_REPAIR.md">Driving and traffic validation</a></p></section>\n<!-- END STATUS SECTION -->'
         text = re.sub(r'<!-- BEGIN STATUS SECTION -->.*?<!-- END STATUS SECTION -->',lambda _:block,text,flags=re.S)
         if passed:
             text = re.sub(r'(<strong[^>]*>)\d+/\d+(</strong>)',rf'\g<1>{passed}/{passed}\2',text)
@@ -322,8 +324,8 @@ def write_all(result, out_assets, out_docs, sync_docs=True):
 def main():
     parser = argparse.ArgumentParser(description='Measure native Rust inventory, never inferred PSP completion.')
     parser.add_argument('--source-dir',type=Path,default=SOURCE_DIR)
-    parser.add_argument('--out-assets',type=Path,default=ROOT/'docs/assets')
-    parser.add_argument('--out-docs',type=Path,default=ROOT/'docs')
+    parser.add_argument('--out-assets',type=Path,default=ROOT/'docs/legacy/assets')
+    parser.add_argument('--out-docs',type=Path,default=ROOT/'docs/legacy')
     parser.add_argument('--no-sync',action='store_true')
     args = parser.parse_args()
     write_all(measure_rust(args.source_dir),args.out_assets,args.out_docs,not args.no_sync)

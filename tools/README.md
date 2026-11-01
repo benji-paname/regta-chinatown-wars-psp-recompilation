@@ -1,9 +1,7 @@
-# Tools
+# Tooling
 
-- `build/Compile.ps1`: canonical compiler/test/delivery implementation; use root `Compiler.ps1`.
-- `maintenance/audit_storage.py`: immutable-file snapshot, exact decoded-pixel BMP/PNG comparison, preservation verification. Reports stay in `work/restructure/`.
-- `maintenance/Clean-VerifiedStorage.ps1`: validates the cleanup plan and removes only the authorized regenerable caches and verified redundant BMPs.
-- `maintenance/check_repository.py`: checks every tracked file against the public source policy.
-- `research/README.md`: index of preserved research scripts. Their originals remain intact in `work/` because many depend on their original path and private inputs.
+C++ mainline: root Compiler.ps1 delegates to build/Cpp.cmd and build/cpp.py. Test fixture: tests/kernel/mutex_scheduler.cpp. Playtest source: playtest/launcher.cpp; explicit updater: update_playtest.py. No build starts a game or replaces user saves.
 
-No tool downloads proprietary game files. The image-comparison audit requires Pillow; the build and source-policy check do not.
+maintenance/check_upstreams.py is mandatory before each task. maintenance/check_publication.py audits tracked trees/outgoing blobs before publication. progress/cpp_status.py emits evidence-based C++ status. progress/progress.py is historical Rust-only and cannot rewrite mainline documentation.
+
+build/Compile.ps1 remains the explicit legacy Rust builder. Historical/private experimental scripts are preserved in work/ but must not be blindly rerun.

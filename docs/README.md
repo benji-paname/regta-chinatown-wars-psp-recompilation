@@ -1,10 +1,5 @@
 # Documentation
 
-- [Building and testing](BUILDING.md)
-- [Module status and provenance limits](STATUS.md)
-- [Release process](RELEASING.md)
-- [Current AI/developer handoff](../outputs/CTW-Rust/AI_HANDOFF_GUIDE.md)
-- [Preserved technical investigations](reference/)
-- [Historical notes](archive/) — dated development records, not a current fidelity certificate
+Active: [C++ status](STATUS.md), [Build](BUILD_CPP.md), [Playtest](PLAYTEST.md), [Migration](CPP_MAINLINE_MIGRATION.md), [AI handoff](AI_HANDOFF.md), [Private data](PRIVATE_DATA.md), [Upstream review](UPSTREAM_REVIEW.md).
 
-Technical documents moved from `outputs/CTW-Rust/` retain their original filenames; forwarding documents remain at the old locations. Paths and claims inside archived records reflect their original context.
+The website is index.html (English/French/Spanish). Historical Rust metrics live under legacy/. Older mechanics/research reports remain evidence, not current C++ feature guarantees. Private detailed experiment logs and game data remain in work/.

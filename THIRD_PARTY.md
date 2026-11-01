@@ -1,3 +1,15 @@
+# C++ mainline provenance — 2026-11-02
+
+The canonical runtime now resides in runtime/. Its63 source/header files derive from highcmd/chinatown-wars-psp-recomp at6562163b6f504a1db93e1be5ce580d8cd6f024a7 (GPL-3.0-or-later), including six validated local adaptations. Per-file SHA256 provenance is in runtime/provenance.json. Original notices are retained. VFPU and SAS portions originate in PPSSPP (GPL-2.0-or-later), as noted in those files. Compatible inherited terms remain applicable; this repository's original contributions remain GPL-3.0-only.
+
+External local dependencies: SDL2 2.30.9 (zlib), FFmpeg supplied by the existing local development tree (build-dependent LGPL/GPL terms; current upstream package described as GPL), Khronos OpenGL headers (their permissive notices), Microsoft/LLVM build tools (their own terms). No DLL, SDK, table binary or dependency package is redistributed by this migration. Binary packaging/source-offer compliance must be separately reviewed before any release. Linking successfully is not redistribution clearance.
+
+The250 translated game units and all original/extracted game content are PRIVATE despite being source-like text or required to run locally. None is covered by the runtime GPL grant. The public source alone is not a ready-to-run game.
+
+Benjamin confirmed on2026-11-02 that he has a license or authorization for the supplied logo font artwork. This is owner confirmation, not an independently reviewed license document. No font software or game capture is published. The detailed historical Rust provenance follows; it does not describe the active runtime.
+
+---
+
 # Provenance and licenses
 
 ## ReGTA CTW PC Recomp
@@ -48,4 +60,4 @@ The earlier provenance document is preserved verbatim in `docs/archive/THIRD_PAR
 
 ## Presentation logo typefaces
 
-The project wordmarks in `docs/assets/logo.svg` and `logo-ctw.svg` use fixed outlines from user-supplied **Pricedown Black** (Typodermic Fonts) and **Bruce Mikita Two** (Harold Lohner). Font software is not redistributed or covered by the source-code GPL declaration. The supplied Pricedown desktop terms permit fixed logo artwork. Public-use terms for the supplied historical Bruce Mikita copy remain undocumented; consult [BRANDING.md](docs/BRANDING.md) before public distribution. The wordmarks are independent project branding, not official Rockstar artwork or endorsement.
+The project wordmarks in `docs/assets/logo.svg` and `logo-ctw.svg` use fixed outlines from user-supplied **Pricedown Black** (Typodermic Fonts) and **Bruce Mikita Two** (Harold Lohner). Font software is not redistributed or covered by the source-code GPL declaration. The supplied Pricedown desktop terms permit fixed logo artwork. Benjamin confirmed on 2026-11-02 that he holds a license or authorization for this use of Bruce Mikita. This is an owner declaration, not an independent review of license documents; see [BRANDING.md](docs/BRANDING.md). The wordmarks are independent project branding, not official Rockstar artwork or endorsement.

@@ -3,20 +3,20 @@
   "measurement": "native Rust function inventory; not original-code coverage",
   "pspParityVerified": false,
   "pspCompletionPercent": null,
-  "sourceSha256": "f25aaca58f48a0e85b2e253039aae09ad1f35f420e7791e78d80294dc219ef25",
-  "runtimeFunctions": 1058,
-  "testFunctions": 276,
+  "sourceSha256": "0cc3d1cbd7267ce1681eea4a1f053142fd28511fb855670a84207e9c56a5a671",
+  "runtimeFunctions": 1063,
+  "testFunctions": 278,
   "modules": 51,
   "subsystems": [
     {
       "name": "People",
-      "runtimeFunctions": 95,
-      "testFunctions": 70,
+      "runtimeFunctions": 98,
+      "testFunctions": 72,
       "classes": [
         {
           "name": "actors.rs",
-          "runtimeFunctions": 46,
-          "testFunctions": 36,
+          "runtimeFunctions": 49,
+          "testFunctions": 38,
           "relatedClasses": [
             "cAIGang",
             "cAITaskHub",
@@ -303,7 +303,7 @@
     },
     {
       "name": "Missions and activities",
-      "runtimeFunctions": 167,
+      "runtimeFunctions": 169,
       "testFunctions": 42,
       "classes": [
         {
@@ -336,7 +336,7 @@
         },
         {
           "name": "jobs.rs",
-          "runtimeFunctions": 19,
+          "runtimeFunctions": 21,
           "testFunctions": 4,
           "relatedClasses": [
             "cOddJob",
@@ -652,7 +652,7 @@
     }
   ],
   "lastLocalValidation": {
-    "passed": 246,
-    "date": "2026-10-30"
+    "passed": 248,
+    "date": "2026-11-01"
   }
 }

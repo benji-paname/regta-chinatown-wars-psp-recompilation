@@ -1,6 +1,44 @@
 {
   "repositories": [
-    {"id":"ctw-native","url":"https://github.com/official-kryo-to/ctw-native.git","path":"references/ctw-native","branch":"main","platform":"Android 4.4.243 / C++","use":"Gameplay algorithms, class names and porting methodology; verify PSP Europe differences."},
-    {"id":"psp-recomp","url":"https://github.com/highcmd/chinatown-wars-psp-recomp.git","path":"references/chinatown-wars-psp-recomp","branch":"master","platform":"PSP USA ULUS-10490 1.01 / C++ + PSP HLE","use":"Overlay analysis, original control flow and rendering/audio research; validate against ULES-01347 1.01."}
+    {
+      "id": "ctw-native",
+      "url": "https://github.com/official-kryo-to/ctw-native.git",
+      "path": "references/ctw-native",
+      "branch": "main",
+      "platform": "Android 4.4.243 / C++",
+      "use": "Gameplay algorithms, class names and porting methodology; verify PSP Europe differences."
+    },
+    {
+      "id": "psp-recomp",
+      "url": "https://github.com/highcmd/chinatown-wars-psp-recomp.git",
+      "path": "references/chinatown-wars-psp-recomp",
+      "branch": "master",
+      "platform": "PSP USA ULUS-10490 1.01 / C++ + PSP HLE",
+      "use": "Overlay analysis, original control flow and rendering/audio research; validate against ULES-01347 1.01."
+    },
+    {
+      "id": "gtactw-vita",
+      "url": "https://github.com/TheOfficialFloW/gtactw_vita.git",
+      "path": "references/gtactw_vita",
+      "branch": "master",
+      "platform": "PS Vita / C Native Wrapper",
+      "use": "Remapping des mini-jeux tactiles vers manette/gamepad, ponts runtime OpenAL et OpenGL ES."
+    },
+    {
+      "id": "ctw-cheatdevice-reversed",
+      "url": "https://github.com/daniemun/CTW-CheatDevice-Reversed.git",
+      "path": "references/ctw-cheatdevice-reversed",
+      "branch": "main",
+      "platform": "PSP ULES-01347 & ULUS-10490 / C Plugin",
+      "use": "Cartographie directe des adresses mémoires RAM PSP, offsets de structures joueur/véhicule et tables de threads."
+    },
+    {
+      "id": "psp-re",
+      "url": "https://github.com/psp-re/psp-re.github.io.git",
+      "path": "references/psp-re",
+      "branch": "code",
+      "platform": "PSP Hardware & Syscalls / Knowledge Base",
+      "use": "Tables NIDs Sony, syscalls kernel, formats PRX/ELF et registres VFPU/GE."
+    }
   ]
 }

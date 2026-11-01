@@ -8,7 +8,7 @@ publish = false
 
 [[bin]]
 name = "ctw-rust"
-path = "../../src/main.rs"
+path = "../../legacy/rust/src/main.rs"
 
 [dependencies]
 flate2 = { version = "1.1", default-features = false, features = ["rust_backend"] }

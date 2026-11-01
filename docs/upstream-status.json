@@ -1,67 +1,41 @@
 {
-  "checked_at": "2026-10-30T21:14:42+00:00",
-  "task": "Recover PSP lighting material coefficients and shadows",
+  "checked_at": "2026-11-01T23:01:16+00:00",
+  "task": "Official C++ mainline migration and GitHub Pages update",
   "repositories": [
     {
       "id": "ctw-native",
       "url": "https://github.com/official-kryo-to/ctw-native.git",
-      "platform": "Android 4.4.243 / C++",
-      "use": "Gameplay algorithms, class names and porting methodology; verify PSP Europe differences.",
-      "status": "checked",
-      "revision": "f7a45b3b7aac9bd9f4662d104d276d421c1fca52",
-      "previous_revision": "f7a45b3b7aac9bd9f4662d104d276d421c1fca52",
-      "changed_files": [],
-      "local_changes_present": false,
-      "recent_commits": [
-        {
-          "sha": "f7a45b3b7aac9bd9f4662d104d276d421c1fca52",
-          "date": "2026-10-27T20:15:15+01:00",
-          "subject": "Show other players' gunfire: puppets hold their weapon and shoot harmlessly"
-        },
-        {
-          "sha": "4bba4c13c269119391ab13c116b9585eca8149ab",
-          "date": "2026-10-27T20:11:02+01:00",
-          "subject": "Name the ported cash meter and assigned-weapon routines so the progress map counts them"
-        },
-        {
-          "sha": "6e86eb0e77e6b29166cfe892d39b4056f35084cc",
-          "date": "2026-10-27T20:09:35+01:00",
-          "subject": "Describe money, pickups, the police response and multiplayer in STATUS and the README"
-        },
-        {
-          "sha": "ba6061fd1f3c36d415a0f63e146ebefd4ceafcca",
-          "date": "2026-10-27T20:08:35+01:00",
-          "subject": "Fix an overflow in the protocol test; two rendering tests need no sound device"
-        },
-        {
-          "sha": "70ac8c6e4ffe7e60c56a27ac5a0c65d2c678341f",
-          "date": "2026-10-27T20:05:07+01:00",
-          "subject": "Add multiplayer: mod API v13 puppets and the Multiplayer mod"
-        },
-        {
-          "sha": "166edcdc70e307ce9c2d640add95951466e760e4",
-          "date": "2026-10-27T19:38:44+01:00",
-          "subject": "Port money and pickups: the cash counter, map pickups and peds' dropped goodies"
-        }
-      ]
+      "status": "unavailable",
+      "error": "fatal: unable to access 'https://github.com/official-kryo-to/ctw-native.git/': Could not resolve host: github.com",
+      "last_successful_revision": "108320b137c3ca748d697838f86c8919c12b3f2c"
     },
     {
       "id": "psp-recomp",
       "url": "https://github.com/highcmd/chinatown-wars-psp-recomp.git",
-      "platform": "PSP USA ULUS-10490 1.01 / C++ + PSP HLE",
-      "use": "Overlay analysis, original control flow and rendering/audio research; validate against ULES-01347 1.01.",
-      "status": "checked",
-      "revision": "6562163b6f504a1db93e1be5ce580d8cd6f024a7",
-      "previous_revision": "6562163b6f504a1db93e1be5ce580d8cd6f024a7",
-      "changed_files": [],
-      "local_changes_present": false,
-      "recent_commits": [
-        {
-          "sha": "6562163b6f504a1db93e1be5ce580d8cd6f024a7",
-          "date": "2026-10-24T00:54:05+02:00",
-          "subject": "Launcher 0.1.5 (rebuilds the game: HUD size on F3)"
-        }
-      ]
+      "status": "unavailable",
+      "error": "fatal: unable to access 'https://github.com/highcmd/chinatown-wars-psp-recomp.git/': Could not resolve host: github.com",
+      "last_successful_revision": "6562163b6f504a1db93e1be5ce580d8cd6f024a7"
+    },
+    {
+      "id": "gtactw-vita",
+      "url": "https://github.com/TheOfficialFloW/gtactw_vita.git",
+      "status": "unavailable",
+      "error": "fatal: unable to access 'https://github.com/TheOfficialFloW/gtactw_vita.git/': Could not resolve host: github.com",
+      "last_successful_revision": "90809be1c619a8799bb0f2e07a674414e63b55e2"
+    },
+    {
+      "id": "ctw-cheatdevice-reversed",
+      "url": "https://github.com/daniemun/CTW-CheatDevice-Reversed.git",
+      "status": "unavailable",
+      "error": "fatal: unable to access 'https://github.com/daniemun/CTW-CheatDevice-Reversed.git/': Could not resolve host: github.com",
+      "last_successful_revision": "d6072f85c7060107e5b23116b70abd1f196eadc4"
+    },
+    {
+      "id": "psp-re",
+      "url": "https://github.com/psp-re/psp-re.github.io.git",
+      "status": "unavailable",
+      "error": "fatal: unable to access 'https://github.com/psp-re/psp-re.github.io.git/': Could not resolve host: github.com",
+      "last_successful_revision": "d9f9d801d5f04f0a25f3f346413f011f5f857c31"
     }
   ]
 }

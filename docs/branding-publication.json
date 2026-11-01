@@ -1,0 +1,20 @@
+{
+  "reviewed": "2026-11-02",
+  "basis": "Benjamin explicitly confirmed a license or authorization for the supplied Bruce Mikita branding on 2026-11-02. No font software is distributed. No gameplay captures authorized for publication.",
+  "files": {
+    "docs/assets/logo-black.png": "f59798d2c1f010e8bdbba1413698bb109aee278366d305b2f7d5902b516f18b9",
+    "docs/assets/logo-black.svg": "7e1d1a7887650b536b5f274db109cbb29a22fa11b5b3bb6a042b85b1eb3fa55e",
+    "docs/assets/logo-ctw-black.png": "ebfd52ff4aa9d60e8ebf31adf358e185273176c4c95838e22b688bc95022bb97",
+    "docs/assets/logo-ctw-black.svg": "df2c348d5f066b0ecba7eb42d59101ce0c5881c2ccada782ffba8dbd0c935fa8",
+    "docs/assets/logo-ctw-transparent.png": "919c34b3c72bf63af38c8014b22ab04ed4565bd1c6abb3821727f00720381875",
+    "docs/assets/logo-ctw-transparent.svg": "f6c1579aad61e5d38d3a7c41a6e0c2c1c166402487c0cefa8123709319d7b980",
+    "docs/assets/logo-ctw.png": "919c34b3c72bf63af38c8014b22ab04ed4565bd1c6abb3821727f00720381875",
+    "docs/assets/logo-ctw.svg": "f6c1579aad61e5d38d3a7c41a6e0c2c1c166402487c0cefa8123709319d7b980",
+    "docs/assets/logo-transparent.png": "88644e5cc8c041129dbd47e25e6e0ad53bc5eb676129679f3f6420e9445c89d5",
+    "docs/assets/logo-transparent.svg": "b08b96795615357d551890c5d511706a2150c0d840eb341438daa94577de0daf",
+    "docs/assets/logo.png": "88644e5cc8c041129dbd47e25e6e0ad53bc5eb676129679f3f6420e9445c89d5",
+    "docs/assets/logo.svg": "b08b96795615357d551890c5d511706a2150c0d840eb341438daa94577de0daf",
+    "docs/assets/favicon.svg": "dfcca5f1565547785f0b7172cbdbd2ae706bb2936992b855913c213d5e801d14"
+  },
+  "hash_basis": "SHA256 of exact Git blob bytes (SVG line endings normalized by Git); local artwork is unchanged."
+}

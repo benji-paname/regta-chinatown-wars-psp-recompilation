@@ -1,3 +1,101 @@
+# Mainline migration handoff — 2026-11-02
+
+C++20 is now canonical: runtime/. Rust sources are preserved in legacy/rust/src/. Read docs/AI_HANDOFF.md and docs/CPP_MAINLINE_MIGRATION.md first. Resume validation with .\Compiler.ps1 -Check. The rebuilt 29 runtime components link against 250 preserved generated objects; 35 kernel checks pass. Existing Playtest binary and saves were not replaced. No test captures may be published. Benjamin confirms logo font authorization. The local directory rename is blocked by a Windows lock; do not force it.
+
+Historical handoff follows.
+
+# ACTIVE HANDOFF — Bink fix experimentally validated; STOP after 3/3 boots
+
+Updated 2026-11-01T19:13+01:00 (Europe/Paris). Read `work/cpp-recomp-feasibility/reports/BINK_MUTEX_FIX_VALIDATION.md`. This entry supersedes the historical entries below. Benjamin authorized the exact isolated fix and three bounded boots; all three are now consumed. No further execution or integration is authorized by that completed mission.
+
+Approved owner-exit cleanup applied ONLY in `work/cpp-recomp-feasibility/bink-fix-validation/src/kernel_thread.cpp`. Exact behavioral diff equals the approved proposal; twelve diagnostic-only additions are separately recorded and removable. Original highcmd source SHA256 f70fd4b2ef5f35c534e2ca80ee6792bfdad3025ef3886713786d85e9eddba9f2 remains unchanged. Rust/generated code/original data/staging/reference executable are intact.
+
+Actual C++ white-box fixture: 27 checks pass, 0 unexpected failures; THREE known policy differences exposed (FIFO attr0/200 and priority ties by UID). Real HLE/Windows fibers/timeout service exercised; no substitute mutex stubs or guest game loaded in fixture. One production kernel component compiled with Clang22.1.3/C++20/MSVCx64; 5 inherited warnings, 0 errors. Isolated link: 0 warnings/errors, 279 inputs with only the kernel object replaced. 31 public API symbols and all69 HLE declarations preserved; COFF/ABI directives match exactly. Full compiler logs retained.
+
+Experimental exe `bink-fix-validation/gamebuild/ctw.exe`: SHA256 53e833fd4ddb1f7c9e8274699fd3348b192605dd0fabd8d608fb909e1ef7cc38. Never replace baseline `ctw_native_diag.exe` automatically.
+
+Three boots: PID4268 58.125460s; PID10224 58.154974s; PID23356 58.093031s. All reached autosave and ken_a01 comic intro; no new runtime anomaly observed. Run02 recreated the failing race: main260 joins309, video271 exits owning308; at9.158s cleanup transfers308 to309, actual lock/unlock/exit succeed, main join returns0. Runs01/03 retain the previously successful path and do not trigger a cleanup transfer. Logs/captures (171 PNGs) and per-run SHA evidence retained under `reports/bink-fix-validation/`.
+
+GO recommendation is limited to a future explicitly approved integration of the minimal Bink lifetime fix. NO full PSP-fidelity or definitive-reliability claim: FIFO/priority-tie gaps remain, audio output was disabled, no controller connected, no long gameplay/hardware test, instrumentation changes timing. Do not change queue rules without separate authorization. Exit code1 after watchdog is intentional termination, not a crash; Bink's own exit1 is not automatically an error.
+
+All2167 protected files verified unchanged. GitHub preflight DNS failed; pinned local references reviewed, separate PPSSPP source accessed through web reader. No dump, interprocess read, elevation, install, commit or push. Rust tests/progress visuals not rerun or advanced for this C++ work.
+
+Resume in ten seconds (read-only): `Get-Content work/cpp-recomp-feasibility/reports/BINK_MUTEX_FIX_VALIDATION.md`. Await Benjamin's next validation. Do NOT relaunch old scripts, clear consumed markers, integrate, or run a fourth session. Offline evidence extraction only: `python work/cpp-recomp-feasibility/tools/analyze_bink_fix_validation.py`.
+
+---
+
+# HISTORICAL HANDOFF — Bink root-cause investigation complete; fix proposal NOT applied
+
+Updated 2026-11-01 18:50 Europe/Paris. Read `work/cpp-recomp-feasibility/reports/BINK_MUTEX_ROOT_CAUSE_AND_FIX_PROPOSAL.md` and `reports/bink-mutex-investigation/HANDOFF.md`. This entry supersedes all historical entries below. One authorized logging-only kernel compilation/link and one native run completed (PID 6828, 58.068642 seconds). Both the original baseline executable and Rust are unchanged. No further run or behavioral correction authorized.
+
+New precise proof: video 271's old-mutex Unlock(268) returns 800201C5. Main 260's Unlock(268) succeeds, but preemption lets video close269, delete267/268 and create307/308/309 BEFORE main's unlock returns. Main then reloads the global audio ID and joins309. At14.017 seconds video271 becomes dormant retaining mutex308 count1 owner271; 309 repeatedly times out. Missing normal-mutex thread-end cleanup sustains the deadlock. PPSSPP's inspected primary source has that cleanup. Earlier speculation about main's unlock failing is not borne out by this trace.
+
+`fix_proposal_UNAPPLIED.patch` is review text only: normal-mutex cleanup on exit/terminate with waiter handoff, no owner-check bypass. It has NOT been applied, compiled or game-tested. It retains the existing best_waiter policy, which is not FIFO-correct generally; multi-waiter fidelity is an explicit gate. No hardware-test claim. Exact early-reset timing trigger remains open. Ghidra failed at launcher Java configuration access; no bypass. Original ELF fallback checked1,482 words in13 functions. Eight offline trace checks pass, not fix/game tests. Diagnostic compilation has5 pre-existing warnings,0 errors; link0 errors/warnings. All1,974 protected files unchanged, rechecked18:50. No dump/interprocess read/elevation/commit/push.
+
+Next step requires Benjamin's approval of the isolated fix and test scope. Read the report in10seconds, then await approval. Never clear `reports/bink-mutex-investigation/SESSION_CONSUMED` or run an old unconditional boot script. Full proposed test matrix: `reports/bink-mutex-investigation/FIX_VALIDATION_PLAN.md`. No new Rust tests or dashboard percentage claimed.
+
+---
+
+# HISTORICAL HANDOFF — Boot diagnostic complete; Bink blocking chain proven; STOP
+
+Updated 2026-11-01 (Europe/Paris). Read `work/cpp-recomp-feasibility/reports/JALON_BOOT_REPRODUCIBILITY_DIAGNOSTIC.md` and `reports/boot-repro-diagnostic/HANDOFF.md`. This entry supersedes the historical entries below. The single authorized diagnostic process (PID 21396) ran for 58.064 seconds and was deliberately stopped. Do not launch again, clear SESSION_CONSUMED, build or modify runtime behavior without Benjamin's next authorization.
+
+Built-in save-state succeeded at t=18.001605 s and was parsed offline after termination; no interprocess memory read or elevation. Proven chain: main thread 260 waits indefinitely for audio thread 309; audio retries shutdown mutex 308; that mutex has count 1 and owner 271, the already-ended Bink video thread. Successful boots recreated audio from thread 260, both failures from thread 271. The trigger of this early reset and the actual unlock return remain unproven. Do not bypass ownership or auto-release mutexes on speculation. Exit status 1 also occurs in successful Bink runs and is not independently an error. All four compared logs have zero controllers; the earlier contrary claim is corrected.
+
+One session only; no new build/link, runtime/source/HLE/hook change, Rust change, live memory read, commit or push. All 1,974 protected files hash-unchanged. Original staging/data/references/executable preserved; 46 isolated launch copies match. GitHub DNS failed during mandatory preflight; only pinned local upstream sources were reviewed. No new Rust test result or dashboard progress claimed. Offline saved-state evidence and 57 captures retained privately; do not publish game-memory snapshots.
+
+Next proposal: inspect the European Bink reset/close path offline, then seek separate approval for narrowly scoped ownership/return logging if necessary. Current snapshot already proves the blocking chain; no additional live-memory read is needed for that finding. Await Benjamin's validation before further work.
+
+---
+
+# HISTORICAL HANDOFF — First playable C++ experiment stopped; new execution requires approval
+
+Updated 2026-11-01 (Europe/Paris). Read `work/cpp-recomp-feasibility/reports/MAJOR_MILESTONE_FIRST_PLAYABLE.md` and `FIRST_PLAYABLE_HANDOFF.md`. This entry supersedes the historical milestones below. Native build/link had previously reached 279 selected objects and the existing executable; no compilation/relink in this mission.
+
+One authorized native session ran for 180.424 seconds and was deliberately terminated on a persistent yellow Rockstar-logo screen before autosave. No first-playable level reached; no `sinkingcarapp`, no PSP CtrlRead log, no L/R/swimming/movement sent. The earlier 1B.17 successful path was not reproduced. Bink audio/video thread lifecycle diverged; precise cause remains unproven. Do not treat display FPS as gameplay. All 1,974 protected files hash-unchanged, including Rust, references, original PSP data, generated code, objects and executable. No Rust changes, no new test result or dashboard percentage.
+
+New isolated runner preserves original staging and has a persistent one-session lock. Do not clear it or run the older unconditional 1B.18 script. External memory-read attempt failed access; elevated retry was rejected by automatic approval review, no dump obtained. Ghidra read-only launcher failed before opening the project. Next proposed step is a separately approved bounded run using existing caller/wait/save-state diagnostics; any read-memory escalation also needs explicit scope/approval. No runtime fix, rebuild, further execution or commit authorized.
+
+---
+
+# HISTORICAL HANDOFF — Jalon 1B.5 documentary audit complete; await validation
+
+Updated 2026-10-31 22:32 Europe/Paris. Latest report: work/cpp-recomp-feasibility/reports/JALON1B5_HLE_CRITICAL_AUDIT.md; exact evidence and resumption in reports/JALON1B5_HANDOFF.md. This heading supersedes the historical handoffs below.
+
+265 existing C++20/MSVC x64 objects, prior residual native-symbol count124 unchanged; no compilation in this mission. Correction:53 raw unmatched import records include4 shadowed duplicates;252 unique stubs,49 selected unmatched names (9 non-network,40 network). Existing dispatch already selects correct ExitGame/Utils time/UMD names for those4. Their provider kernel_misc.cpp remains uncompiled and needs a separately reviewed MSVC time-portability change. No binding/fallback/source modification. Nickname output and timed UMD waits have concrete conditional correctness risks; no first-frame reachability proven.14 runtime C++ units remain; propose osd/hle_ge/hle_savedata/hle_net as a separately authorized next object-only batch. Ghidra launch failed before project open.879 protected existing files hash-unchanged; Rust source/exe preserved, no new Rust tests or dashboard claims. No install/commit/link/run. Wait for Benjamin's validation.
+
+---
+
+# ACTIVE HANDOFF — Jalon1B.0 runtime audit completed; await approval
+
+Updated 2026-10-31 Europe/Paris. User authorized analysis/non-destructive verification only. No runtime compilation, preprocessing, final link, startup, dependency installation or Git commit performed. Rust/delivered exe/generated250 objects/reference/original game binaries preserved.
+
+Read work/cpp-recomp-feasibility/reports/JALON1B_RUNTIME_AUDIT.md. Existing250 COFF objects scanned with llvm-nm:34,841 distinct unresolved before union,34,802 resolved within set,39 residual symbols (23VFPU,12runtime/hooks,4CRT). All35 non-CRT providers found at source level, not compiled/link-certified.
+
+Material new finding: literal HLE registrations match203/256 EU import names;53 unmatched (21NID placeholders plus32 named services). core.cpp missing-binding trampoline logs first5 calls then returns0: not support evidence; do not let fallback silently mask missing boot services. PriorityP1 unknownIO/audio;18unknownNetInet P2offline candidates only, no proof of startup unreachability. Source-only JAL graph cannot establish boot reachability.
+
+MSVC-target current objects cannot be mixed directly with LLVM-MinGW C++ runtime objects (mangling/STL/CRT). Propose one Clang/MSVC C++20 object-only phase; review sys/time.h/gettimeofday portability and VFPU math macros first. Existing SDL2/FFmpeg dependency candidate isAMD64 but hasavcodec61, differs from upstream FFmpeg8.1; API/exports/DLLpairing not validated.
+
+No essential USA-address boot hook found in main/core/kernel; boot uses generatedEU metadata. Optional tpcam_stream_ahead wrapper remains unproved regionally; original game_hooks.cpp readsUSAglobal0x08B542E0 before g_cheats check, so off does not certify safety.47patches areoptional camera feature, not boot prerequisites, but current objects retain native symbol dependencies. No hook/cheat edit or activation.
+
+GO only to propose separately approved same-ABI runtime object compilation; NO-GO mixedABI/full-link/startup readiness. Resume by reading report and awaiting Benjamin validation. Do not run tools/win_deps.py (installs/downloads) or build/link commands automatically. Reproduce symbols safely: python work/cpp-recomp-feasibility/tools/audit_jalon1b_symbols.py. Prior detailed handoffs preserved below.
+
+---
+
+# ACTIVE HANDOFF — Milestone 0 pre-build audit: NO-GO, await Benjamin
+
+Updated 2026-10-31 (Europe/Paris). User authorized audit ONLY; do not start Milestone1, compile native runtime, install dependencies, commit/push/reset, change Rust, original binaries, reference repo or Ghidra project.
+
+Report: work/cpp-recomp-feasibility/reports/VALIDATION_PRE_BUILD.md. Wrapper corrected: natural ctypes layout matches compiled C headers (48 bytes/alignment8/all offsets), Allegrex/R5900 enum values corrected to3/4, dynamic disassembly buffer from Rabbitizer sizing API. Four tests/10 exact instruction vectors pass; long buffer regression passes. Exact DLL build provenance not certified (version symbols unavailable).
+
+Analysis reproduced exactly (12,222 main,22,579 overlay functions,341 jump tables). Two C++ generations in build/validation-gen byte-identical to each other AND existing build/gen.250 listed C++ sources present (82main+166overlay+2dispatch).166 signatures,15,534 ordered comparisons,0 collisions. One mapapp unhandled mfc0 is strongly supported as data seeded by HI/LO load; trap preserved.21 unresolved imports and3 genuine callback tail branches documented.
+
+NO USA original ELF present in inspected reference paths:47 cheats+streaming hook/camera/global remain UNPROVEN cross-region.45 patch sites pass narrow EU instruction expectation;2 offset-zero stores need pointer context, are not automatically wrong. Existing isolated EU patch tables unmodified and NOT approved for execution. Mapping script now inventories evidence, never applies deltas. Upstream DNS unavailable; local PSP pin6562163b, Android HEADb0506abc; review recorded. Ghidra read-only attempt hung without output, cancelled; no successful decompilation claimed.
+
+Resume in10seconds: read report, await user validation. Local tests (from work/cpp-recomp-feasibility): python tools/test_rabbitizer_wrapper.py. No runtime compiled. Rust unchanged by this audit; last248-test status is prior agent documentation, NOT rerun/certified here. Existing user/other-agent modifications preserved. Rust treemap unchanged because no Rust runtime progress occurred.
+
+---
+
 # ACTIVE HANDOFF — visible first-pass world shadows; sunlight still unresolved
 
 Updated 2026-10-30T22:18+01:00. Implemented native planar shadows for opaque world meshes and Standing props, using cached ISO triangles, table sun/channel19 alpha, collision ground plane, stencil once per pixel. Visual capture target/visual-comparison/shadows-1352.bmp confirms lamp silhouettes. NOT original PSP algorithm: no foliage alpha, uneven receiver splitting, loose/tilted or car/ped projected shadows. No new yellow filter/material guess. Sunlight/colours remain wrong. See docs/reference/PSP-VISUAL-PARITY.md.

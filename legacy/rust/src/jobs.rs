@@ -219,12 +219,33 @@ pub enum ActiveJob {
 pub struct JobPerks {
     /// Unlocked at 15 consecutive taxi fares: all taxis have nitro boost and higher durability.
     pub taxi_medallion: bool,
-    /// Unlocked at Vigilante Wave 5: maximum armour doubles from 100 to 200.
+    /// Unlocked at Vigilante Wave 5 (PSP `flags_f14 & 0x2000`): halves incoming damage >= 2
+    /// and alternates 1-point damage while keeping the armour ceiling at 127 (`0x7f`).
     pub double_armour: bool,
+    /// PSP `flags_f14 & 0x4000`: 1-point damage alternation toggle for Double Armour.
+    /// Cleared whenever `set_double_armour` (`0x089c8930`) or `reset_damage_state` (`0x089c8ff4`) is called.
+    pub armour_half_tick: bool,
     /// Unlocked at Firefighter Wave 5: Huang is completely immune to fire and explosions.
     pub flameproof: bool,
     /// Unlocked at Paramedic Wave 5: Huang never tires when sprinting.
     pub infinite_sprint: bool,
+}
+
+impl JobPerks {
+    /// PSP `cPlayer::SetHasDoubleArmour` (`0x089c892c` / `0x089c8930`):
+    /// sets bit `0x2000` (`double_armour`) and unconditionally clears bit `0x4000` (`armour_half_tick`).
+    pub fn set_double_armour(&mut self, enabled: bool) {
+        self.double_armour = enabled;
+        self.armour_half_tick = false;
+    }
+
+    /// PSP `cPlayer::Reset` (`0x089c8ff4`):
+    /// clears both bit `0x2000` (`double_armour`) and bit `0x4000` (`armour_half_tick`).
+    #[cfg_attr(not(test), allow(dead_code))]
+    pub fn reset_damage_state(&mut self) {
+        self.double_armour = false;
+        self.armour_half_tick = false;
+    }
 }
 
 /// Global Jobs Manager coordinating vehicle ambient missions.
@@ -723,9 +744,9 @@ impl JobManager {
 
                                 if wave == 5 {
                                     save_progress.ambient_medal[0x06] = 2; // Silver medal
-                                    self.perks.double_armour = true;
+                                    self.perks.set_double_armour(true);
                                     self.banner_message = Some((
-                                        format!("AUTODÉFENSE NIVEAU 5 RÉUSSI ! Gilet pare-balles doublé (200 AP) (+${})", wave_reward),
+                                        format!("AUTODÉFENSE NIVEAU 5 RÉUSSI ! Bonus Double Armure débloqué (+${})", wave_reward),
                                         5.0,
                                     ));
                                 } else {
@@ -1090,6 +1111,9 @@ mod tests {
         assert!(mgr.try_start_job(JobKind::Vigilante, "POLICE", [300.0, 300.0, 5.0]));
         assert!(mgr.is_active());
 
+        // Simulate a prior dirty alternation bit to verify SetHasDoubleArmour clears 0x4000
+        mgr.perks.armour_half_tick = true;
+
         // Simulate reaching and clearing 5 waves
         for _wave in 1..=5 {
             let crime_blip = mgr.current_radar_blip().expect("Vigilante blip");
@@ -1102,6 +1126,7 @@ mod tests {
         }
 
         assert!(mgr.perks.double_armour, "Wave 5 vigilante must unlock double armour");
+        assert!(!mgr.perks.armour_half_tick, "Unlocking double armour must clear 1-point alternation bit (0x4000)");
         assert_eq!(save.ambient_medal[0x06], 2, "Wave 5 vigilante awards Silver medal");
         assert!(cash >= 7500, "Cash reward should accumulate across waves");
     }

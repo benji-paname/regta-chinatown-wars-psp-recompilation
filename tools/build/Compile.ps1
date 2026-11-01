@@ -9,10 +9,15 @@ foreach ($name in @('PATH', 'CARGO_HOME', 'CARGO_TARGET_DIR', 'RUSTFLAGS')) {
 }
 try {
     if (-not $ToolchainRoot -and -not (Get-Command cargo -ErrorAction SilentlyContinue)) {
-        # Compatibility with the existing local portable toolchain; not required by public builds.
-        $localTools = Join-Path (Split-Path (Split-Path $repoRoot -Parent) -Parent) '2026-10-05/en/work'
-        $candidate = Join-Path $localTools 'rust-portable'
-        if (Test-Path -LiteralPath (Join-Path $candidate 'bin/cargo.exe')) { $ToolchainRoot = $candidate }
+        # Check local work/rust-portable first, then fallback to external path
+        $localCandidate = Join-Path $repoRoot 'work/rust-portable'
+        if (Test-Path -LiteralPath (Join-Path $localCandidate 'bin/cargo.exe')) {
+            $ToolchainRoot = $localCandidate
+        } else {
+            $localTools = Join-Path (Split-Path (Split-Path $repoRoot -Parent) -Parent) '2026-10-05/en/work'
+            $candidate = Join-Path $localTools 'rust-portable'
+            if (Test-Path -LiteralPath (Join-Path $candidate 'bin/cargo.exe')) { $ToolchainRoot = $candidate }
+        }
     }
     if ($ToolchainRoot) {
         $toolRoot = (Resolve-Path -LiteralPath $ToolchainRoot).Path

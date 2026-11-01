@@ -1,26 +1,11 @@
-# ReGTA CTW PC Recomp — AI Assistant Guidelines
+# ReGTA CTW — C++ mainline assistant guidelines
 
-## Core Project Mandates
+Read AGENTS.md and docs/AI_HANDOFF.md first. The active implementation is native C++20 in runtime/. Rust is historical under legacy/rust/src/.
 
-1. **Keep Visual Port Status & Treemap Up To Date After Every Significant Advance**:
-   - Whenever you implement a new feature, add gameplay systems, or complete refactoring, **you MUST update the port progress visual treemap, SVG badges, and documentation dashboards**.
-   - Run:
-     ```powershell
-     python tools/progress/progress.py
-     ```
-     Or simply run:
-     ```powershell
-     .\Compiler.ps1 -Test
-     ```
-     (which compiles with warnings as errors, runs the 160 unit tests, and automatically updates the treemap and badges).
+Before each task, run tools/maintenance/check_upstreams.py and review BOTH upstreams. Never merge automatically or copy USA addresses to PSP Europe without proof.
 
-2. **100% Native Rust Data Only (No Borrowed or False Numbers)**:
-   - The status treemap (`docs/assets/progress.svg`), the SVG badges (`badge-overall.svg`, `badge-routines.svg`), and the breakdown tables in `README.md` and `docs/index.html` **must reflect strictly and exclusively our native Rust codebase (`src/**/*.rs`)**.
-   - **NEVER** scan, borrow, or mix in third-party C++ code (e.g. from `references/ctw-native`). Every green block must correspond to verified, real functions implemented in pure Rust in `src/`.
+Run the C++ evidence generator tools/progress/cpp_status.py after verified advances. Rust's progress.py writes only docs/legacy/. Never present Rust percentages as C++ game completion.
 
-3. **Updating Module Mapping**:
-   - If you create a new Rust file in `src/`, add it to `RUST_MODULE_MAP` in `tools/progress/progress.py` so that its functions are properly allocated to the corresponding Chinatown Wars classes.
+Keep all game files, saves and test captures private and intact. Audit the Git tree and outgoing history with tools/maintenance/check_publication.py before each authorized push. A .gitignore is insufficient for tracked files.
 
-4. **Zero Warnings & Test Pass Guarantee**:
-   - The Rust build is configured with `-D warnings`. Any warning causes compilation failure.
-   - All 160 unit tests must always pass before any commit.
+Build instructions: docs/BUILD_CPP.md. The private recipe and generated game code are intentionally excluded. Preserve diagnostics; C++ has inherited warnings. 35 passing kernel checks are limited evidence, not complete PSP fidelity.

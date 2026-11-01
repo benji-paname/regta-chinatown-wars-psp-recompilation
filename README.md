@@ -1,148 +1,69 @@
-<p align="center">
-  <img src="docs/assets/logo.svg" alt="ReGTA CTW — PC Recomp" width="720"/>
-</p>
+<p align="center"><img src="docs/assets/logo.svg" alt="ReGTA CTW — PC Recomp" width="440"></p>
 
-# ReGTA CTW — PC Recomp
+# ReGTA CTW — Native PC Recomp
 
-**A native PC future for Chinatown Wars PSP.**
-**by Benji Paname**
+**The original Chinatown Wars PSP game, recompiled natively for Windows x64.**
 
-[![Version](https://img.shields.io/badge/milestone-0.1.4--alpha-orange)](CHANGELOG.md)
-[![Tests](https://img.shields.io/badge/local_tests-246_passed-brightgreen)](docs/STATUS.md)
-[![Warnings](https://img.shields.io/badge/compiler_warnings-0-brightgreen)](docs/STATUS.md)
-[![Platform](https://img.shields.io/badge/platform-Windows_x64-blue)](#build-and-run)
-[![Language](https://img.shields.io/badge/runtime-Rust-dea584)](#repository-layout)
-[![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
-[![Discord](https://img.shields.io/badge/Discord-benjamin060936-5865F2?logo=discord&logoColor=white)](https://discord.com/users/601648068277960714)
+C++20 is now the mainline of this independent project by **Benji Paname**, targeting **PSP Europe ULES-01347 v1.01**. Original MIPS control flow is compiled ahead of time; the runtime provides PSP services, graphics and audio. This is an unfinished native port, not a complete-fidelity certification.
 
-ReGTA CTW is an independent reverse-engineering and native-port project for **Grand Theft Auto: Chinatown Wars**, targeting the European PSP release **ULES-01347, version 1.01**. The goal is to rebuild the PSP experience in Rust for Windows x64, reading game data from the user's own disc image without a PSP CPU emulator in the runtime.
+[Website](https://benji-paname.github.io/regta-chinatown-wars-pc-port/) · [Status](docs/STATUS.md) · [Local build](docs/BUILD_CPP.md) · [Playtest guide](docs/PLAYTEST.md) · [Contributing](CONTRIBUTING.md)
 
-> **Pre-alpha — no public playable download.** No game executable, ROM, ISO or proprietary game assets are offered for download. The local prototype is unfinished; no release date or complete gameplay parity is promised. Building from source requires the tools and personal game copy described below.
+![C++ kernel checks](docs/assets/badge-cpp.svg)
 
-The city, player movement, cameras, navigation, vehicles and combat already have prototype implementations. The work ahead is to verify their behaviour against the PSP original and connect them into a complete game. **165 passing tests and 166 indexed code overlays are progress measurements, not proof of full-game equivalence.**
+## Playable progress, with clear limits
 
-**[Support on Tipeee](https://fr.tipeee.com/benji-paname/)** · [Support via PayPal](https://paypal.me/BenjiLsg) · **[Discord: benjamin060936](https://discord.com/users/601648068277960714)**
-Support helps sustain Benji Paname's reverse engineering, native development and documentation. It does not buy the game, game assets or early access, and does not guarantee completion or a release date.
+**Benjamin reports completing the first two story missions in the private PC Playtest using normal controls.** His test covered cinematics/dialogue, walking/swimming, driving/traffic, police/NPC interactions, window-breaking and vehicle-start mini-games, HUD/map and controller input. These are observations from tested sequences, not a claim that every system or mission is finished.
 
-[Project website source](docs/index.html) · [Implementation status](docs/STATUS.md) · [Changelog](CHANGELOG.md) · [Publish with GitHub Pages](docs/PUBLISHING.md) · [YouTube Creator Kit](docs/YOUTUBE_CREATOR_KIT.md)
+The current local validation rebuilt **29 runtime components**, reused **250 generated translation units** covering the executable and **166 overlays**, and passed **35 deterministic kernel checks**. Bink thread-owner cleanup and FIFO/priority handling for mutexes and mailboxes are integrated. Compiler warnings remain; detailed evidence is in the [migration report](docs/CPP_MAINLINE_MIGRATION.md).
 
-<!-- BEGIN STATUS SECTION -->
-## Status
+**Known limitation:** frame rates can drop toward **20 FPS**, with uneven frametimes, especially while driving through dense traffic and pedestrian areas. Performance and wider campaign validation are the next priorities. No global completion percentage is claimed.
 
-[![PSP fidelity](docs/assets/badge-overall.svg)](docs/progress.html) [![Rust runtime functions](docs/assets/badge-routines.svg)](docs/progress.html)
+## Your game data stays yours
 
-[![Native Rust inventory](docs/assets/progress.svg)](docs/progress.html)
+**No public Playtest download is offered.** A local setup needs your own supported PSP copy and privately generated data. This repository must not contain an ISO/ROM, PSP executable, extracted assets, generated game code, game video/audio, saves or gameplay captures. Existing private files stay on their owner's PC. The public runtime source does not grant rights to the original game content.
 
-Green counts runtime function definitions in src/**/*.rs; grey counts test and test-helper definitions. Area represents function count, not original binary size. No C++ code or Android routine totals enter these measurements. These source counts do not prove gameplay fidelity or a percentage of the PSP game completed. Related class names are research navigation hints, not verified routine matches.
+Benjamin's existing local package remains in `outputs/ReGTA-CTW-Playtest/`: open **ReGTA-CTW-Playtest.exe** normally, with no command-line setup. Keep its `ms0/` saves and `ctw.ini` preferences. Builds do not replace it automatically. [Private data policy](docs/PRIVATE_DATA.md).
 
-[Driving and traffic validation](docs/DRIVING_TRAFFIC_REPAIR.md).
-<!-- END STATUS SECTION -->
-
-## Next milestones
-
-- Review the English-first presentation and four horizontal/vertical, black/transparent logo variants; see [branding provenance](docs/BRANDING.md) for the outstanding Bruce Mikita license documentation.
-- YouTube first-look film: review the new local edit and upload kit in [`docs/YOUTUBE_CREATOR_KIT.md`](docs/YOUTUBE_CREATOR_KIT.md).
-- Expand story missions execution engine across Boss contacts with scripted cutscene staging.
-- Continue PSP behaviour comparisons, progression and save work before considering a public playable release.
-
-## Build and run
-
-Requirements: Windows x64, a Rust toolchain with a matching Windows linker, and a legally obtained personal ISO of the supported PSP release. The current local validation uses Rust 1.90.0 with the GNU Windows target. Cargo dependencies are pinned in `Cargo.lock`.
-
-From the repository root, in PowerShell:
+## Development
 
 ```powershell
+# Check the existing private build recipe and dependencies; no game launch.
+.\Compiler.ps1 -Check
+# Compile the canonical runtime, link locally and run 35 kernel checks.
 .\Compiler.ps1 -Test
-.\outputs\CTW-Rust\CTW-Rust.exe --iso "D:\Games\Chinatown-Wars-PSP.iso" --slice
 ```
 
-The compiler runs with warnings treated as errors, tests the workspace, and updates the executable only after success. Unit tests use generated synthetic fixtures and do not require an ISO or extracted game tables. Local validation on **2026-10-30: 246 passed, 0 failed, 0 ignored, 0 compiler warnings**. This is a local result, not a hosted CI badge.
-
-For desktop launchers, set `CTW_ISO` in the launching environment or pass `--iso` to a launcher:
-
-```powershell
-.\outputs\CTW-Rust\Presenter-la-demo.cmd --iso "D:\Games\Chinatown-Wars-PSP.iso"
-```
-
-The existing `outputs/CTW-Rust/Compiler.ps1 -Test` entry point remains supported. The executable keeps its technical name `CTW-Rust.exe` for existing shortcuts; the Cargo package is `regta-ctw`. Build cache: `target/`. See [build instructions](docs/BUILDING.md) for portable toolchains, offline builds, private integration checks and troubleshooting.
-
-## Current scope
-
-| Area | Current implementation | Remaining work |
-| --- | --- | --- |
-| Resources and world | PSP ISO/WAD/PAK readers, textures, models, map and collisions | Continue format validation and completeness checks |
-| Player and cameras | Movement, rolling, obstacle traversal, PSP/mobile/DS camera profiles | Establish remaining PSP behaviour and collision parity |
-| Navigation and HUD | PSP radar resources, health/armour display, route guidance, large map | Finish original interface behaviour and GPS fidelity |
-| Pedestrians and props | PSP pavement graph, population and prop systems | Validate AI decisions and interactions against PSP |
-| Vehicles and combat | Driving, traffic, weapons, explosions and police prototypes | Replace unverified behaviour and Android reference dependencies |
-| Sound, weather and statistics | Native audio infrastructure, radio/weather managers, stats structures | Verify integration, PSP provenance and complete save support |
-| Full game progression | Not complete | Missions, scripting and complete campaign/save behaviour |
-
-The three camera profiles, French/English interface, keyboard/XInput controls and optional locally supplied HD replacements remain available. No texture pack is included in this repository.
-
-<!-- BEGIN VERIFIABLE PROGRESS DASHBOARD -->
-## 📊 Verifiable Progress & Implementation Map
-
-> [!NOTE]
-> **Progress Measurement Policy**: Third-party progress charts (e.g. from Android C++ decompilations) measure Android ELF symbols. In contrast, ReGTA CTW is an independent native Rust port targeting the European PSP release (**ULES-01347 v1.01**). Original PSP routine coverage is unmeasured pending a reviewed build-specific routine inventory (`docs/progress/psp-routines.json`). We present **verifiable, testable counts** from our local codebase rather than an unverified percentage.
-
-### 🎯 Key Verified Metrics (Local Codebase)
-
-| Metric | Measured Value | Verification Method |
-|---|---|---|
-| **Passing Unit Tests** | **246 tests / 0 failures** | `Compiler.ps1 -Test` (100% deterministic synthetic fixtures) |
-| **Compiler Warnings** | **0 warnings** | Enforced via `-D warnings` in Cargo build profile |
-| **Active Rust Modules** | **45 modules** (25,018 lines) | Pure native Rust x86_64 in `src/` |
-| **PSP Code Overlays Indexed** | **166 overlays** | Verified against `OVERLAYS.PAK` directory table |
-| **Street Races Implemented** | **16 circuits** | Broker, Dukes, Bohan & Algonquin with AI racers (`src/races.rs`) |
-| **Safehouse Properties** | **21 planques** | Property ownership, stash box & wardrobe (`src/safehouse.rs`) |
-| **Collectible Challenges** | **100 cameras, 35 rampages, 30 jumps** | LCPD cameras, 35 Rampages, 30 USJ Stunt Jumps (`src/collectibles.rs`) |
-| **Drug Wars Economy** | **81 dealers, 7 gangs, 6 commodities** | Wholesale pricing, price-drop emails & inventory bag (`src/drugs.rs`) |
-| **Story Boss Contacts** | **8 boss storylines** | Kenny, Chan, Zhou, Hsin, Heston, Lester, Rudy, Xin Shan (`src/missions.rs`) |
-| **Vehicle Audio & Radio** | **11 radio stations** | In-car tuning & stream manager (`src/radio.rs`) |
-| **Odd Jobs (Missions Ambulantes)** | **5 services** | Taxi, Vigilante, Firefighter, Paramedic, Noodle Delivery (`src/jobs.rs`) |
-
-### 🧭 Reference Repositories & Upstream Alignment
-
-ReGTA CTW independently cross-references two separate upstream projects without importing their binaries:
-- **`ctw-native`** (Android 4.4.243 / C++) : `b0506abc` — *Gameplay algorithms, class names and porting methodology; verify PSP Europe differences.*
-- **`psp-recomp`** (PSP USA ULUS-10490 1.01 / C++ + PSP HLE) : `6562163b` — *Overlay analysis, original control flow and rendering/audio research; validate against ULES-01347 1.01.*
-
-<!-- END VERIFIABLE PROGRESS DASHBOARD -->
-
-## Repository layout
+These commands use the already prepared local Clang/MSVC environment and private generated sources. A fresh public clone is **not** a ready-to-run game; the complete ISO-to-build setup is not yet packaged for public use. See [BUILD_CPP.md](docs/BUILD_CPP.md).
 
 ```text
-src/                     Active Rust implementation and unit tests
-tools/build/             Canonical compiler implementation
-tools/maintenance/       Storage audit, cleanup and repository checks
-tools/research/          Index of preserved local research scripts
-docs/                    Build, status, release and research documentation
-data/tables/             Private local tables (ignored; provenance documented)
-references/              Source references and provenance, no game binaries
-outputs/CTW-Rust/        Compatibility manifest, launchers and local executable
-work/                    Preserved private research (ignored)
-target/                  Single regenerable Cargo cache (ignored)
+runtime/                    Canonical C++20 runtime, VFPU and SAS sources
+ tests/kernel/              Deterministic real-runtime tests
+ tools/build/               C++ build entry point and historical Rust builder
+ tools/playtest/            Windows launcher source
+ docs/                      Website, evidence, build and preservation guidance
+ legacy/rust/src/           Preserved historical Rust implementation
+ work/                      PRIVATE generation, builds, research and game data
+ outputs/ReGTA-CTW-Playtest/ PRIVATE local executable, DLLs, data and saves
 ```
 
-The root Cargo workspace retains the package manifest under `outputs/CTW-Rust/` so existing build commands continue to work. The implementation has a single source location: `src/`.
+## Roadmap
 
-## Support & Contact
+1. Profile and improve FPS and frametimes in dense driving scenes.
+2. Validate the campaign mission by mission and document regressions.
+3. Resolve compatibility issues without guessed PSP behavior.
+4. Improve PC usability and packaging.
+5. Explore optional mouse-driven mini-games inspired by Android, retaining classic PSP controls when implemented. **This option is planned, not available.**
 
-Support **Benji Paname's reverse-engineering, documentation and native-port development**, or get in touch:
+## Support the work
 
-- **Discord**: [benjamin060936 (ID: 601648068277960714)](https://discord.com/users/601648068277960714) (contact direct pour collaborations / reverse-engineering)
-- **[Support on Tipeee](https://fr.tipeee.com/benji-paname/)**
-- [One-time support through PayPal.Me](https://paypal.me/BenjiLsg)
+[Tipeee](https://fr.tipeee.com/benji-paname/) · [PayPal.Me](https://paypal.me/BenjiLsg) · [Discord: benjamin060936](https://discord.com/users/601648068277960714)
 
-Contributions are optional. They do not purchase the game, provide game assets or grant rights to Rockstar's intellectual property. No game download, completion date or access tier is promised in exchange. These links were supplied by the project owner.
+Support helps Benjamin spend more time on profiling, reverse engineering, testing and documentation. Donations are voluntary: they do not buy the original game, copyrighted assets, a release date or guaranteed completion.
 
-## License and provenance
+## Credits, license and history
 
-Source code: **GPL-3.0-only**. See [LICENSE](LICENSE) and [THIRD_PARTY.md](THIRD_PARTY.md) for upstream work and component credits.
+Built on the PSP recompilation/runtime work of [highcmd](https://github.com/highcmd/chinatown-wars-psp-recomp), with PPSSPP-derived VFPU/SAS components. [Kryo.to's CTW-Native](https://github.com/official-kryo-to/ctw-native) remains the Android reference and informed the historical Rust implementation. Exact provenance and license boundaries: [THIRD_PARTY.md](THIRD_PARTY.md), [runtime/provenance.json](runtime/provenance.json).
 
-This repository contains no ISO, decrypted PSP executable, extracted game archive, texture pack or audio asset. Optional private tables and research artifacts are excluded from Git. Supply your own supported game copy; do not submit proprietary resources in issues or pull requests.
+Project contributions: GPL-3.0-only; inherited components retain their notices and compatible upstream terms. Game data is separate and not distributed. This fan project is not affiliated with Rockstar Games or Take-Two Interactive. Grand Theft Auto and Chinatown Wars belong to their respective rights holders.
 
-This is an independent fan research project, not affiliated with or endorsed by Rockstar Games or Take-Two Interactive. Game assets and trademarks remain the property of their respective owners.
-
-[Changelog](CHANGELOG.md) · [Release process](docs/RELEASING.md) · [Developer handoff](outputs/CTW-Rust/AI_HANDOFF_GUIDE.md)
+The former Rust port is preserved in [legacy/rust](legacy/rust/) and local branch `legacy/rust-pre-cpp-migration`. Its [historical function inventory](docs/legacy/progress.html) does not describe C++ progress. No historical commits have been rewritten.

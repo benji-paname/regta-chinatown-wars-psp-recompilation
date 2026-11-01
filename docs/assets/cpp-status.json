@@ -1,0 +1,25 @@
+{
+  "mainline": "C++20",
+  "target": "Windows x64 / PSP Europe ULES-01347 v1.01",
+  "validation_date": "2026-11-02",
+  "kernel_checks": {
+    "passed": 35,
+    "failed": 0,
+    "known_differences_in_covered_tests": 0
+  },
+  "runtime_units_compiled": 29,
+  "generated_units_reused": 250,
+  "overlay_count": 166,
+  "completion_percent": null,
+  "user_report": {
+    "completed_story_missions": 2,
+    "reported_by": "Benjamin Paname",
+    "independently_replayed_in_migration": false
+  },
+  "known_limits": [
+    "Unvalidated remainder of campaign",
+    "Drops toward 20 FPS and uneven frametimes in dense driving scenes",
+    "Existing compiler warnings",
+    "Private Playtest only; no cleared public binary package"
+  ]
+}

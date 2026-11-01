@@ -1,0 +1,658 @@
+{
+  "schema": 2,
+  "measurement": "native Rust function inventory; not original-code coverage",
+  "pspParityVerified": false,
+  "pspCompletionPercent": null,
+  "sourceSha256": "0cc3d1cbd7267ce1681eea4a1f053142fd28511fb855670a84207e9c56a5a671",
+  "runtimeFunctions": 1063,
+  "testFunctions": 278,
+  "modules": 51,
+  "subsystems": [
+    {
+      "name": "People",
+      "runtimeFunctions": 98,
+      "testFunctions": 72,
+      "classes": [
+        {
+          "name": "actors.rs",
+          "runtimeFunctions": 49,
+          "testFunctions": 38,
+          "relatedClasses": [
+            "cAIGang",
+            "cAITaskHub",
+            "cSimpleMover",
+            "cPlayerOnFoot",
+            "cPlayerBoat",
+            "cLeaveWater",
+            "cPlayerPickup",
+            "cBodySearch"
+          ]
+        },
+        {
+          "name": "pavement.rs",
+          "runtimeFunctions": 17,
+          "testFunctions": 4,
+          "relatedClasses": [
+            "cLocalAreaKnowledge",
+            "cRoadNetwork"
+          ]
+        },
+        {
+          "name": "ped.rs",
+          "runtimeFunctions": 20,
+          "testFunctions": 5,
+          "relatedClasses": [
+            "cPed",
+            "cPlayer",
+            "cPopulationManager",
+            "cPedSprite",
+            "cAnimation"
+          ]
+        },
+        {
+          "name": "ped_paths.rs",
+          "runtimeFunctions": 2,
+          "testFunctions": 4,
+          "relatedClasses": [
+            "cPedRoute",
+            "cPedPath"
+          ]
+        },
+        {
+          "name": "roll.rs",
+          "runtimeFunctions": 6,
+          "testFunctions": 7,
+          "relatedClasses": [
+            "cTaskRoll",
+            "cOneShotAnimationTask"
+          ]
+        },
+        {
+          "name": "vault.rs",
+          "runtimeFunctions": 4,
+          "testFunctions": 14,
+          "relatedClasses": [
+            "cTaskVault",
+            "cSimpleTrail"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Audio and weather",
+      "runtimeFunctions": 64,
+      "testFunctions": 9,
+      "classes": [
+        {
+          "name": "audio.rs",
+          "runtimeFunctions": 46,
+          "testFunctions": 5,
+          "relatedClasses": [
+            "cAudio",
+            "cAudioManager",
+            "cAudioBase",
+            "SoundImpl",
+            "cSoundEvents"
+          ]
+        },
+        {
+          "name": "radio.rs",
+          "runtimeFunctions": 8,
+          "testFunctions": 2,
+          "relatedClasses": [
+            "cRadioApp",
+            "cSoundStream",
+            "cAudioBaseOAL"
+          ]
+        },
+        {
+          "name": "weather.rs",
+          "runtimeFunctions": 10,
+          "testFunctions": 2,
+          "relatedClasses": [
+            "cWeather",
+            "cTimeCycle",
+            "cLightManager",
+            "Fire",
+            "cFire",
+            "cParticleEmitterFire"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "World and rendering",
+      "runtimeFunctions": 131,
+      "testFunctions": 43,
+      "classes": [
+        {
+          "name": "camera.rs",
+          "runtimeFunctions": 20,
+          "testFunctions": 10,
+          "relatedClasses": [
+            "cCamera",
+            "cBaseCam",
+            "cFollowPedCam",
+            "cCam"
+          ]
+        },
+        {
+          "name": "collision.rs",
+          "runtimeFunctions": 30,
+          "testFunctions": 9,
+          "relatedClasses": [
+            "CCollision",
+            "CCollisionBox",
+            "CCollisionMesh"
+          ]
+        },
+        {
+          "name": "gpu.rs",
+          "runtimeFunctions": 45,
+          "testFunctions": 0,
+          "relatedClasses": [
+            "cWaterRenderBlock",
+            "cParticleEmitterWaterSplash",
+            "cPickupEffectRenderable"
+          ]
+        },
+        {
+          "name": "model.rs",
+          "runtimeFunctions": 7,
+          "testFunctions": 5,
+          "relatedClasses": []
+        },
+        {
+          "name": "props.rs",
+          "runtimeFunctions": 20,
+          "testFunctions": 13,
+          "relatedClasses": [
+            "cDynamicProp",
+            "cZoneManager"
+          ]
+        },
+        {
+          "name": "texture.rs",
+          "runtimeFunctions": 5,
+          "testFunctions": 4,
+          "relatedClasses": []
+        },
+        {
+          "name": "world.rs",
+          "runtimeFunctions": 4,
+          "testFunctions": 2,
+          "relatedClasses": [
+            "WorldImpl",
+            "cWorldSector",
+            "Area",
+            "cPhysicalIntegrator",
+            "cPhysical"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Runtime and tools",
+      "runtimeFunctions": 77,
+      "testFunctions": 35,
+      "classes": [
+        {
+          "name": "car_camera.rs",
+          "runtimeFunctions": 6,
+          "testFunctions": 7,
+          "relatedClasses": [
+            "cFollowCarCam2"
+          ]
+        },
+        {
+          "name": "driving_audit.rs",
+          "runtimeFunctions": 1,
+          "testFunctions": 1,
+          "relatedClasses": []
+        },
+        {
+          "name": "gamepad.rs",
+          "runtimeFunctions": 12,
+          "testFunctions": 4,
+          "relatedClasses": []
+        },
+        {
+          "name": "iso.rs",
+          "runtimeFunctions": 8,
+          "testFunctions": 1,
+          "relatedClasses": []
+        },
+        {
+          "name": "locale.rs",
+          "runtimeFunctions": 4,
+          "testFunctions": 1,
+          "relatedClasses": []
+        },
+        {
+          "name": "main.rs",
+          "runtimeFunctions": 5,
+          "testFunctions": 0,
+          "relatedClasses": []
+        },
+        {
+          "name": "overlays.rs",
+          "runtimeFunctions": 8,
+          "testFunctions": 2,
+          "relatedClasses": []
+        },
+        {
+          "name": "pak.rs",
+          "runtimeFunctions": 4,
+          "testFunctions": 4,
+          "relatedClasses": []
+        },
+        {
+          "name": "play.rs",
+          "runtimeFunctions": 5,
+          "testFunctions": 1,
+          "relatedClasses": []
+        },
+        {
+          "name": "psp.rs",
+          "runtimeFunctions": 2,
+          "testFunctions": 2,
+          "relatedClasses": []
+        },
+        {
+          "name": "psp_prop_physics.rs",
+          "runtimeFunctions": 0,
+          "testFunctions": 5,
+          "relatedClasses": [
+            "cPhysical"
+          ]
+        },
+        {
+          "name": "shaders.rs",
+          "runtimeFunctions": 3,
+          "testFunctions": 0,
+          "relatedClasses": []
+        },
+        {
+          "name": "test_support.rs",
+          "runtimeFunctions": 1,
+          "testFunctions": 0,
+          "relatedClasses": []
+        },
+        {
+          "name": "texture_pack.rs",
+          "runtimeFunctions": 5,
+          "testFunctions": 1,
+          "relatedClasses": []
+        },
+        {
+          "name": "timecycle.rs",
+          "runtimeFunctions": 8,
+          "testFunctions": 3,
+          "relatedClasses": [
+            "cTimeCycle",
+            "cCycleElement"
+          ]
+        },
+        {
+          "name": "wad.rs",
+          "runtimeFunctions": 5,
+          "testFunctions": 3,
+          "relatedClasses": []
+        }
+      ]
+    },
+    {
+      "name": "Missions and activities",
+      "runtimeFunctions": 169,
+      "testFunctions": 42,
+      "classes": [
+        {
+          "name": "collectibles.rs",
+          "runtimeFunctions": 11,
+          "testFunctions": 5,
+          "relatedClasses": [
+            "CRampage",
+            "CTurretRampage",
+            "cSecurityCamera"
+          ]
+        },
+        {
+          "name": "drugs.rs",
+          "runtimeFunctions": 30,
+          "testFunctions": 5,
+          "relatedClasses": [
+            "cDrugSystem",
+            "cDealer",
+            "cTrade",
+            "cBaseTradeApp",
+            "cTradeApp",
+            "cTradeQuantity",
+            "cTradeItem",
+            "cTradeManager",
+            "cTradeStorageApp",
+            "cAmbDealer",
+            "cDealerInfo"
+          ]
+        },
+        {
+          "name": "jobs.rs",
+          "runtimeFunctions": 21,
+          "testFunctions": 4,
+          "relatedClasses": [
+            "cOddJob",
+            "Taxi",
+            "cParamedic",
+            "cFleeOnFoot"
+          ]
+        },
+        {
+          "name": "minigames.rs",
+          "runtimeFunctions": 54,
+          "testFunctions": 11,
+          "relatedClasses": [
+            "cHotWiringApp",
+            "cScratchCardApp",
+            "cShootingRange",
+            "cTattooingApp",
+            "cSinkingCarApp",
+            "cSafeCrackingApp",
+            "cDumpsterWeaponStashApp",
+            "cCarBombFittingApp",
+            "cMolotovApp",
+            "cRifleConstructionApp",
+            "cSearchingBodiesApp",
+            "cAmmozoneApp",
+            "cMapApp"
+          ]
+        },
+        {
+          "name": "missions.rs",
+          "runtimeFunctions": 21,
+          "testFunctions": 6,
+          "relatedClasses": [
+            "CScriptInit",
+            "CScriptMain",
+            "ScriptHnd",
+            "cMission",
+            "cActStructure",
+            "cCutscene_Intro",
+            "cCutscene_Outro",
+            "cCutscene_AtKennys",
+            "cDeathArrestApp"
+          ]
+        },
+        {
+          "name": "races.rs",
+          "runtimeFunctions": 16,
+          "testFunctions": 6,
+          "relatedClasses": [
+            "CRaces_Algon",
+            "CRaces_East",
+            "CRaces_North",
+            "cRace",
+            "cCheckpointTT"
+          ]
+        },
+        {
+          "name": "safehouse.rs",
+          "runtimeFunctions": 16,
+          "testFunctions": 5,
+          "relatedClasses": [
+            "cSafehouse",
+            "cStash",
+            "cWardrobe",
+            "cSafehouseApp",
+            "cSafehouseManager",
+            "cSafehouseInfo",
+            "cSafehouseHandler",
+            "cSafehouseSaleHandler"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Combat",
+      "runtimeFunctions": 129,
+      "testFunctions": 14,
+      "classes": [
+        {
+          "name": "explosions.rs",
+          "runtimeFunctions": 10,
+          "testFunctions": 2,
+          "relatedClasses": [
+            "Explosion",
+            "cBaseExplosion",
+            "FadeExplosion"
+          ]
+        },
+        {
+          "name": "weapons.rs",
+          "runtimeFunctions": 119,
+          "testFunctions": 12,
+          "relatedClasses": [
+            "cWeapon",
+            "cWeaponManager",
+            "cBulletBasedWeapon",
+            "cAK47",
+            "cTazer",
+            "cSensorCone",
+            "cBaseProjectile",
+            "cGrenade",
+            "cMolotov",
+            "cMolotovManager",
+            "cRocket",
+            "cRocketLauncher",
+            "cAIRocket",
+            "cFlameThrower",
+            "cSniperRifle",
+            "cPlayerAsSniper",
+            "cSniperCam",
+            "cBulletTrace",
+            "cBulletTraces",
+            "cParticleEmitterFlameThrower",
+            "cBaseWeaponPickup",
+            "cPickupBat",
+            "cPickupChainsaw",
+            "cPickupColt",
+            "cPickupDesertEagle",
+            "cPickupDualPistol",
+            "cPickupFlameThrower",
+            "cPickupGrenade",
+            "cPickupMinigun",
+            "cPickupMolotov",
+            "cPickupMp5",
+            "cPickupNiteStick",
+            "cPickupPistol",
+            "cPickupProximityMine",
+            "cPickupRocketLauncher",
+            "cPickupShotgun",
+            "cPickupSniperRifle",
+            "cPickupSword",
+            "cPickupTazer",
+            "cPickupUzi",
+            "cPickupAk47",
+            "cPickupDoubleBarrelShot",
+            "cPickupSawnOffShot",
+            "cPickupFlashBang",
+            "cPickupHealth",
+            "cPickupArmour",
+            "cPickupBribe",
+            "cPickupMoney",
+            "cPickupManager",
+            "cBasePickup",
+            "cPickupGen",
+            "cPickupGeneric",
+            "cPickupLuckLion",
+            "cPickupRandomStuff",
+            "cPickupListener",
+            "cCollectedAmbientPickupStore",
+            "cHudWeaponSelect",
+            "cWeaponSlotIcon"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "HUD and navigation",
+      "runtimeFunctions": 127,
+      "testFunctions": 24,
+      "classes": [
+        {
+          "name": "gps.rs",
+          "runtimeFunctions": 37,
+          "testFunctions": 11,
+          "relatedClasses": [
+            "cGPS",
+            "cRouteManager"
+          ]
+        },
+        {
+          "name": "hud.rs",
+          "runtimeFunctions": 9,
+          "testFunctions": 2,
+          "relatedClasses": [
+            "Gui",
+            "HUDText",
+            "cMiniHud",
+            "cInWaterHelpText"
+          ]
+        },
+        {
+          "name": "pda.rs",
+          "runtimeFunctions": 61,
+          "testFunctions": 8,
+          "relatedClasses": [
+            "PDAImpl",
+            "cPda",
+            "cEmailApp",
+            "cPhoneApp",
+            "cIPhonePad",
+            "cContextHelp",
+            "cContainerWnd",
+            "cWnd",
+            "cListBox"
+          ]
+        },
+        {
+          "name": "radar.rs",
+          "runtimeFunctions": 11,
+          "testFunctions": 3,
+          "relatedClasses": [
+            "cRadar",
+            "cRadarBlip",
+            "cTurfMap"
+          ]
+        },
+        {
+          "name": "ui.rs",
+          "runtimeFunctions": 9,
+          "testFunctions": 0,
+          "relatedClasses": []
+        }
+      ]
+    },
+    {
+      "name": "Vehicles",
+      "runtimeFunctions": 117,
+      "testFunctions": 30,
+      "classes": [
+        {
+          "name": "handling.rs",
+          "runtimeFunctions": 13,
+          "testFunctions": 5,
+          "relatedClasses": [
+            "CEngine",
+            "CTyre",
+            "cWheeledVehicle"
+          ]
+        },
+        {
+          "name": "traffic.rs",
+          "runtimeFunctions": 10,
+          "testFunctions": 16,
+          "relatedClasses": [
+            "cWanderRoads",
+            "cAISpline",
+            "cDrivingRecovery"
+          ]
+        },
+        {
+          "name": "vehicle.rs",
+          "runtimeFunctions": 94,
+          "testFunctions": 9,
+          "relatedClasses": [
+            "cVehicle",
+            "cWheeledVehicle",
+            "cCar",
+            "cBike",
+            "Vehicle",
+            "VehicleType",
+            "cSeats",
+            "cTrafficLight",
+            "cTrafficLightManager",
+            "cTrafficManager",
+            "cWanderRoads",
+            "cCarController",
+            "cPayNSpray",
+            "cPayNSprayManager",
+            "cBoat",
+            "cAIBoat",
+            "cAmbientBoatManager",
+            "cBoatEngine",
+            "cBoatWakeEmitter",
+            "cBoatSprayEmitter",
+            "cCarInWater",
+            "cPoliceBoat",
+            "cSkidmark",
+            "cSkidmarkManager",
+            "cCarGen",
+            "cCarGenManager",
+            "cVehicleDoor",
+            "cDoor",
+            "cDoorManager",
+            "cRollOutOfVehicle",
+            "cTank",
+            "cParticleEmitterSkidSmoke"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Saves and police",
+      "runtimeFunctions": 151,
+      "testFunctions": 9,
+      "classes": [
+        {
+          "name": "police.rs",
+          "runtimeFunctions": 25,
+          "testFunctions": 5,
+          "relatedClasses": [
+            "cWantedManager",
+            "cWantedRating",
+            "cPoliceChase",
+            "cMonitorWantedLevel",
+            "cPoliceHeli",
+            "cHeliSearchLight",
+            "cHelicopterManager",
+            "cRoadBlock",
+            "cSpikeStrip"
+          ]
+        },
+        {
+          "name": "stats.rs",
+          "runtimeFunctions": 126,
+          "testFunctions": 4,
+          "relatedClasses": [
+            "cStatsManager",
+            "StatsImpl",
+            "PopulationProfile"
+          ]
+        }
+      ]
+    }
+  ],
+  "lastLocalValidation": {
+    "passed": 248,
+    "date": "2026-11-01"
+  }
+}

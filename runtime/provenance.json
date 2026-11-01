@@ -1,0 +1,385 @@
+{
+  "upstream": "https://github.com/highcmd/chinatown-wars-psp-recomp",
+  "revision": "6562163b6f504a1db93e1be5ce580d8cd6f024a7",
+  "license": "GPL-3.0-or-later; VFPU/SAS portions GPL-2.0-or-later",
+  "files": [
+    {
+      "path": "src/core.cpp",
+      "upstream_sha256": "80f4a26b2761d5f767e3703c2ee527c3c6c33833ea9fd2c12b28f9a199b3761e",
+      "canonical_sha256": "80f4a26b2761d5f767e3703c2ee527c3c6c33833ea9fd2c12b28f9a199b3761e",
+      "adapted": false
+    },
+    {
+      "path": "src/cpu_state.h",
+      "upstream_sha256": "dfdbe36af4c823757c4a8225088238d3b33f2b42a08f40a47f6620eaf8a3f2d9",
+      "canonical_sha256": "dfdbe36af4c823757c4a8225088238d3b33f2b42a08f40a47f6620eaf8a3f2d9",
+      "adapted": false
+    },
+    {
+      "path": "src/game_hooks.cpp",
+      "upstream_sha256": "fd53aaff51e484816ff3c926f718b6c38b8a58b9cb46a5f64f3939f799de1677",
+      "canonical_sha256": "fd53aaff51e484816ff3c926f718b6c38b8a58b9cb46a5f64f3939f799de1677",
+      "adapted": false
+    },
+    {
+      "path": "src/ge_gl.cpp",
+      "upstream_sha256": "a53e6232fe948a6fba9f82eee0621e4bd4fddd681a53797c796c859be0dc1cbf",
+      "canonical_sha256": "8146438f01687809b8e9f77c08a78388134ff4312b342600f196f064c31f309b",
+      "adapted": true
+    },
+    {
+      "path": "src/ge_gl.h",
+      "upstream_sha256": "1ea0684fab25b289e2db17d36fe2a6944e939e06b494f61070d1e6cd4a46f9db",
+      "canonical_sha256": "1ea0684fab25b289e2db17d36fe2a6944e939e06b494f61070d1e6cd4a46f9db",
+      "adapted": false
+    },
+    {
+      "path": "src/ge_render.cpp",
+      "upstream_sha256": "a0a7cf7e437b4e84207fd0b152c0dc697e08b15f44e4ec644f3c2614fe0eb8ea",
+      "canonical_sha256": "a0a7cf7e437b4e84207fd0b152c0dc697e08b15f44e4ec644f3c2614fe0eb8ea",
+      "adapted": false
+    },
+    {
+      "path": "src/gl_aliases.h",
+      "upstream_sha256": "c02876491e197f2c97fd90304f6b661c82e8ae0c5cbd738232c682c7d88ffb7d",
+      "canonical_sha256": "c02876491e197f2c97fd90304f6b661c82e8ae0c5cbd738232c682c7d88ffb7d",
+      "adapted": false
+    },
+    {
+      "path": "src/gl_funcs.cpp",
+      "upstream_sha256": "be260025a5e5a179faaf0e34cf7429b4c1b3de56062d8c62f533a987fc2e4372",
+      "canonical_sha256": "9c9315f5c3e50c1aa1906c179db37f2e0548816ec2ee8a40fa3652b30c64b80b",
+      "adapted": true
+    },
+    {
+      "path": "src/gl_funcs.h",
+      "upstream_sha256": "0d45efd1e6eab869870a710a9b670fe3e9f9a3570058d42d9808feb9571edc73",
+      "canonical_sha256": "0d45efd1e6eab869870a710a9b670fe3e9f9a3570058d42d9808feb9571edc73",
+      "adapted": false
+    },
+    {
+      "path": "src/hle.h",
+      "upstream_sha256": "cccb1430ffd416aed786bc1598a651e1c23212f47bc0809aacfdce285dc7ccbe",
+      "canonical_sha256": "cccb1430ffd416aed786bc1598a651e1c23212f47bc0809aacfdce285dc7ccbe",
+      "adapted": false
+    },
+    {
+      "path": "src/hle_audio.cpp",
+      "upstream_sha256": "f6421baee0820399dd5946b6acf1e4859f89e4c4064cf22bd09461bdca69ed76",
+      "canonical_sha256": "9d40d6db76a4180dc347590b9dc408ab97ea9287b3bfabd354ba012b1cdd1d38",
+      "adapted": true
+    },
+    {
+      "path": "src/hle_display.cpp",
+      "upstream_sha256": "88c39977a6e54bd2684e882308e70ef2295d1a0c066ed8a715d8da48e4d4e309",
+      "canonical_sha256": "5ffaa3636331d75522c01a8152231731bdf5726ac5669bc5472a4078c5ca2564",
+      "adapted": true
+    },
+    {
+      "path": "src/hle_extra.cpp",
+      "upstream_sha256": "f0a4034bd7daff9a46afc82fc93f3cb75a3038ba81deb9a4270ff4e8e58b992e",
+      "canonical_sha256": "f0a4034bd7daff9a46afc82fc93f3cb75a3038ba81deb9a4270ff4e8e58b992e",
+      "adapted": false
+    },
+    {
+      "path": "src/hle_ge.cpp",
+      "upstream_sha256": "7a08edc7686b412d7dd3d6c148a169d77e12de7f607e530c2bb760533e1932df",
+      "canonical_sha256": "7a08edc7686b412d7dd3d6c148a169d77e12de7f607e530c2bb760533e1932df",
+      "adapted": false
+    },
+    {
+      "path": "src/hle_intr.cpp",
+      "upstream_sha256": "4153172d41ac0845b70e89487622c899314a54f61b436ff0224c98b137b3ed1c",
+      "canonical_sha256": "4153172d41ac0845b70e89487622c899314a54f61b436ff0224c98b137b3ed1c",
+      "adapted": false
+    },
+    {
+      "path": "src/hle_io.cpp",
+      "upstream_sha256": "289fe4a4810ad2df32f49f4614aaee54e8fdd61b92655e390b4283a08f523045",
+      "canonical_sha256": "289fe4a4810ad2df32f49f4614aaee54e8fdd61b92655e390b4283a08f523045",
+      "adapted": false
+    },
+    {
+      "path": "src/hle_misc.cpp",
+      "upstream_sha256": "8d36166179dfe33d183749f11f0522a812a40eedc3de1d27138b4be7191c07d4",
+      "canonical_sha256": "8d36166179dfe33d183749f11f0522a812a40eedc3de1d27138b4be7191c07d4",
+      "adapted": false
+    },
+    {
+      "path": "src/hle_mpeg.cpp",
+      "upstream_sha256": "bd082cfa932fa6116bde6397ca0ba783e3f7a80971c69447f4365b2384bd5e21",
+      "canonical_sha256": "bd082cfa932fa6116bde6397ca0ba783e3f7a80971c69447f4365b2384bd5e21",
+      "adapted": false
+    },
+    {
+      "path": "src/hle_net.cpp",
+      "upstream_sha256": "d05c37d818caf1d6ea19b71f9697a4f46ca42ce10bc90a981933743ab78f4b95",
+      "canonical_sha256": "d05c37d818caf1d6ea19b71f9697a4f46ca42ce10bc90a981933743ab78f4b95",
+      "adapted": false
+    },
+    {
+      "path": "src/hle_savedata.cpp",
+      "upstream_sha256": "bfcef5c174598e0a00b28b60a911fafb28c4207ff2cf613d22a9a33065d97d99",
+      "canonical_sha256": "bfcef5c174598e0a00b28b60a911fafb28c4207ff2cf613d22a9a33065d97d99",
+      "adapted": false
+    },
+    {
+      "path": "src/kernel.h",
+      "upstream_sha256": "3b7b394e9d87302fbfd3362e15d49f1d8c19dd4d303b53c4a7518a3e15654685",
+      "canonical_sha256": "3b7b394e9d87302fbfd3362e15d49f1d8c19dd4d303b53c4a7518a3e15654685",
+      "adapted": false
+    },
+    {
+      "path": "src/kernel_misc.cpp",
+      "upstream_sha256": "4a0ddc8c3bacc1148b9093dfcce3a71e842703ceeb62e4a116be7f38808acd20",
+      "canonical_sha256": "ccdcb4fd2df4263341803dc18b313db88e3524cb754dbeefd17b2639709132af",
+      "adapted": true
+    },
+    {
+      "path": "src/kernel_thread.cpp",
+      "upstream_sha256": "f70fd4b2ef5f35c534e2ca80ee6792bfdad3025ef3886713786d85e9eddba9f2",
+      "canonical_sha256": "b84b1f0325449e86507fb1f2576cf7ef6f5c4f83bf93cf099a76311d274bb757",
+      "adapted": true
+    },
+    {
+      "path": "src/main.cpp",
+      "upstream_sha256": "97797578d472879efe4c56b04edf064696307677d06f524e8f17fad1837eb959",
+      "canonical_sha256": "97797578d472879efe4c56b04edf064696307677d06f524e8f17fad1837eb959",
+      "adapted": false
+    },
+    {
+      "path": "src/osd.cpp",
+      "upstream_sha256": "ab160275528f2fdabd6c92000b5039e2ab32d3b4d9520629b2ca3d7daffc199a",
+      "canonical_sha256": "ab160275528f2fdabd6c92000b5039e2ab32d3b4d9520629b2ca3d7daffc199a",
+      "adapted": false
+    },
+    {
+      "path": "src/osd.h",
+      "upstream_sha256": "9ebfaff2f11810db7b0dd92fcae794b19844e63dc810a25b14acb55a543bc255",
+      "canonical_sha256": "9ebfaff2f11810db7b0dd92fcae794b19844e63dc810a25b14acb55a543bc255",
+      "adapted": false
+    },
+    {
+      "path": "src/platform.cpp",
+      "upstream_sha256": "0a3d9f980c68cfd1690aedb7b28ac68b92c38e67771ee01d42b85ac8dac37c8c",
+      "canonical_sha256": "0a3d9f980c68cfd1690aedb7b28ac68b92c38e67771ee01d42b85ac8dac37c8c",
+      "adapted": false
+    },
+    {
+      "path": "src/platform.h",
+      "upstream_sha256": "c0ea61b600c59c7da80163b15e87da9a9992a7c2135cab8c8a7085c57ecd9a5d",
+      "canonical_sha256": "c0ea61b600c59c7da80163b15e87da9a9992a7c2135cab8c8a7085c57ecd9a5d",
+      "adapted": false
+    },
+    {
+      "path": "src/recomp.h",
+      "upstream_sha256": "159b3fac9a2e6fb3f7a89da9716bdc2117c3849f7e70c3e3f264496ccb8071be",
+      "canonical_sha256": "159b3fac9a2e6fb3f7a89da9716bdc2117c3849f7e70c3e3f264496ccb8071be",
+      "adapted": false
+    },
+    {
+      "path": "src/savestate.cpp",
+      "upstream_sha256": "9f936c8dd6205ba203d626c7cede3c34661c844ec46b86fc9918cb15884ab06d",
+      "canonical_sha256": "9f936c8dd6205ba203d626c7cede3c34661c844ec46b86fc9918cb15884ab06d",
+      "adapted": false
+    },
+    {
+      "path": "src/savestate.h",
+      "upstream_sha256": "4fdd9e1f21ff49b79dfb16b3e79850715262a564c636826623b5e1135b434172",
+      "canonical_sha256": "4fdd9e1f21ff49b79dfb16b3e79850715262a564c636826623b5e1135b434172",
+      "adapted": false
+    },
+    {
+      "path": "src/settings.cpp",
+      "upstream_sha256": "fe206391b7784462b08a4b99fcd1c7b848e5cdd40e85cf90872077afc35b0c35",
+      "canonical_sha256": "fe206391b7784462b08a4b99fcd1c7b848e5cdd40e85cf90872077afc35b0c35",
+      "adapted": false
+    },
+    {
+      "path": "src/settings.h",
+      "upstream_sha256": "abad56d675a578f3da3276afece2249587b5ad509ce6ae117ec22453bc2ea299",
+      "canonical_sha256": "abad56d675a578f3da3276afece2249587b5ad509ce6ae117ec22453bc2ea299",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/MIPSIntVFPU.cpp",
+      "upstream_sha256": "093c5dfdb51a318e81fed1372c2d48931743cd7463017e192305a2c5d4166de8",
+      "canonical_sha256": "093c5dfdb51a318e81fed1372c2d48931743cd7463017e192305a2c5d4166de8",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/MIPSVFPUFallbacks.cpp",
+      "upstream_sha256": "2d7f0c9e71537c1ebb712161799a7f70ae30b806872e6495c6ec786780df9385",
+      "canonical_sha256": "2d7f0c9e71537c1ebb712161799a7f70ae30b806872e6495c6ec786780df9385",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/MIPSVFPUUtils.cpp",
+      "upstream_sha256": "c4e3b792bc1978b4b353581320f892562397a7517cf59db1c80eb322bb57185f",
+      "canonical_sha256": "c4e3b792bc1978b4b353581320f892562397a7517cf59db1c80eb322bb57185f",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/vfpu_glue.cpp",
+      "upstream_sha256": "45e960f7f1d66a11aca374274cfd111c0074724a8df0e2fabfbeae63a74049d1",
+      "canonical_sha256": "45e960f7f1d66a11aca374274cfd111c0074724a8df0e2fabfbeae63a74049d1",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Common/BitScan.h",
+      "upstream_sha256": "9eb9d14048996a659b26feb91a903de263ec3bfd0b63585c7dde918e8a2fd15d",
+      "canonical_sha256": "9eb9d14048996a659b26feb91a903de263ec3bfd0b63585c7dde918e8a2fd15d",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Common/BitSet.h",
+      "upstream_sha256": "aecb9819eb04bf5ad6cd2535cfac9b1bed5ef7946e551eff2224759862e16294",
+      "canonical_sha256": "aecb9819eb04bf5ad6cd2535cfac9b1bed5ef7946e551eff2224759862e16294",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Common/CommonTypes.h",
+      "upstream_sha256": "e79c62f6ab04536f561249752b7c7730d1d505eded94eaac4a97d1b2726fa0ef",
+      "canonical_sha256": "e79c62f6ab04536f561249752b7c7730d1d505eded94eaac4a97d1b2726fa0ef",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Common/StringUtils.h",
+      "upstream_sha256": "56cdbd328f1390c8ec6889313c2c337dd57ab58e45e62c66de17404bbef646e5",
+      "canonical_sha256": "56cdbd328f1390c8ec6889313c2c337dd57ab58e45e62c66de17404bbef646e5",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Core/Compatibility.h",
+      "upstream_sha256": "aecb9819eb04bf5ad6cd2535cfac9b1bed5ef7946e551eff2224759862e16294",
+      "canonical_sha256": "aecb9819eb04bf5ad6cd2535cfac9b1bed5ef7946e551eff2224759862e16294",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Core/Core.h",
+      "upstream_sha256": "aecb9819eb04bf5ad6cd2535cfac9b1bed5ef7946e551eff2224759862e16294",
+      "canonical_sha256": "aecb9819eb04bf5ad6cd2535cfac9b1bed5ef7946e551eff2224759862e16294",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Core/MemMap.h",
+      "upstream_sha256": "8461a50d3c85da8ecf675c99fdee85cb90a5bf65b218babc96727939f40ead03",
+      "canonical_sha256": "8461a50d3c85da8ecf675c99fdee85cb90a5bf65b218babc96727939f40ead03",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Core/Opcode.h",
+      "upstream_sha256": "57bdcc2914cafb450b34a3372bb2d6ce6f932d6bbbbb08995c3b7f4d449a4c57",
+      "canonical_sha256": "57bdcc2914cafb450b34a3372bb2d6ce6f932d6bbbbb08995c3b7f4d449a4c57",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Core/Reporting.h",
+      "upstream_sha256": "b359aca53c88cbc1b1fdf66a13a0a810247ca26970aef53b50345cdadadf2826",
+      "canonical_sha256": "b359aca53c88cbc1b1fdf66a13a0a810247ca26970aef53b50345cdadadf2826",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Core/System.h",
+      "upstream_sha256": "748a30e10ee4bf55db7dff6b8631d00828c26c7a475c1c7fd0dac4068a81a5d8",
+      "canonical_sha256": "748a30e10ee4bf55db7dff6b8631d00828c26c7a475c1c7fd0dac4068a81a5d8",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Core/MIPS/MIPS.h",
+      "upstream_sha256": "f27b2fd51a74dd1b14d813ac8b1b327cff75133423777dc2b215a7fa56e354a0",
+      "canonical_sha256": "f27b2fd51a74dd1b14d813ac8b1b327cff75133423777dc2b215a7fa56e354a0",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Core/MIPS/MIPSInt.h",
+      "upstream_sha256": "9a15e7a5982226e8cbeafd04318d2dd16f694d6eacc49d1ea0d913f478f2382e",
+      "canonical_sha256": "9a15e7a5982226e8cbeafd04318d2dd16f694d6eacc49d1ea0d913f478f2382e",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Core/MIPS/MIPSIntVFPU.h",
+      "upstream_sha256": "118bf3dedb545a190615419b8c920b8cef3aa6025a3f55c52fcb5679742a489a",
+      "canonical_sha256": "118bf3dedb545a190615419b8c920b8cef3aa6025a3f55c52fcb5679742a489a",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Core/MIPS/MIPSTables.h",
+      "upstream_sha256": "ea31d49b55481229473af7b76950f8c4fb88d2a0faf9ab0af49b5976b8fcfc55",
+      "canonical_sha256": "ea31d49b55481229473af7b76950f8c4fb88d2a0faf9ab0af49b5976b8fcfc55",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Core/MIPS/MIPSVFPUFallbacks.h",
+      "upstream_sha256": "00e42ed0707a76d54a4ec56705301dc0d72c678eb1ee4bc08d558183075dc8ae",
+      "canonical_sha256": "00e42ed0707a76d54a4ec56705301dc0d72c678eb1ee4bc08d558183075dc8ae",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Core/MIPS/MIPSVFPUUtils.h",
+      "upstream_sha256": "a39a4f263d0a8dc6a5fbdd42a3d108e7043ca744e73b983db9735826a02a39e2",
+      "canonical_sha256": "a39a4f263d0a8dc6a5fbdd42a3d108e7043ca744e73b983db9735826a02a39e2",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Common/Math/math_util.h",
+      "upstream_sha256": "0403111b15921dbc00dbcb74e5b977f002821b196213a22abf94d2f34e9f1273",
+      "canonical_sha256": "0403111b15921dbc00dbcb74e5b977f002821b196213a22abf94d2f34e9f1273",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Common/Math/SIMDHeaders.h",
+      "upstream_sha256": "5e5c9ef1b9e6a6a323be7f988e49c7fb93c228181dd8b5f82920ec9f85141c5f",
+      "canonical_sha256": "5e5c9ef1b9e6a6a323be7f988e49c7fb93c228181dd8b5f82920ec9f85141c5f",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Common/File/VFS/VFS.h",
+      "upstream_sha256": "8394623de29c6a84ca946c89a358fd8559e1d69416257d7d51df49f754b7ced4",
+      "canonical_sha256": "8394623de29c6a84ca946c89a358fd8559e1d69416257d7d51df49f754b7ced4",
+      "adapted": false
+    },
+    {
+      "path": "vfpu/shim/Common/Data/Convert/SmallDataConvert.h",
+      "upstream_sha256": "421f4161a6ddb466ea3d49b8f886a590b1103e0c975b08502da19d8f3bd16872",
+      "canonical_sha256": "421f4161a6ddb466ea3d49b8f886a590b1103e0c975b08502da19d8f3bd16872",
+      "adapted": false
+    },
+    {
+      "path": "sas/SasAudio.cpp",
+      "upstream_sha256": "a71eed5ddcff17bdc70d84b21a2a84c388e9ba0703b51586d725bafc707589bc",
+      "canonical_sha256": "a71eed5ddcff17bdc70d84b21a2a84c388e9ba0703b51586d725bafc707589bc",
+      "adapted": false
+    },
+    {
+      "path": "sas/SasAudio.h",
+      "upstream_sha256": "9566dc746ad16ebe9f43681c98e25fe28e0aeeeef578228879a50a11042dc36d",
+      "canonical_sha256": "9566dc746ad16ebe9f43681c98e25fe28e0aeeeef578228879a50a11042dc36d",
+      "adapted": false
+    },
+    {
+      "path": "sas/SasReverb.cpp",
+      "upstream_sha256": "390bfce44cde3add2bae87973463cf40f19cab165e90a58e44ad4d0d03fe9b76",
+      "canonical_sha256": "390bfce44cde3add2bae87973463cf40f19cab165e90a58e44ad4d0d03fe9b76",
+      "adapted": false
+    },
+    {
+      "path": "sas/SasReverb.h",
+      "upstream_sha256": "a7df2617dae7147a527c6aedab63b101896567ea05c84cb2f1ceb385c430ea3c",
+      "canonical_sha256": "a7df2617dae7147a527c6aedab63b101896567ea05c84cb2f1ceb385c430ea3c",
+      "adapted": false
+    },
+    {
+      "path": "sas/sas_glue.cpp",
+      "upstream_sha256": "bac20bebabd600a549ec5d7c0a8123eeec02ff2c5f79ea395459deac7a756927",
+      "canonical_sha256": "bac20bebabd600a549ec5d7c0a8123eeec02ff2c5f79ea395459deac7a756927",
+      "adapted": false
+    },
+    {
+      "path": "sas/sas_shim.h",
+      "upstream_sha256": "5f3cc5f2caf5f867cf11d59ddd8b7cd01cc1c7aa619d3aea9e74399a0ab4c101",
+      "canonical_sha256": "5f3cc5f2caf5f867cf11d59ddd8b7cd01cc1c7aa619d3aea9e74399a0ab4c101",
+      "adapted": false
+    }
+  ]
+}

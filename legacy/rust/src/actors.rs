@@ -351,12 +351,77 @@ pub struct Scene {
     stream_timer: f32,
 }
 
-/// PSP ReduceArmour 0x089c967c: normal armour absorbs damage first and
-/// returns only overflow to health. Double-armour reward is not implemented.
-fn damage_player(health: &mut f32, armour: &mut u8, damage: u8) {
-    let absorbed = (*armour).min(damage);
-    *armour -= absorbed;
-    *health = (*health - (damage - absorbed) as f32).max(0.);
+/// PSP `cPed::AddArmour` (`0x089c7c50`) & `cPed::SetArmour` (`0x089c7d08`):
+/// hardware/gameplay ceiling for ped and player armour (`0x7f` = 127).
+pub const MAX_ARMOUR: u8 = crate::radar::MAX_VITAL;
+
+/// PSP `cPed::SetArmour` (`0x089c7d08`): sets armour clamped to `MAX_ARMOUR` (127).
+pub fn set_armour(armour: &mut u8, value: u8) {
+    *armour = value.min(MAX_ARMOUR);
+}
+
+/// PSP `cPed::AddArmour` (`0x089c7c50`): adds armour and clamps to `MAX_ARMOUR` (127).
+#[cfg_attr(not(test), allow(dead_code))]
+pub fn add_armour(armour: &mut u8, amount: u8) {
+    *armour = armour.saturating_add(amount).min(MAX_ARMOUR);
+}
+
+/// PSP `cPlayer::ReduceArmour` (`0x089c967c`, called by `cPlayer::FixDamageForArmour` `0x089c8f20`):
+/// - Enforces the `MAX_ARMOUR` (127) ceiling on `armour`.
+/// - When `double_armour` (bit `0x2000` of `flags_f14`) is active:
+///   - For `damage < 2`: toggles `armour_half_tick` (bit `0x4000` of `flags_f14`).
+///     When the toggled bit is `true` (1st, 3rd, 5th... 1-point hit), returns `0` immediately
+///     without reducing armour. When `false` (2nd, 4th, 6th... 1-point hit), applies `damage`.
+///   - For `damage >= 2`: divides `damage` by 2 via unsigned right shift (`damage >>= 1`)
+///     without modifying `armour_half_tick`.
+/// - Absorbs up to `*armour` points and returns the unabsorbed overflow damage to be subtracted from health.
+pub fn reduce_armour(
+    armour: &mut u8,
+    damage: u8,
+    double_armour: bool,
+    armour_half_tick: &mut bool,
+) -> u8 {
+    let current_armour = (*armour).min(MAX_ARMOUR);
+    let mut adjusted_damage = damage;
+    if double_armour {
+        if adjusted_damage < 2 {
+            *armour_half_tick = !*armour_half_tick;
+            if *armour_half_tick {
+                *armour = current_armour;
+                return 0;
+            }
+        } else {
+            adjusted_damage >>= 1;
+        }
+    }
+    if current_armour < adjusted_damage {
+        let overflow = adjusted_damage - current_armour;
+        set_armour(armour, 0);
+        overflow
+    } else {
+        set_armour(armour, current_armour - adjusted_damage);
+        0
+    }
+}
+
+/// PSP `cPed::Damage` (`0x089a1e78`) -> `cPlayer::FixDamageForArmour` (`0x089c8f20`)
+/// -> `cPlayer::ReduceArmour` (`0x089c967c`):
+/// Applies incoming damage to player armour and health, honouring the PSP Double Armour
+/// bonus (`flags_f14 & 0x2000`), 1-point damage alternation (`flags_f14 & 0x4000`),
+/// and the 127 armour ceiling (`0x7f`).
+fn damage_player(
+    health: &mut f32,
+    armour: &mut u8,
+    damage: u8,
+    double_armour: bool,
+    armour_half_tick: &mut bool,
+) {
+    set_armour(armour, *armour);
+    if damage == 0 {
+        return;
+    }
+    let overflow = reduce_armour(armour, damage, double_armour, armour_half_tick);
+    *health = (*health - overflow as f32).max(0.);
 }
 pub(crate) fn forward(angle: f32) -> [f32; 2] {
     [-angle.sin(), angle.cos()]
@@ -1664,7 +1729,13 @@ impl Scene {
                         bike.lat_vel = 0.;
                         bike.yaw_rate = 0.;
                         let crash_damage = ((prev_speed.abs() - 7.0) * 3.2).clamp(12.0, 60.0) as u8;
-                        damage_player(&mut self.health, &mut self.armour, crash_damage);
+                        damage_player(
+                            &mut self.health,
+                            &mut self.armour,
+                            crash_damage,
+                            self.jobs.perks.double_armour,
+                            &mut self.jobs.perks.armour_half_tick,
+                        );
                         self.hit_flash = 0.35;
                         self.driving = None;
                     }
@@ -1862,7 +1933,13 @@ impl Scene {
                                 bike.lat_vel = 0.;
                                 bike.yaw_rate = 0.;
                                 let crash_damage = ((rel_speed - 7.0) * 3.2).clamp(12.0, 60.0) as u8;
-                                damage_player(&mut self.health, &mut self.armour, crash_damage);
+                                damage_player(
+                                    &mut self.health,
+                                    &mut self.armour,
+                                    crash_damage,
+                                    self.jobs.perks.double_armour,
+                                    &mut self.jobs.perks.armour_half_tick,
+                                );
                                 self.hit_flash = 0.35;
                                 self.driving = None;
                             }
@@ -2231,7 +2308,13 @@ impl Scene {
                                 focus[2],
                             ];
                             if c.body_clear(midpoint, 0.2, 1.5) {
-                                damage_player(&mut self.health, &mut self.armour, 8);
+                                damage_player(
+                                    &mut self.health,
+                                    &mut self.armour,
+                                    8,
+                                    self.jobs.perks.double_armour,
+                                    &mut self.jobs.perks.armour_half_tick,
+                                );
                                 self.hit_flash = 0.25;
                                 ped.cooldown = 1.1;
                                 ped.attacking = 0.4;
@@ -2600,7 +2683,13 @@ impl Scene {
             if self.driving.is_none() {
                 let (hit, dmg) = blast.ped_hit(focus, true);
                 if hit && dmg > 0.0 {
-                    damage_player(&mut self.health, &mut self.armour, dmg as u8);
+                    damage_player(
+                        &mut self.health,
+                        &mut self.armour,
+                        dmg as u8,
+                        self.jobs.perks.double_armour,
+                        &mut self.jobs.perks.armour_half_tick,
+                    );
                     self.hit_flash = 0.45;
                 }
             }
@@ -2712,6 +2801,8 @@ impl Scene {
                 &mut self.police.stars,
                 &crate::weapons::WeaponTables::default(),
             ) {
+                let current_armour = self.armour;
+                set_armour(&mut self.armour, current_armour);
                 self.banner = Some((msg, 2.5));
                 self.pending_impact_sounds.push((focus, false));
             }
@@ -3417,16 +3508,121 @@ mod tests {
     }
     #[test]
     fn original_armour_absorbs_damage_and_passes_only_overflow_to_health() {
-        let (mut health, mut armour) = (127., 127);
-        damage_player(&mut health, &mut armour, 8);
+        let (mut health, mut armour, mut half_tick) = (127., 127, false);
+        damage_player(&mut health, &mut armour, 8, false, &mut half_tick);
         assert_eq!((health, armour), (127., 119));
-        damage_player(&mut health, &mut armour, 119);
+        damage_player(&mut health, &mut armour, 119, false, &mut half_tick);
         assert_eq!((health, armour), (127., 0));
         armour = 3;
-        damage_player(&mut health, &mut armour, 8);
+        damage_player(&mut health, &mut armour, 8, false, &mut half_tick);
         assert_eq!((health, armour), (122., 0));
-        damage_player(&mut health, &mut armour, 127);
+        damage_player(&mut health, &mut armour, 127, false, &mut half_tick);
         assert_eq!((health, armour), (0., 0));
+        assert!(!half_tick);
+    }
+
+    #[test]
+    fn psp_double_armour_halves_damage_at_least_two_and_alternates_single_point_damage() {
+        // Cases 2, 3, 4: Double Armour integer division by 2 (`srl $a0, $a0, 1`) for damage >= 2
+        let (mut health, mut armour, mut half_tick) = (127., 10, false);
+        // 2 points -> 2 >> 1 = 1
+        damage_player(&mut health, &mut armour, 2, true, &mut half_tick);
+        assert_eq!((health, armour, half_tick), (127., 9, false));
+        // 3 points -> 3 >> 1 = 1
+        damage_player(&mut health, &mut armour, 3, true, &mut half_tick);
+        assert_eq!((health, armour, half_tick), (127., 8, false));
+        // 4 points -> 4 >> 1 = 2
+        damage_player(&mut health, &mut armour, 4, true, &mut half_tick);
+        assert_eq!((health, armour, half_tick), (127., 6, false));
+
+        // Case 5: Multiple successive 1-point hits alternate via bit 0x4000 (0, 1, 0, 1, 0, 1...)
+        // 1st 1-point hit: half_tick toggles false -> true, returns 0 damage
+        damage_player(&mut health, &mut armour, 1, true, &mut half_tick);
+        assert_eq!((health, armour, half_tick), (127., 6, true));
+        // 2nd 1-point hit: half_tick toggles true -> false, applies 1 damage
+        damage_player(&mut health, &mut armour, 1, true, &mut half_tick);
+        assert_eq!((health, armour, half_tick), (127., 5, false));
+        // 3rd 1-point hit: half_tick toggles false -> true, returns 0 damage
+        damage_player(&mut health, &mut armour, 1, true, &mut half_tick);
+        assert_eq!((health, armour, half_tick), (127., 5, true));
+        // Damage >= 2 while half_tick is true must NOT modify half_tick (PSP 0x089c96a4..0x089c96b4)
+        damage_player(&mut health, &mut armour, 5, true, &mut half_tick); // 5 >> 1 = 2
+        assert_eq!((health, armour, half_tick), (127., 3, true));
+        // 4th 1-point hit: since half_tick stayed true, toggles true -> false and applies 1 damage
+        damage_player(&mut health, &mut armour, 1, true, &mut half_tick);
+        assert_eq!((health, armour, half_tick), (127., 2, false));
+    }
+
+    #[test]
+    fn psp_double_armour_insufficient_or_zero_armour_and_127_ceiling_and_reset() {
+        // Case 6: Damage when armour is insufficient (overflow to health is also halved)
+        let (mut health, mut armour, mut half_tick) = (100., 3, false);
+        // 9 damage -> 9 >> 1 = 4; armour absorbs 3, overflow to health is 1
+        damage_player(&mut health, &mut armour, 9, true, &mut half_tick);
+        assert_eq!((health, armour), (99., 0));
+
+        // Case 7: Damage when armour is already 0 (still halved / alternated by Double Armour)
+        damage_player(&mut health, &mut armour, 6, true, &mut half_tick); // 6 >> 1 = 3
+        assert_eq!((health, armour), (96., 0));
+        // 1-point alternation at 0 armour: 1st hit ignored (0), 2nd hit deals 1 to health
+        damage_player(&mut health, &mut armour, 1, true, &mut half_tick);
+        assert_eq!((health, armour, half_tick), (96., 0, true));
+        damage_player(&mut health, &mut armour, 1, true, &mut half_tick);
+        assert_eq!((health, armour, half_tick), (95., 0, false));
+
+        // Case 8 & 9: Armour ceiling fixed at 127 (`0x7f`) in SetArmour, AddArmour, and damage_player
+        set_armour(&mut armour, 200);
+        assert_eq!(armour, MAX_ARMOUR);
+        assert_eq!(MAX_ARMOUR, 127);
+        armour = 120;
+        add_armour(&mut armour, 50);
+        assert_eq!(armour, 127);
+        armour = 250; // Even if externally mutated above 127, damage_player clamps to 127 first
+        damage_player(&mut health, &mut armour, 4, true, &mut half_tick); // 127 - (4 >> 1) = 125
+        assert_eq!((health, armour), (95., 125));
+
+        // Case 10: Activation, deactivation, re-activation (`SetHasDoubleArmour` 0x089c8930)
+        // and reset (`cPlayer::Reset` 0x089c8ff4) clear the 1-point alternation state (`0x4000`)
+        let mut perks = crate::jobs::JobPerks::default();
+        perks.set_double_armour(true);
+        assert!(perks.double_armour && !perks.armour_half_tick);
+        // Prime half_tick to true with one 1-point hit
+        damage_player(
+            &mut health,
+            &mut armour,
+            1,
+            perks.double_armour,
+            &mut perks.armour_half_tick,
+        );
+        assert_eq!((armour, perks.armour_half_tick), (125, true));
+        // Re-enabling Double Armour (e.g. hospital/arrest respawn 0x08897e78 -> SetHasDoubleArmour)
+        // clears armour_half_tick so the next 1-point hit is absorbed again
+        perks.set_double_armour(true);
+        assert!(perks.double_armour && !perks.armour_half_tick);
+        damage_player(
+            &mut health,
+            &mut armour,
+            1,
+            perks.double_armour,
+            &mut perks.armour_half_tick,
+        );
+        assert_eq!((armour, perks.armour_half_tick), (125, true));
+        // Disabling Double Armour clears both bits; subsequent 1-point hit deals full 1 damage
+        perks.set_double_armour(false);
+        assert!(!perks.double_armour && !perks.armour_half_tick);
+        damage_player(
+            &mut health,
+            &mut armour,
+            1,
+            perks.double_armour,
+            &mut perks.armour_half_tick,
+        );
+        assert_eq!((armour, perks.armour_half_tick), (124, false));
+        // Full player reset (`cPlayer::Reset` 0x089c8ff4) clears both bits
+        perks.set_double_armour(true);
+        perks.armour_half_tick = true;
+        perks.reset_damage_state();
+        assert!(!perks.double_armour && !perks.armour_half_tick);
     }
     #[test]
     fn drive_accelerates_brakes_reverses_and_does_not_tunnel_through_walls() {

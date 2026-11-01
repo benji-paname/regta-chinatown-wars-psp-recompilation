@@ -1,42 +1,48 @@
-# ReGTA CTW PC Recomp — working instructions
+# ReGTA CTW — C++20 mainline instructions
 
-## Before every new user task
+## Canonical implementation (Benjamin's decision, 2026-11-02)
 
-Run from the repository root:
+Work on `runtime/` by default: native C++20 PSP Europe ULES-01347 v1.01 recompilation for Windows x64. Do not restart gameplay reconstruction in Rust. `legacy/rust/src/` is the preserved historical implementation; its archive branch is `legacy/rust-pre-cpp-migration`. Root `Compiler.ps1` now invokes C++.
 
-```powershell
-python tools/maintenance/check_upstreams.py --task "Short description of the current task"
-```
+Benjamin reports completing the first two story missions in the private C++ Playtest using normal controls. This is a user playtest report, not exhaustive campaign validation. Drops toward 20 FPS and irregular frametimes in dense traffic remain a priority.
 
-This is Benjamin's explicit requirement: consult BOTH official-kryo-to/ctw-native and highcmd/chinatown-wars-psp-recomp before starting a task. It also applies to branding, documentation and tooling tasks; do not force unrelated upstream changes into them. The report is docs/upstream-status.json. Read changed files / recent commits relevant to the task, then record the conclusion in docs/UPSTREAM_REVIEW.md. Fetching alone is not a review.
+## Before every task
 
-- If network access or a mirror is unavailable, record that limitation; do not claim a current upstream check succeeded. Continue independent work, but defer decisions that require unavailable evidence.
-- The mirrors in references/ must have their own Git roots and exact expected origins. work/upstream-ctw is a historical file snapshot, NOT a Git mirror. Never run fetch/pull there: Git can fall back to this project's parent repository.
-- Do not merge/pull upstream into our runtime automatically. Compare findings, record a pinned source commit and license, adapt compatible algorithms to Rust and verify against our PSP Europe ULES-01347 1.01 evidence. Android and PSP USA are references, not interchangeable data/addresses.
-- Respect upstream license/attribution. Do not send messages, open issues or submit upstream PRs unless Benjamin authorizes that communication.
+Run `python tools/maintenance/check_upstreams.py --task "Description"` from the root. Review BOTH official-kryo-to/ctw-native (Android reference) and highcmd/chinatown-wars-psp-recomp (PSP USA reference), then record relevant findings in `docs/UPSTREAM_REVIEW.md`. A fetch alone is not review. If DNS/network fails, record it; connected GitHub reads may independently verify remote revisions. Do not import upstream changes automatically. Mirrors must have their own .git and expected origin. Never fetch from `work/upstream-ctw`.
 
-## Mandatory: Keep Visual Port Status & Treemap Up To Date After Every Significant Progress
+## Absolute private-data preservation
 
-> **BENJAMIN'S CORE MANDATE FOR ALL AI MODELS (GPT, Claude, Gemini, Copilot, Cursor, etc.)**:
-> After **every significant progress, new gameplay system, module expansion, or refactoring**, the visual status treemap, SVG badges, and documentation dashboards **MUST be updated and kept current**.
-> Never leave the repository with stale status visuals.
+Keep ALL original game files and local Playtest data on Benjamin's PC, including ignored files, extracted data, textures, videos, music, executables and saves. Never delete these as cleanup, overwrite saves/preferences during updates, or force a locked directory rename. Reference mirrors, ISO/ELF and Ghidra projects remain untouched. Preserve uncommitted changes before reorganizing.
 
-### Rules for Port Progress & Treemap Maintenance:
-1. **Automated Synchronization**:
-   - Running `.\Compiler.ps1 -Test` automatically re-measures the codebase and synchronizes the treemap, badges, `README.md`, and `docs/index.html`.
-   - You can also run the generator directly:
-     ```powershell
-     python tools/progress/progress.py
-     ```
-2. **100% Native Rust Data Only (Absolute Integrity Rule)**:
-   - The visual treemap (`docs/assets/progress.svg`), the SVG badges (`docs/assets/badge-overall.svg`, `docs/assets/badge-routines.svg`), and the subsystems breakdown table in `README.md` and `docs/index.html` **MUST reflect strictly and exclusively our native Rust codebase (`src/**/*.rs`)**.
-   - **NEVER** scan, borrow, or mix in third-party C++ code (e.g. from `references/ctw-native`). Every single green block in the treemap must correspond to verified, real functions implemented in pure Rust in `src/`.
-3. **Updating `RUST_MODULE_MAP`**:
-   - When creating a new Rust file or adding new gameplay systems in `src/`, make sure `RUST_MODULE_MAP` in `tools/progress/progress.py` associates your module with the relevant Chinatown Wars classes.
-   - The generator will immediately count your new Rust functions and allocate the corresponding routines and bytes in the treemap and badges.
-4. **Never Hand-Edit Generated SVGs**:
-   - `docs/assets/progress.svg`, `docs/assets/badge-overall.svg`, `docs/assets/badge-routines.svg`, and `docs/assets/progress.json` are generated artifacts. Always generate them through `python tools/progress/progress.py` or `.\Compiler.ps1 -Test`.
+Publish NO proprietary game content: no ISO, PSP executable, generated/recompiled game translation units, extracted resources, texture packs, game audio/video, saves or test captures. All captures stay local per Benjamin's explicit instruction. Licensed project wordmarks may remain public; no font files. `work/`, `outputs/ReGTA-CTW-Playtest/`, and private build recipes stay ignored. `.gitignore` does not protect tracked files: check the index/tree AND outgoing Git objects before every push. Remove private files from tracking only, never from disk. Do not rewrite history destructively.
 
-## Handoff
+Publication gate: `python tools/maintenance/check_publication.py --tree HEAD --outgoing`. Install the versioned pre-push hook with `git config core.hooksPath .githooks`. Review actual content/provenance as well; an extension filter is not legal clearance. No commit/push unless authorized by the current user mission. The official repository and Pages URLs must not be renamed.
 
-Keep outputs/CTW-Rust/AI_HANDOFF_GUIDE.md current. Preserve private game data and the latest film/logos. Public branding: ReGTA CTW PC Recomp; website/README default language: English. No emulated CPU in our Rust runtime; references may use different approaches.
+## Active layout and commands
+
+- `runtime/src/`, `runtime/vfpu/`, `runtime/sas/`: canonical licensed runtime, provenance in `runtime/provenance.json` and `THIRD_PARTY.md`.
+- `tests/kernel/mutex_scheduler.cpp`: 35-check real-runtime fixture; no game boot.
+- `tools/build/cpp.py`, `tools/build/Cpp.cmd`, root `Compiler.ps1`: validated Clang 22.1.3/MSVC x64 C++20 build. No fast-math, no silent ABI/flag changes.
+- `work/cpp-mainline/build-config.json`: private relocatable local recipe, generated from existing evidence, not a distributable game package.
+- `work/cpp-recomp-feasibility/build/gen/`: 250 PRIVATE generated units; do not upload them or regenerate unnecessarily. Earlier reports/objects remain evidence.
+- `outputs/ReGTA-CTW-Playtest/ReGTA-CTW-Playtest.exe`: normal local launcher; `ctw_game.exe`, image, DLLs, ms0 and ctw.ini stay together.
+- `tools/update_playtest.py`: explicit local update; preserve saves, preferences and previous binary.
+- `legacy/rust/src/`: byte-preserved Rust history. Old Cargo manifest remains under outputs/CTW-Rust for compatibility.
+
+Build/check: `powershell -ExecutionPolicy Bypass -File .\Compiler.ps1 -Check`.
+Compile 29 runtime units, link locally and test: `powershell -ExecutionPolicy Bypass -File .\Compiler.ps1 -Test`.
+This does not launch the game or replace the Playtest. `-FullGame` additionally recompiles the 250 private units only when needed. See `docs/BUILD_CPP.md` for local prerequisites; do not install/download dependencies automatically.
+
+Keep compiler diagnostics. Current C++ builds have inherited warnings: do not claim zero warnings. Do not equate passing 35 tests with full PSP fidelity. Bink owner-exit cleanup and mutex/mailbox FIFO/priority selection are integrated; preserve them. USA hooks/cheats not verified for Europe must not be activated or remapped by guessed offsets. No fake HLE stubs or undocumented fallback changes.
+
+## Status, website and handoff
+
+`python tools/progress/cpp_status.py` generates C++ evidence status from actual local validation, without a completion percentage. Rust's `tools/progress/progress.py` writes only `docs/legacy/`; never put Rust metrics back on the main site or README. Never hand-edit generated status SVGs.
+
+Public name: ReGTA CTW — Native PC Recomp; credit: by Benji Paname. README English; site English/French/Spanish. Keep translations consistent. No public download until redistribution rights/package are verified. Preserve GitHub, Discord and support links. Owner reports and automated test results must be separately labelled.
+
+Read/update `docs/AI_HANDOFF.md` and `docs/CPP_MAINLINE_MIGRATION.md`. Historical reports can overstate fidelity: current evidence takes precedence. Preserve private reports rather than rewriting them. A new game run needs current authorization and a bounded supervisor; never reuse consumed-session markers.
+
+## Ghidra
+
+Use the existing CTW_Working project only with `-noanalysis -readOnly`, exact European function entries, and compare decompiler output with Allegrex instructions. No project writes, memory dumps, permission bypass or guessed USA-to-Europe offsets. See `docs/REVERSE_ENGINEERING.md` for reference paths.
