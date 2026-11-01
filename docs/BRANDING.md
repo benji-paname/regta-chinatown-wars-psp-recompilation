@@ -2,7 +2,7 @@
 
 Project: **ReGTA CTW**. Full name: **ReGTA CTW PC Recomp**. Credit: **by Benji Paname**.
 
-The website and GitHub presentation use English as their primary language. The website also offers French.
+The website and GitHub presentation use English as their primary language. The website also offers French and Spanish.
 
 ## Requested final typography
 

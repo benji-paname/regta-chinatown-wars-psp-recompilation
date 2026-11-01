@@ -1,6 +1,6 @@
 # C++ mainline migration — 2 November 2026
 
-**C++ MAINLINE MIGRATION — PARTIAL.** Canonical source migration, local compilation and bounded launch verification have succeeded. The local directory rename is blocked by a Windows lock. Publication/deployment verification is recorded below; do not infer completion from local files.
+**C++ MAINLINE MIGRATION — PARTIAL.** Canonical source migration, local compilation and bounded launch verification have succeeded. The local directory rename is blocked by a Windows lock. The first migration commit has been pushed and its GitHub Pages deployment verified successfully; final documentation follow-up uses the same publication gate.
 
 ## Decision and observed scope
 
@@ -34,8 +34,8 @@ Inherited highcmd GPL-3.0-or-later and PPSSPP GPL-2.0-or-later notices remain. A
 | Python tools | **10 tests pass**: private-publication filter and safe Playtest updater, including no-write check mode, backup, invalid executable rejection and save/preferences preservation. |
 | `tools/update_playtest.py --check` | New build hash verified; original installed game binary left unchanged. An explicit update makes a hash-verified backup, atomically replaces only the executable and writes a separate receipt. |
 | Isolated launcher smoke | 21.64 seconds, launcher and game return 0. New canonical binary ran in a copy under `work/Playtest-migration-smoke/`; original package untouched. ISO resolved via relative configuration, DLL/GL/audio loaded, copied 4,152-byte savedata loaded, HUD/environment/safehouse overlays reached. No interactive keyboard/controller validation in this smoke. Logs stay private. |
-| Site static checks | 60 complete EN/FR/ES translation sets, English default, local links/anchors and approved media checked. No gameplay media embedded. |
-| Browser/local preview | In-app browser timed out on localhost; native Edge observation failed because its window was minimized. No visual browser PASS claimed for that attempt. Remote verification follows publication. |
+| Site static checks | 62 complete EN/FR/ES translation sets, English default, local links/anchors and approved media checked. No gameplay media embedded. |
+| Browser/local preview | In-app browser timed out on localhost; native Edge observation failed because its window was minimized. No visual browser PASS claimed for that attempt. The deployed site was subsequently opened successfully: logo/hero inspected visually, English default observed and FR/ES switches verified through the live rendered page. |
 | Rust | No Rust compilation rerun. Sources preserved by SHA256; old test totals are historical. |
 
 New canonical executable SHA256: `4e862c05605c28e7fa76cf988b6c393dd23b9fa956a06099d7b8b198ea99353c`.
@@ -54,7 +54,16 @@ README, website EN/FR/ES, build/status/playtest/AI instructions, contribution/li
 
 The publication guard checks the complete proposed tree and all new reachable Git blobs, file magic, private paths, secrets and exact approved logo hashes. The pre-push hook and public CI check reinforce this; manual content/license review remains necessary. This is not a legal guarantee.
 
-**Publication status: pending final tree/history audit, authorized commit/push and Pages verification.**
+**Publication succeeded for migration commit `5ce70a631fa3bcf483f8cf16ccee0c852c4fc900`.** It fast-forwarded the unchanged official main from `0323f03d23d0cd5668e52bc3712512513245b12f`; the 18 existing local commits were preserved. The full outgoing audit checked 464 distinct blobs with zero blocked files, and the installed pre-push hook repeated it successfully. SVG branding hashes describe exact Git blob bytes after Git line-ending normalization; original local images were unchanged.
+
+- [Public source checks — success](https://github.com/benji-paname/regta-chinatown-wars-pc-port/actions/runs/41362705571): 10 Python tests, publication tree audit and site checks.
+- [GitHub Pages — successful deployment](https://github.com/benji-paname/regta-chinatown-wars-pc-port/actions/runs/41362702257).
+- Six deployed resources (HTML, logo, favicon, CSS, JS and historical inventory page) returned HTTP 200 and matched the exact published Git blob bytes.
+- The actual public page displays C++20 as canonical, the two-mission owner report, the existing logo and performance limitations. Its EN/FR/ES controls were exercised. Test captures are absent.
+- The repository About description now identifies C++20 and archived Rust; repository name, default branch and official website URL are unchanged.
+- The final documentation follow-up records these results and adds translated footer links. Its SHA is available from `git log` and the subsequent published main; a commit cannot embed its own SHA.
+
+Whitespace diagnostics from `git diff --check` include inherited source trailing spaces and Markdown hard breaks in preserved historical files. Runtime bytes were intentionally not reformatted; this does not indicate a compiler failure. No zero-warning claim is made.
 
 Official [repository](https://github.com/benji-paname/regta-chinatown-wars-pc-port) and [website](https://benji-paname.github.io/regta-chinatown-wars-pc-port/) are unchanged.
 
@@ -62,7 +71,7 @@ Official [repository](https://github.com/benji-paname/regta-chinatown-wars-pc-po
 
 The mandatory Git preflight failed DNS. A separate connected GitHub read verified highcmd `6562163b6f504a1db93e1be5ce580d8cd6f024a7` and Android `108320b137c3ca748d697838f86c8919c12b3f2c`, matching local mirrors. Relevant recent changes were reviewed and recorded in UPSTREAM_REVIEW.md. No automatic upstream merge or guessed USA-to-Europe address mapping occurred.
 
-1. Finish verified publication; retain PARTIAL while the root rename is blocked.
+1. Retain PARTIAL while the local root rename is blocked; do not force it. Reopen the whole project and verify paths after a later manual rename.
 2. Profile frame times in dense driving scenes before changing scheduler/rendering behavior.
 3. Validate the campaign incrementally with normal user input.
 4. Package lawful local generation/build preparation for future public use.
