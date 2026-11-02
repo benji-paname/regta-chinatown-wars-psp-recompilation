@@ -1,16 +1,16 @@
 # Publish ReGTA CTW
 
-The live repository name is **regta-chinatown-wars-pc-port** under account **benji-paname**. The website is static and lives in `docs/`; it needs no build service or dependency installation.
+The live repository name is **regta-chinatown-wars-psp-recompilation** under account **benji-paname**. The website is static and lives in `docs/`; it needs no build service or dependency installation.
 
 ## Setup and URLs
 
-1. **Repository URL**: `https://github.com/benji-paname/regta-chinatown-wars-pc-port`
-2. **Git Remote**: `git remote set-url origin https://github.com/benji-paname/regta-chinatown-wars-pc-port.git`
+1. **Repository URL**: `https://github.com/benji-paname/regta-chinatown-wars-psp-recompilation`
+2. **Git Remote**: `git remote set-url origin https://github.com/benji-paname/regta-chinatown-wars-psp-recompilation.git`
 3. **GitHub Pages Deployment**:
    - Source: **Deploy from a branch**
    - Branch: **`main`**
    - Folder: **`/docs`**
-4. **Live Website URL**: **`https://benji-paname.github.io/regta-chinatown-wars-pc-port/`**
+4. **Live Website URL**: **`https://benji-paname.github.io/regta-chinatown-wars-psp-recompilation/`**
 
 On that standard Pages address, the site's GitHub links automatically resolve to the actual account and repository.
 

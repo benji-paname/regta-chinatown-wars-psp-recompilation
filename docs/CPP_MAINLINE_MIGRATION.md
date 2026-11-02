@@ -65,7 +65,7 @@ The publication guard checks the complete proposed tree and all new reachable Gi
 
 Whitespace diagnostics from `git diff --check` include inherited source trailing spaces and Markdown hard breaks in preserved historical files. Runtime bytes were intentionally not reformatted; this does not indicate a compiler failure. No zero-warning claim is made.
 
-Official [repository](https://github.com/benji-paname/regta-chinatown-wars-pc-port) and [website](https://benji-paname.github.io/regta-chinatown-wars-pc-port/) are unchanged.
+Official [repository](https://github.com/benji-paname/regta-chinatown-wars-psp-recompilation) and [website](https://benji-paname.github.io/regta-chinatown-wars-psp-recompilation/) are unchanged.
 
 ## Upstreams and remaining work
 

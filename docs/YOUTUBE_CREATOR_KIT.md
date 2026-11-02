@@ -32,8 +32,8 @@ Tipeee: https://fr.tipeee.com/benji-paname/
 PayPal: https://paypal.me/BenjiLsg
 
 Follow the work, share your feedback, or star the repository:
-Website: https://benji-paname.github.io/regta-chinatown-wars-pc-port/
-GitHub: https://github.com/benji-paname/regta-chinatown-wars-pc-port
+Website: https://benji-paname.github.io/regta-chinatown-wars-psp-recompilation/
+GitHub: https://github.com/benji-paname/regta-chinatown-wars-psp-recompilation
 
 Support is voluntary. It supports ongoing research and development; it does not purchase the game, game assets, early access or a guaranteed release.
 

@@ -6,7 +6,7 @@
 
 C++20 is now the mainline of this independent project by **[Benji Paname (@benji-paname)](https://github.com/benji-paname)**, targeting **PSP Europe ULES-01347 v1.01**. Original MIPS control flow is compiled ahead of time; the runtime provides PSP services, graphics and audio. This is an unfinished native port, not a complete-fidelity certification.
 
-[Website](https://benji-paname.github.io/regta-chinatown-wars-pc-port/) · [Status](docs/STATUS.md) · [Local build](docs/BUILD_CPP.md) · [Playtest guide](docs/PLAYTEST.md) · [Contributing](CONTRIBUTING.md)
+[Website](https://benji-paname.github.io/regta-chinatown-wars-psp-recompilation/) · [Status](docs/STATUS.md) · [Local build](docs/BUILD_CPP.md) · [Playtest guide](docs/PLAYTEST.md) · [Contributing](CONTRIBUTING.md)
 
 ![C++ kernel checks](docs/assets/badge-cpp.svg)
 

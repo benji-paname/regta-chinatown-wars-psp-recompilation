@@ -85,7 +85,7 @@ Maintenir à jour :
 - Les rapports de progression publics (docs/CPP_PROGRESS.md, docs/STATUS.md).
 - La documentation technique utile aux contributeurs (docs/BUILD_CPP.md, CONTRIBUTING.md).
 
-Vérifier l'URL et la branche officielles du dépôt (https://github.com/benji-paname/regta-chinatown-wars-pc-port.git, branche main) avant toute intervention.
+Vérifier l'URL et la branche officielles du dépôt (https://github.com/benji-paname/regta-chinatown-wars-psp-recompilation.git, branche main) avant toute intervention.
 
 ### 3. Site officiel (docs/index.html)
 Mettre à jour les trois langues existantes :
