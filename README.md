@@ -1,6 +1,6 @@
 <p align="center"><img src="docs/assets/logo-chinatown-wars.svg" alt="ReGTA Chinatown Wars — PSP Recompilation" width="440"></p>
 
-# ReGTA CTW — Native PC Recomp
+# ReGTA Chinatown Wars PSP Recompilation — Native port to PC
 
 **The original Chinatown Wars PSP game, recompiled natively for Windows x64.**
 
