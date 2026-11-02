@@ -12,13 +12,15 @@ C++20 is now the mainline of this independent project by **Benji Paname**, targe
 
 ## Progress
 
-<!-- CPP_IMPORT_PROGRESS_START -->
-![PSP import mappings](docs/assets/badge-cpp-imports.svg)
+<!-- CPP_RECOMP_PROGRESS_START -->
+![Original PSP code recompiled](docs/assets/badge-cpp-recomp.svg) ![PSP routines](docs/assets/badge-cpp-routines.svg)
 
-**80.56% of selected PSP imports have exact source providers (203/252).** Green blocks show source mappings; grey blocks show missing providers. Mappings can be incomplete or stubs: this is not a percentage of the game finished or a gameplay-fidelity certificate.
+**Original PSP code recompiled: 99.99% — 34,800 / 34,801 indexed routines, weighted by original code size.** Green routines have native C++ bodies in verified compiled objects, without a known unsupported operation. This measures static recompilation of the indexed PSP executable and 166 overlays. Runtime services, correctness and campaign validation remain separate.
 
-[![PSP import source mappings](docs/assets/cpp-progress.svg)](docs/CPP_PROGRESS.md)
-<!-- CPP_IMPORT_PROGRESS_END -->
+[![Original PSP code recompilation treemap](docs/assets/cpp-progress.svg)](docs/CPP_PROGRESS.md)
+
+[PSP service bindings: a separate diagnostic](docs/CPP_IMPORTS.md).
+<!-- CPP_RECOMP_PROGRESS_END -->
 
 ## Playable progress, with clear limits
 

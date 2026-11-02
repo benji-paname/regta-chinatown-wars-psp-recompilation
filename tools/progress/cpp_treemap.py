@@ -99,27 +99,15 @@ def generate(root=ROOT):
     data['method']='Selected PSP imports with exact (library, name) source providers; not game completion or implementation correctness'
     data['evidence']={'private_import_table_sha256':hashlib.sha256(table.read_bytes()).hexdigest(),'runtime_sources':sources}
     assets=root/'docs/assets'
-    (assets/'cpp-progress.svg').write_text(treemap(data),encoding='utf-8')
-    (assets/'cpp-progress.json').write_text(json.dumps(data,indent=2)+'\n',encoding='utf-8')
+    (assets/'cpp-imports.svg').write_text(treemap(data),encoding='utf-8')
+    (assets/'cpp-imports.json').write_text(json.dumps(data,indent=2)+'\n',encoding='utf-8')
     badge=f'<svg xmlns="http://www.w3.org/2000/svg" width="292" height="24" role="img" aria-label="PSP import source mappings {data["percent"]:.2f}%"><rect width="292" height="24" rx="4" fill="#24492c"/><text x="146" y="16" text-anchor="middle" fill="#e7f6e7" font-size="11" font-family="Verdana,sans-serif">PSP import mappings · {data["percent"]:.2f}% ({data["mapped"]}/{data["selected_imports"]})</text></svg>\n'
     (assets/'badge-cpp-imports.svg').write_text(badge,encoding='utf-8')
-    readme=root/'README.md'
-    metric=f"<!-- CPP_IMPORT_PROGRESS_START -->\n![PSP import mappings](docs/assets/badge-cpp-imports.svg)\n\n**{data['percent']:.2f}% of selected PSP imports have exact source providers ({data['mapped']}/{data['selected_imports']}).** Green blocks show source mappings; grey blocks show missing providers. Mappings can be incomplete or stubs: this is not a percentage of the game finished or a gameplay-fidelity certificate.\n\n[![PSP import source mappings](docs/assets/cpp-progress.svg)](docs/CPP_PROGRESS.md)\n<!-- CPP_IMPORT_PROGRESS_END -->"
-    if readme.exists():
-        text=readme.read_text(encoding='utf-8-sig')
-        text=re.sub(r'<!-- CPP_IMPORT_PROGRESS_START -->.*?<!-- CPP_IMPORT_PROGRESS_END -->',lambda _:metric,text,flags=re.S)
-        readme.write_text(text,encoding='utf-8')
-    site=root/'docs/index.html'
-    if site.exists():
-        text=site.read_text(encoding='utf-8-sig')
-        text=re.sub(r'(<strong data-import-percent>)[^<]+',lambda m:m[1]+f"{data['percent']:.2f}%",text)
-        text=re.sub(r'(<code data-import-count>)[^<]+',lambda m:m[1]+f"{data['mapped']} / {data['selected_imports']}",text)
-        site.write_text(text,encoding='utf-8')
     rows=['| PSP library | Source mappings | Percent |','| --- | ---: | ---: |']
     for libs in data['groups'].values():
         for lib in libs:rows.append(f"| {lib['library']} | {lib['mapped']}/{lib['total']} | {lib['mapped']/lib['total']*100:.2f}% |")
-    report=f"# C++ progress: PSP import source mappings\n\n**{data['percent']:.2f}% — {data['mapped']} of {data['selected_imports']} selected PSP imports.**\n\n![PSP import source mappings](assets/cpp-progress.svg)\n\nThe percentage measures exact `(library, name)` providers in the current canonical C++ source. Each tile is one selected import: green when a provider declaration exists, grey when absent. Providers may be partial or stubs. This metric does not prove correct behavior, multiplayer availability or completion of any percentage of the game.\n\nThe private European import inventory contains {data['raw_records']} records; the same last-record-per-stub selection used by the runtime yields {data['selected_imports']} active entries. No original import table, NID list, generated code or game data is published here. Groups and aggregate counts are public research metadata. Runtime sources and private input hashes are recorded in [cpp-progress.json](assets/cpp-progress.json).\n\nIndependent evidence: 29 runtime components compiled, 250 generated objects reused, 35 kernel checks passed; Benjamin reports two missions completed. These measurements are not combined into a game-completion score. See [STATUS.md](STATUS.md).\n\n"+'\n'.join(rows)+"\n\nRegenerate in the prepared workspace: `python tools/progress/cpp_status.py`. The generator parses current source registrations and private imports; it never reads Rust metrics. See tools/progress/cpp_treemap.py for the method.\n"
-    (root/'docs/CPP_PROGRESS.md').write_text(report,encoding='utf-8')
+    report=f"# C++ progress: PSP import source mappings\n\n**{data['percent']:.2f}% — {data['mapped']} of {data['selected_imports']} selected PSP imports.**\n\n![PSP import source mappings](assets/cpp-imports.svg)\n\nThe percentage measures exact `(library, name)` providers in the current canonical C++ source. Each tile is one selected import: green when a provider declaration exists, grey when absent. Providers may be partial or stubs. This metric does not prove correct behavior, multiplayer availability or completion of any percentage of the game.\n\nThe private European import inventory contains {data['raw_records']} records; the same last-record-per-stub selection used by the runtime yields {data['selected_imports']} active entries. No original import table, NID list, generated code or game data is published here. Groups and aggregate counts are public research metadata. Runtime sources and private input hashes are recorded in [cpp-imports.json](assets/cpp-imports.json).\n\nIndependent evidence: 29 runtime components compiled, 250 generated objects reused, 35 kernel checks passed; Benjamin reports two missions completed. These measurements are not combined into a game-completion score. See [STATUS.md](STATUS.md).\n\n"+'\n'.join(rows)+"\n\nRegenerate in the prepared workspace: `python tools/progress/cpp_status.py`. The generator parses current source registrations and private imports; it never reads Rust metrics. See tools/progress/cpp_treemap.py for the method.\n"
+    (root/'docs/CPP_IMPORTS.md').write_text(report,encoding='utf-8')
     print(f'PSP import source mappings: {data["mapped"]}/{data["selected_imports"]} = {data["percent"]:.2f}%')
     return data
 

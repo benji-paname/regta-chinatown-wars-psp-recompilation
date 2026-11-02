@@ -13,6 +13,10 @@ Known: drops toward 20 FPS and uneven frametimes in dense driving scenes. Remain
 
 No public download or completion percentage. No gameplay captures published. [Migration evidence](CPP_MAINLINE_MIGRATION.md) · [Historical Rust inventory](legacy/progress.html).
 
-## Visual source-mapping progress
+## Original PSP code recompilation progress
 
-The [C++ treemap](CPP_PROGRESS.md) is restored: **80.56% (203/252)** selected PSP imports have exact source providers. Green means a provider declaration exists, including potentially partial implementations/stubs; grey means absent. This does not certify those services or score completion of the game. Counts regenerate from the current canonical runtime and private Europe import inventory. Historical Rust metrics remain separate.
+The [main C++ treemap](CPP_PROGRESS.md) now measures **original PSP code recompiled, weighted by original routine size**, as requested by Benjamin. Current evidence: **34,800/34,801 indexed routines**, **12,307,572/12,307,576 original bytes**. It displays **99.99%**, truncated to avoid rounding known remaining work to 100.00%. One four-byte mapapp candidate still contains an unsupported-operation trap; earlier evidence suggests data, but it remains excluded pending reviewed classification.
+
+This measures automatic static translation and verified object compilation across the indexed European executable and 166 overlays. It does not establish gameplay fidelity, campaign completion, all indirect callback targets or perfect code/data boundaries. The high figure reflects the automated recompilation process; runtime compatibility, performance and gameplay validation remain in progress.
+
+[PSP HLE source mappings](CPP_IMPORTS.md), 203/252 = 80.56%, remain a separate diagnostic. The old Rust statistics remain historical and are not mixed into either C++ metric.

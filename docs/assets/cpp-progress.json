@@ -1,293 +1,1872 @@
 {
-  "raw_records": 256,
-  "selected_imports": 252,
-  "mapped": 203,
-  "missing": 49,
-  "percent": 80.56,
-  "groups": {
-    "Audio": [
-      {
-        "library": "sceAtrac3plus",
-        "mapped": 14,
-        "total": 14
-      },
-      {
-        "library": "sceAudio",
-        "mapped": 11,
-        "total": 11
-      },
-      {
-        "library": "sceSasCore",
-        "mapped": 27,
-        "total": 27
-      }
-    ],
-    "Files & media": [
-      {
-        "library": "IoFileMgrForUser",
-        "mapped": 15,
-        "total": 15
-      },
-      {
-        "library": "StdioForUser",
-        "mapped": 3,
-        "total": 3
-      },
-      {
-        "library": "scePspNpDrm_user",
-        "mapped": 2,
-        "total": 2
-      },
-      {
-        "library": "sceUmdUser",
-        "mapped": 6,
-        "total": 7
-      }
-    ],
-    "Graphics & display": [
-      {
-        "library": "sceDisplay",
-        "mapped": 4,
-        "total": 6
-      },
-      {
-        "library": "sceGe_user",
-        "mapped": 6,
-        "total": 6
-      }
-    ],
-    "Input & system": [
-      {
-        "library": "UtilsForUser",
-        "mapped": 6,
-        "total": 6
-      },
-      {
-        "library": "sceCtrl",
-        "mapped": 3,
-        "total": 3
-      },
-      {
-        "library": "sceImpose",
-        "mapped": 1,
-        "total": 1
-      },
-      {
-        "library": "scePower",
-        "mapped": 1,
-        "total": 3
-      },
-      {
-        "library": "sceRtc",
-        "mapped": 5,
-        "total": 5
-      },
-      {
-        "library": "sceSuspendForUser",
-        "mapped": 5,
-        "total": 5
-      },
-      {
-        "library": "sceUtility",
-        "mapped": 15,
-        "total": 16
-      }
-    ],
-    "Kernel & threads": [
-      {
-        "library": "InterruptManager",
-        "mapped": 3,
-        "total": 3
-      },
-      {
-        "library": "Kernel_Library",
-        "mapped": 3,
-        "total": 3
-      },
-      {
-        "library": "LoadExecForUser",
-        "mapped": 2,
-        "total": 2
-      },
-      {
-        "library": "ModuleMgrForUser",
-        "mapped": 5,
-        "total": 5
-      },
-      {
-        "library": "SysMemUserForUser",
-        "mapped": 7,
-        "total": 7
-      },
-      {
-        "library": "ThreadManForUser",
-        "mapped": 41,
-        "total": 44
-      }
-    ],
-    "Network": [
-      {
-        "library": "sceNet",
-        "mapped": 3,
-        "total": 4
-      },
-      {
-        "library": "sceNetAdhoc",
-        "mapped": 2,
-        "total": 6
-      },
-      {
-        "library": "sceNetAdhocMatching",
-        "mapped": 7,
-        "total": 9
-      },
-      {
-        "library": "sceNetAdhocctl",
-        "mapped": 6,
-        "total": 10
-      },
-      {
-        "library": "sceNetApctl",
-        "mapped": 0,
-        "total": 5
-      },
-      {
-        "library": "sceNetInet",
-        "mapped": 0,
-        "total": 18
-      },
-      {
-        "library": "sceNetResolver",
-        "mapped": 0,
-        "total": 5
-      },
-      {
-        "library": "sceWlanDrv",
-        "mapped": 0,
-        "total": 1
-      }
-    ]
-  },
-  "method": "Selected PSP imports with exact (library, name) source providers; not game completion or implementation correctness",
+  "bytes": 12307576,
+  "recompiled_bytes": 12307572,
+  "remaining_bytes": 4,
+  "routines": 34801,
+  "recompiled_routines": 34800,
+  "percent": 99.99996749969287,
+  "display_percent": "99.99",
+  "metric": "Original PSP code recompiled, weighted by original routine size",
+  "build": "PSP Europe ULES-01347 v1.01",
+  "scope": "Indexed executable .text and all 166 analyzed code overlays; original analysis boundaries may include embedded data",
+  "modules": [
+    {
+      "name": "main",
+      "category": "Main executable",
+      "bytes": 3346064,
+      "recompiled_bytes": 3346064,
+      "remaining_bytes": 0,
+      "routines": 12222,
+      "recompiled_routines": 12222,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ammozoneapp",
+      "category": "UI & other apps",
+      "bytes": 42464,
+      "recompiled_bytes": 42464,
+      "remaining_bytes": 0,
+      "routines": 81,
+      "recompiled_routines": 81,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "autosavequeryapp",
+      "category": "UI & other apps",
+      "bytes": 4272,
+      "recompiled_bytes": 4272,
+      "remaining_bytes": 0,
+      "routines": 19,
+      "recompiled_routines": 19,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "bik_b01",
+      "category": "Mission overlays",
+      "bytes": 130828,
+      "recompiled_bytes": 130828,
+      "remaining_bytes": 0,
+      "routines": 329,
+      "recompiled_routines": 329,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "bik_b02",
+      "category": "Mission overlays",
+      "bytes": 84132,
+      "recompiled_bytes": 84132,
+      "remaining_bytes": 0,
+      "routines": 210,
+      "recompiled_routines": 210,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "bik_b03",
+      "category": "Mission overlays",
+      "bytes": 78724,
+      "recompiled_bytes": 78724,
+      "remaining_bytes": 0,
+      "routines": 193,
+      "recompiled_routines": 193,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "bik_b04",
+      "category": "Mission overlays",
+      "bytes": 104180,
+      "recompiled_bytes": 104180,
+      "remaining_bytes": 0,
+      "routines": 272,
+      "recompiled_routines": 272,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "bombdisposalapp",
+      "category": "Minigame overlays",
+      "bytes": 16744,
+      "recompiled_bytes": 16744,
+      "remaining_bytes": 0,
+      "routines": 32,
+      "recompiled_routines": 32,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "bombplantingapp",
+      "category": "Minigame overlays",
+      "bytes": 8296,
+      "recompiled_bytes": 8296,
+      "remaining_bytes": 0,
+      "routines": 30,
+      "recompiled_routines": 30,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "bugplantingapp",
+      "category": "Minigame overlays",
+      "bytes": 6912,
+      "recompiled_bytes": 6912,
+      "remaining_bytes": 0,
+      "routines": 24,
+      "recompiled_routines": 24,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "carbombfittingapp",
+      "category": "Minigame overlays",
+      "bytes": 8880,
+      "recompiled_bytes": 8880,
+      "remaining_bytes": 0,
+      "routines": 27,
+      "recompiled_routines": 27,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "caryard",
+      "category": "Other overlays",
+      "bytes": 19636,
+      "recompiled_bytes": 19636,
+      "remaining_bytes": 0,
+      "routines": 50,
+      "recompiled_routines": 50,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "charviewer",
+      "category": "Other overlays",
+      "bytes": 2284,
+      "recompiled_bytes": 2284,
+      "remaining_bytes": 0,
+      "routines": 11,
+      "recompiled_routines": 11,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "chinesedelivery",
+      "category": "Activities & races",
+      "bytes": 52020,
+      "recompiled_bytes": 52020,
+      "remaining_bytes": 0,
+      "routines": 149,
+      "recompiled_routines": 149,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "contactsapp",
+      "category": "UI & other apps",
+      "bytes": 5776,
+      "recompiled_bytes": 5776,
+      "remaining_bytes": 0,
+      "routines": 21,
+      "recompiled_routines": 21,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "controlconfigapp",
+      "category": "UI & other apps",
+      "bytes": 9960,
+      "recompiled_bytes": 9960,
+      "remaining_bytes": 0,
+      "routines": 35,
+      "recompiled_routines": 35,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "deatharrestapp",
+      "category": "UI & other apps",
+      "bytes": 1296,
+      "recompiled_bytes": 1296,
+      "remaining_bytes": 0,
+      "routines": 12,
+      "recompiled_routines": 12,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "deedapp",
+      "category": "UI & other apps",
+      "bytes": 3552,
+      "recompiled_bytes": 3552,
+      "remaining_bytes": 0,
+      "routines": 29,
+      "recompiled_routines": 29,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "desktopex",
+      "category": "UI & other apps",
+      "bytes": 10432,
+      "recompiled_bytes": 10432,
+      "remaining_bytes": 0,
+      "routines": 28,
+      "recompiled_routines": 28,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "dlcnotifyapp",
+      "category": "UI & other apps",
+      "bytes": 1104,
+      "recompiled_bytes": 1104,
+      "remaining_bytes": 0,
+      "routines": 11,
+      "recompiled_routines": 11,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "drugvanslashapp",
+      "category": "Minigame overlays",
+      "bytes": 8936,
+      "recompiled_bytes": 8936,
+      "remaining_bytes": 0,
+      "routines": 39,
+      "recompiled_routines": 39,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "dummyapp",
+      "category": "UI & other apps",
+      "bytes": 3432,
+      "recompiled_bytes": 3432,
+      "remaining_bytes": 0,
+      "routines": 26,
+      "recompiled_routines": 26,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "dumpsterweaponstashapp",
+      "category": "Minigame overlays",
+      "bytes": 39480,
+      "recompiled_bytes": 39480,
+      "remaining_bytes": 0,
+      "routines": 99,
+      "recompiled_routines": 99,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "emailapp",
+      "category": "UI & other apps",
+      "bytes": 35304,
+      "recompiled_bytes": 35304,
+      "remaining_bytes": 0,
+      "routines": 64,
+      "recompiled_routines": 64,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "endgame",
+      "category": "Mission overlays",
+      "bytes": 4604,
+      "recompiled_bytes": 4604,
+      "remaining_bytes": 0,
+      "routines": 22,
+      "recompiled_routines": 22,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "enginesabotage",
+      "category": "Minigame overlays",
+      "bytes": 16824,
+      "recompiled_bytes": 16824,
+      "remaining_bytes": 0,
+      "routines": 42,
+      "recompiled_routines": 42,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "environmentsetups",
+      "category": "Other overlays",
+      "bytes": 32684,
+      "recompiled_bytes": 32684,
+      "remaining_bytes": 0,
+      "routines": 130,
+      "recompiled_routines": 130,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "explodingpolicevansapp",
+      "category": "Minigame overlays",
+      "bytes": 12048,
+      "recompiled_bytes": 12048,
+      "remaining_bytes": 0,
+      "routines": 35,
+      "recompiled_routines": 35,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "firefighter",
+      "category": "Activities & races",
+      "bytes": 79332,
+      "recompiled_bytes": 79332,
+      "remaining_bytes": 0,
+      "routines": 127,
+      "recompiled_routines": 127,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "friendlistapp",
+      "category": "UI & other apps",
+      "bytes": 11160,
+      "recompiled_bytes": 11160,
+      "remaining_bytes": 0,
+      "routines": 32,
+      "recompiled_routines": 32,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hes_a01",
+      "category": "Mission overlays",
+      "bytes": 51052,
+      "recompiled_bytes": 51052,
+      "remaining_bytes": 0,
+      "routines": 161,
+      "recompiled_routines": 161,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hes_a02",
+      "category": "Mission overlays",
+      "bytes": 47932,
+      "recompiled_bytes": 47932,
+      "remaining_bytes": 0,
+      "routines": 141,
+      "recompiled_routines": 141,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hes_a03",
+      "category": "Mission overlays",
+      "bytes": 68916,
+      "recompiled_bytes": 68916,
+      "remaining_bytes": 0,
+      "routines": 176,
+      "recompiled_routines": 176,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hes_a04",
+      "category": "Mission overlays",
+      "bytes": 58396,
+      "recompiled_bytes": 58396,
+      "remaining_bytes": 0,
+      "routines": 175,
+      "recompiled_routines": 175,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hes_b01",
+      "category": "Mission overlays",
+      "bytes": 109548,
+      "recompiled_bytes": 109548,
+      "remaining_bytes": 0,
+      "routines": 223,
+      "recompiled_routines": 223,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hes_b02",
+      "category": "Mission overlays",
+      "bytes": 63660,
+      "recompiled_bytes": 63660,
+      "remaining_bytes": 0,
+      "routines": 178,
+      "recompiled_routines": 178,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hes_b03",
+      "category": "Mission overlays",
+      "bytes": 154980,
+      "recompiled_bytes": 154980,
+      "remaining_bytes": 0,
+      "routines": 318,
+      "recompiled_routines": 318,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hes_b04",
+      "category": "Mission overlays",
+      "bytes": 57628,
+      "recompiled_bytes": 57628,
+      "remaining_bytes": 0,
+      "routines": 168,
+      "recompiled_routines": 168,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hes_b05",
+      "category": "Mission overlays",
+      "bytes": 36164,
+      "recompiled_bytes": 36164,
+      "remaining_bytes": 0,
+      "routines": 104,
+      "recompiled_routines": 104,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hes_c01",
+      "category": "Mission overlays",
+      "bytes": 158068,
+      "recompiled_bytes": 158068,
+      "remaining_bytes": 0,
+      "routines": 428,
+      "recompiled_routines": 428,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hes_c01b",
+      "category": "Mission overlays",
+      "bytes": 129116,
+      "recompiled_bytes": 129116,
+      "remaining_bytes": 0,
+      "routines": 345,
+      "recompiled_routines": 345,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hobotron",
+      "category": "Other overlays",
+      "bytes": 38340,
+      "recompiled_bytes": 38340,
+      "remaining_bytes": 0,
+      "routines": 93,
+      "recompiled_routines": 93,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hostscreenpspapp",
+      "category": "UI & other apps",
+      "bytes": 19856,
+      "recompiled_bytes": 19856,
+      "remaining_bytes": 0,
+      "routines": 76,
+      "recompiled_routines": 76,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hostselectpspapp",
+      "category": "UI & other apps",
+      "bytes": 5568,
+      "recompiled_bytes": 5568,
+      "remaining_bytes": 0,
+      "routines": 16,
+      "recompiled_routines": 16,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hotwiringapp",
+      "category": "Minigame overlays",
+      "bytes": 27112,
+      "recompiled_bytes": 27112,
+      "remaining_bytes": 0,
+      "routines": 101,
+      "recompiled_routines": 101,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "hudapp",
+      "category": "UI & other apps",
+      "bytes": 49456,
+      "recompiled_bytes": 49456,
+      "remaining_bytes": 0,
+      "routines": 140,
+      "recompiled_routines": 140,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "internettradingapp_psp",
+      "category": "Other overlays",
+      "bytes": 15208,
+      "recompiled_bytes": 15208,
+      "remaining_bytes": 0,
+      "routines": 46,
+      "recompiled_routines": 46,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_a01",
+      "category": "Mission overlays",
+      "bytes": 52948,
+      "recompiled_bytes": 52948,
+      "remaining_bytes": 0,
+      "routines": 152,
+      "recompiled_routines": 152,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_a02",
+      "category": "Mission overlays",
+      "bytes": 59220,
+      "recompiled_bytes": 59220,
+      "remaining_bytes": 0,
+      "routines": 156,
+      "recompiled_routines": 156,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_a03",
+      "category": "Mission overlays",
+      "bytes": 58148,
+      "recompiled_bytes": 58148,
+      "remaining_bytes": 0,
+      "routines": 156,
+      "recompiled_routines": 156,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_a04",
+      "category": "Mission overlays",
+      "bytes": 175676,
+      "recompiled_bytes": 175676,
+      "remaining_bytes": 0,
+      "routines": 397,
+      "recompiled_routines": 397,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_a05",
+      "category": "Mission overlays",
+      "bytes": 32948,
+      "recompiled_bytes": 32948,
+      "remaining_bytes": 0,
+      "routines": 108,
+      "recompiled_routines": 108,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_a06",
+      "category": "Mission overlays",
+      "bytes": 70524,
+      "recompiled_bytes": 70524,
+      "remaining_bytes": 0,
+      "routines": 269,
+      "recompiled_routines": 269,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_a07",
+      "category": "Mission overlays",
+      "bytes": 88068,
+      "recompiled_bytes": 88068,
+      "remaining_bytes": 0,
+      "routines": 315,
+      "recompiled_routines": 315,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_b01",
+      "category": "Mission overlays",
+      "bytes": 81996,
+      "recompiled_bytes": 81996,
+      "remaining_bytes": 0,
+      "routines": 188,
+      "recompiled_routines": 188,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_b02",
+      "category": "Mission overlays",
+      "bytes": 77540,
+      "recompiled_bytes": 77540,
+      "remaining_bytes": 0,
+      "routines": 208,
+      "recompiled_routines": 208,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_b03",
+      "category": "Mission overlays",
+      "bytes": 70268,
+      "recompiled_bytes": 70268,
+      "remaining_bytes": 0,
+      "routines": 156,
+      "recompiled_routines": 156,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_b04",
+      "category": "Mission overlays",
+      "bytes": 127012,
+      "recompiled_bytes": 127012,
+      "remaining_bytes": 0,
+      "routines": 302,
+      "recompiled_routines": 302,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_b05",
+      "category": "Mission overlays",
+      "bytes": 57284,
+      "recompiled_bytes": 57284,
+      "remaining_bytes": 0,
+      "routines": 186,
+      "recompiled_routines": 186,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_b06",
+      "category": "Mission overlays",
+      "bytes": 82452,
+      "recompiled_bytes": 82452,
+      "remaining_bytes": 0,
+      "routines": 204,
+      "recompiled_routines": 204,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_b07",
+      "category": "Mission overlays",
+      "bytes": 93556,
+      "recompiled_bytes": 93556,
+      "remaining_bytes": 0,
+      "routines": 222,
+      "recompiled_routines": 222,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_c02",
+      "category": "Mission overlays",
+      "bytes": 100252,
+      "recompiled_bytes": 100252,
+      "remaining_bytes": 0,
+      "routines": 226,
+      "recompiled_routines": 226,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "jao_c02b",
+      "category": "Mission overlays",
+      "bytes": 87876,
+      "recompiled_bytes": 87876,
+      "remaining_bytes": 0,
+      "routines": 222,
+      "recompiled_routines": 222,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_a01",
+      "category": "Mission overlays",
+      "bytes": 89028,
+      "recompiled_bytes": 89028,
+      "remaining_bytes": 0,
+      "routines": 273,
+      "recompiled_routines": 273,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_a02",
+      "category": "Mission overlays",
+      "bytes": 136748,
+      "recompiled_bytes": 136748,
+      "remaining_bytes": 0,
+      "routines": 406,
+      "recompiled_routines": 406,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_a03",
+      "category": "Mission overlays",
+      "bytes": 45396,
+      "recompiled_bytes": 45396,
+      "remaining_bytes": 0,
+      "routines": 152,
+      "recompiled_routines": 152,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_a04",
+      "category": "Mission overlays",
+      "bytes": 52748,
+      "recompiled_bytes": 52748,
+      "remaining_bytes": 0,
+      "routines": 157,
+      "recompiled_routines": 157,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_a05",
+      "category": "Mission overlays",
+      "bytes": 78260,
+      "recompiled_bytes": 78260,
+      "remaining_bytes": 0,
+      "routines": 198,
+      "recompiled_routines": 198,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_a06",
+      "category": "Mission overlays",
+      "bytes": 131820,
+      "recompiled_bytes": 131820,
+      "remaining_bytes": 0,
+      "routines": 263,
+      "recompiled_routines": 263,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_a07",
+      "category": "Mission overlays",
+      "bytes": 113788,
+      "recompiled_bytes": 113788,
+      "remaining_bytes": 0,
+      "routines": 306,
+      "recompiled_routines": 306,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_a08",
+      "category": "Mission overlays",
+      "bytes": 92124,
+      "recompiled_bytes": 92124,
+      "remaining_bytes": 0,
+      "routines": 244,
+      "recompiled_routines": 244,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_a09",
+      "category": "Mission overlays",
+      "bytes": 128884,
+      "recompiled_bytes": 128884,
+      "remaining_bytes": 0,
+      "routines": 286,
+      "recompiled_routines": 286,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_a10",
+      "category": "Mission overlays",
+      "bytes": 77452,
+      "recompiled_bytes": 77452,
+      "remaining_bytes": 0,
+      "routines": 208,
+      "recompiled_routines": 208,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_a11",
+      "category": "Mission overlays",
+      "bytes": 80692,
+      "recompiled_bytes": 80692,
+      "remaining_bytes": 0,
+      "routines": 223,
+      "recompiled_routines": 223,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_a12",
+      "category": "Mission overlays",
+      "bytes": 28988,
+      "recompiled_bytes": 28988,
+      "remaining_bytes": 0,
+      "routines": 93,
+      "recompiled_routines": 93,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_b01",
+      "category": "Mission overlays",
+      "bytes": 80260,
+      "recompiled_bytes": 80260,
+      "remaining_bytes": 0,
+      "routines": 217,
+      "recompiled_routines": 217,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "ken_b02",
+      "category": "Mission overlays",
+      "bytes": 152460,
+      "recompiled_bytes": 152460,
+      "remaining_bytes": 0,
+      "routines": 347,
+      "recompiled_routines": 347,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "kor_b01",
+      "category": "Mission overlays",
+      "bytes": 79708,
+      "recompiled_bytes": 79708,
+      "remaining_bytes": 0,
+      "routines": 186,
+      "recompiled_routines": 186,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "kor_b02",
+      "category": "Mission overlays",
+      "bytes": 148916,
+      "recompiled_bytes": 148916,
+      "remaining_bytes": 0,
+      "routines": 308,
+      "recompiled_routines": 308,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "kor_b03",
+      "category": "Mission overlays",
+      "bytes": 119316,
+      "recompiled_bytes": 119316,
+      "remaining_bytes": 0,
+      "routines": 242,
+      "recompiled_routines": 242,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "kor_b04",
+      "category": "Mission overlays",
+      "bytes": 123636,
+      "recompiled_bytes": 123636,
+      "remaining_bytes": 0,
+      "routines": 261,
+      "recompiled_routines": 261,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "laptopapp",
+      "category": "UI & other apps",
+      "bytes": 8080,
+      "recompiled_bytes": 8080,
+      "remaining_bytes": 0,
+      "routines": 25,
+      "recompiled_routines": 25,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "liftgatesmashapp",
+      "category": "Minigame overlays",
+      "bytes": 13832,
+      "recompiled_bytes": 13832,
+      "remaining_bytes": 0,
+      "routines": 50,
+      "recompiled_routines": 50,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "magneticcraneapp",
+      "category": "Minigame overlays",
+      "bytes": 10072,
+      "recompiled_bytes": 10072,
+      "remaining_bytes": 0,
+      "routines": 33,
+      "recompiled_routines": 33,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "mapapp",
+      "category": "UI & other apps",
+      "bytes": 59144,
+      "recompiled_bytes": 59140,
+      "remaining_bytes": 4,
+      "routines": 76,
+      "recompiled_routines": 75,
+      "percent": 99.99323684566482,
+      "display_percent": "99.99"
+    },
+    {
+      "name": "mel_a01",
+      "category": "Mission overlays",
+      "bytes": 152276,
+      "recompiled_bytes": 152276,
+      "remaining_bytes": 0,
+      "routines": 405,
+      "recompiled_routines": 405,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "mel_a02",
+      "category": "Mission overlays",
+      "bytes": 167484,
+      "recompiled_bytes": 167484,
+      "remaining_bytes": 0,
+      "routines": 502,
+      "recompiled_routines": 502,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "mel_a03",
+      "category": "Mission overlays",
+      "bytes": 162428,
+      "recompiled_bytes": 162428,
+      "remaining_bytes": 0,
+      "routines": 518,
+      "recompiled_routines": 518,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "messengerapp",
+      "category": "UI & other apps",
+      "bytes": 6136,
+      "recompiled_bytes": 6136,
+      "remaining_bytes": 0,
+      "routines": 28,
+      "recompiled_routines": 28,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "mob_b01",
+      "category": "Mission overlays",
+      "bytes": 51468,
+      "recompiled_bytes": 51468,
+      "remaining_bytes": 0,
+      "routines": 148,
+      "recompiled_routines": 148,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "mob_b02",
+      "category": "Mission overlays",
+      "bytes": 126932,
+      "recompiled_bytes": 126932,
+      "remaining_bytes": 0,
+      "routines": 298,
+      "recompiled_routines": 298,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "mob_b03",
+      "category": "Mission overlays",
+      "bytes": 126876,
+      "recompiled_bytes": 126876,
+      "remaining_bytes": 0,
+      "routines": 284,
+      "recompiled_routines": 284,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "mob_b04",
+      "category": "Mission overlays",
+      "bytes": 140916,
+      "recompiled_bytes": 140916,
+      "remaining_bytes": 0,
+      "routines": 324,
+      "recompiled_routines": 324,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "molotovmakingapp",
+      "category": "Minigame overlays",
+      "bytes": 30176,
+      "recompiled_bytes": 30176,
+      "remaining_bytes": 0,
+      "routines": 54,
+      "recompiled_routines": 54,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "mpstatsapp",
+      "category": "UI & other apps",
+      "bytes": 1904,
+      "recompiled_bytes": 1904,
+      "remaining_bytes": 0,
+      "routines": 15,
+      "recompiled_routines": 15,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "packagerun",
+      "category": "Activities & races",
+      "bytes": 87732,
+      "recompiled_bytes": 87732,
+      "remaining_bytes": 0,
+      "routines": 175,
+      "recompiled_routines": 175,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "paramedic",
+      "category": "Activities & races",
+      "bytes": 32380,
+      "recompiled_bytes": 32380,
+      "remaining_bytes": 0,
+      "routines": 104,
+      "recompiled_routines": 104,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pausebriefapp",
+      "category": "UI & other apps",
+      "bytes": 5048,
+      "recompiled_bytes": 5048,
+      "remaining_bytes": 0,
+      "routines": 19,
+      "recompiled_routines": 19,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pausegameapp",
+      "category": "UI & other apps",
+      "bytes": 3576,
+      "recompiled_bytes": 3576,
+      "remaining_bytes": 0,
+      "routines": 15,
+      "recompiled_routines": 15,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pausestatsapp",
+      "category": "UI & other apps",
+      "bytes": 33200,
+      "recompiled_bytes": 33200,
+      "remaining_bytes": 0,
+      "routines": 78,
+      "recompiled_routines": 78,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pcjplayground01",
+      "category": "Activities & races",
+      "bytes": 22284,
+      "recompiled_bytes": 22284,
+      "remaining_bytes": 0,
+      "routines": 58,
+      "recompiled_routines": 58,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pcjplayground02",
+      "category": "Activities & races",
+      "bytes": 22156,
+      "recompiled_bytes": 22156,
+      "remaining_bytes": 0,
+      "routines": 58,
+      "recompiled_routines": 58,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pcjplayground03",
+      "category": "Activities & races",
+      "bytes": 22228,
+      "recompiled_bytes": 22228,
+      "remaining_bytes": 0,
+      "routines": 58,
+      "recompiled_routines": 58,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pcjplayground04",
+      "category": "Activities & races",
+      "bytes": 22276,
+      "recompiled_bytes": 22276,
+      "remaining_bytes": 0,
+      "routines": 58,
+      "recompiled_routines": 58,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pcjplayground05",
+      "category": "Activities & races",
+      "bytes": 22236,
+      "recompiled_bytes": 22236,
+      "remaining_bytes": 0,
+      "routines": 58,
+      "recompiled_routines": 58,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pcjplayground06",
+      "category": "Activities & races",
+      "bytes": 22244,
+      "recompiled_bytes": 22244,
+      "remaining_bytes": 0,
+      "routines": 58,
+      "recompiled_routines": 58,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pcjplayground07",
+      "category": "Activities & races",
+      "bytes": 22284,
+      "recompiled_bytes": 22284,
+      "remaining_bytes": 0,
+      "routines": 58,
+      "recompiled_routines": 58,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pcjplayground08",
+      "category": "Activities & races",
+      "bytes": 22284,
+      "recompiled_bytes": 22284,
+      "remaining_bytes": 0,
+      "routines": 58,
+      "recompiled_routines": 58,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pcjplayground09",
+      "category": "Activities & races",
+      "bytes": 22292,
+      "recompiled_bytes": 22292,
+      "remaining_bytes": 0,
+      "routines": 58,
+      "recompiled_routines": 58,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pcjplayground10",
+      "category": "Activities & races",
+      "bytes": 22284,
+      "recompiled_bytes": 22284,
+      "remaining_bytes": 0,
+      "routines": 58,
+      "recompiled_routines": 58,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "pcjplayground11",
+      "category": "Activities & races",
+      "bytes": 22276,
+      "recompiled_bytes": 22276,
+      "remaining_bytes": 0,
+      "routines": 58,
+      "recompiled_routines": 58,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "quicktradingapp",
+      "category": "UI & other apps",
+      "bytes": 6792,
+      "recompiled_bytes": 6792,
+      "remaining_bytes": 0,
+      "routines": 29,
+      "recompiled_routines": 29,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "races_algon",
+      "category": "Activities & races",
+      "bytes": 61100,
+      "recompiled_bytes": 61100,
+      "remaining_bytes": 0,
+      "routines": 159,
+      "recompiled_routines": 159,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "races_east",
+      "category": "Activities & races",
+      "bytes": 60356,
+      "recompiled_bytes": 60356,
+      "remaining_bytes": 0,
+      "routines": 159,
+      "recompiled_routines": 159,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "races_north",
+      "category": "Activities & races",
+      "bytes": 59348,
+      "recompiled_bytes": 59348,
+      "remaining_bytes": 0,
+      "routines": 159,
+      "recompiled_routines": 159,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "radioapp",
+      "category": "UI & other apps",
+      "bytes": 11720,
+      "recompiled_bytes": 11720,
+      "remaining_bytes": 0,
+      "routines": 42,
+      "recompiled_routines": 42,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "rampage",
+      "category": "Activities & races",
+      "bytes": 56548,
+      "recompiled_bytes": 56548,
+      "remaining_bytes": 0,
+      "routines": 131,
+      "recompiled_routines": 131,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "replaylevelapp",
+      "category": "UI & other apps",
+      "bytes": 23384,
+      "recompiled_bytes": 23384,
+      "remaining_bytes": 0,
+      "routines": 54,
+      "recompiled_routines": 54,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "restartengineapp",
+      "category": "UI & other apps",
+      "bytes": 8120,
+      "recompiled_bytes": 8120,
+      "remaining_bytes": 0,
+      "routines": 36,
+      "recompiled_routines": 36,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "rifleconstructionapp",
+      "category": "Minigame overlays",
+      "bytes": 14752,
+      "recompiled_bytes": 14752,
+      "remaining_bytes": 0,
+      "routines": 48,
+      "recompiled_routines": 48,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "rnd_ch01",
+      "category": "Mission overlays",
+      "bytes": 46612,
+      "recompiled_bytes": 46612,
+      "remaining_bytes": 0,
+      "routines": 110,
+      "recompiled_routines": 110,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "rnd_ch02",
+      "category": "Mission overlays",
+      "bytes": 60860,
+      "recompiled_bytes": 60860,
+      "remaining_bytes": 0,
+      "routines": 144,
+      "recompiled_routines": 144,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "rnd_ch03",
+      "category": "Mission overlays",
+      "bytes": 44652,
+      "recompiled_bytes": 44652,
+      "remaining_bytes": 0,
+      "routines": 124,
+      "recompiled_routines": 124,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "rnd_ch04",
+      "category": "Mission overlays",
+      "bytes": 56124,
+      "recompiled_bytes": 56124,
+      "remaining_bytes": 0,
+      "routines": 132,
+      "recompiled_routines": 132,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "rnd_ch05",
+      "category": "Mission overlays",
+      "bytes": 46972,
+      "recompiled_bytes": 46972,
+      "remaining_bytes": 0,
+      "routines": 106,
+      "recompiled_routines": 106,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "rnd_ch06",
+      "category": "Mission overlays",
+      "bytes": 49708,
+      "recompiled_bytes": 49708,
+      "remaining_bytes": 0,
+      "routines": 111,
+      "recompiled_routines": 111,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "rnd_ch07",
+      "category": "Mission overlays",
+      "bytes": 66356,
+      "recompiled_bytes": 66356,
+      "remaining_bytes": 0,
+      "routines": 151,
+      "recompiled_routines": 151,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "rnd_ch08",
+      "category": "Mission overlays",
+      "bytes": 14348,
+      "recompiled_bytes": 14348,
+      "remaining_bytes": 0,
+      "routines": 43,
+      "recompiled_routines": 43,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "safecrackingapp",
+      "category": "Minigame overlays",
+      "bytes": 13776,
+      "recompiled_bytes": 13776,
+      "remaining_bytes": 0,
+      "routines": 36,
+      "recompiled_routines": 36,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "safehouseapp",
+      "category": "UI & other apps",
+      "bytes": 88848,
+      "recompiled_bytes": 88848,
+      "remaining_bytes": 0,
+      "routines": 206,
+      "recompiled_routines": 206,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "safehousesalehandler",
+      "category": "UI & other apps",
+      "bytes": 8876,
+      "recompiled_bytes": 8876,
+      "remaining_bytes": 0,
+      "routines": 27,
+      "recompiled_routines": 27,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "scratchcardapp",
+      "category": "Minigame overlays",
+      "bytes": 24224,
+      "recompiled_bytes": 24224,
+      "remaining_bytes": 0,
+      "routines": 60,
+      "recompiled_routines": 60,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "scratchcards",
+      "category": "Minigame overlays",
+      "bytes": 10604,
+      "recompiled_bytes": 10604,
+      "remaining_bytes": 0,
+      "routines": 30,
+      "recompiled_routines": 30,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "scriptinit",
+      "category": "Mission overlays",
+      "bytes": 13076,
+      "recompiled_bytes": 13076,
+      "remaining_bytes": 0,
+      "routines": 12,
+      "recompiled_routines": 12,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "searchingbodiesapp",
+      "category": "Minigame overlays",
+      "bytes": 11008,
+      "recompiled_bytes": 11008,
+      "remaining_bytes": 0,
+      "routines": 47,
+      "recompiled_routines": 47,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "settingsapp",
+      "category": "UI & other apps",
+      "bytes": 11848,
+      "recompiled_bytes": 11848,
+      "remaining_bytes": 0,
+      "routines": 39,
+      "recompiled_routines": 39,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "shootingrange",
+      "category": "Activities & races",
+      "bytes": 119660,
+      "recompiled_bytes": 119660,
+      "remaining_bytes": 0,
+      "routines": 180,
+      "recompiled_routines": 180,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "singleplayerraceselectapp",
+      "category": "Activities & races",
+      "bytes": 6920,
+      "recompiled_bytes": 6920,
+      "remaining_bytes": 0,
+      "routines": 22,
+      "recompiled_routines": 22,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "sinkingcarapp",
+      "category": "Minigame overlays",
+      "bytes": 27760,
+      "recompiled_bytes": 27760,
+      "remaining_bytes": 0,
+      "routines": 66,
+      "recompiled_routines": 66,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "smashelectroniclockapp",
+      "category": "Minigame overlays",
+      "bytes": 16656,
+      "recompiled_bytes": 16656,
+      "remaining_bytes": 0,
+      "routines": 34,
+      "recompiled_routines": 34,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "tankfield",
+      "category": "Activities & races",
+      "bytes": 35076,
+      "recompiled_bytes": 35076,
+      "remaining_bytes": 0,
+      "routines": 89,
+      "recompiled_routines": 89,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "tattooingapp",
+      "category": "Minigame overlays",
+      "bytes": 34240,
+      "recompiled_bytes": 34240,
+      "remaining_bytes": 0,
+      "routines": 49,
+      "recompiled_routines": 49,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "tattooparlour",
+      "category": "Minigame overlays",
+      "bytes": 9172,
+      "recompiled_bytes": 9172,
+      "remaining_bytes": 0,
+      "routines": 31,
+      "recompiled_routines": 31,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "taxi",
+      "category": "Activities & races",
+      "bytes": 31756,
+      "recompiled_bytes": 31756,
+      "remaining_bytes": 0,
+      "routines": 75,
+      "recompiled_routines": 75,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "timetrial01",
+      "category": "Activities & races",
+      "bytes": 66876,
+      "recompiled_bytes": 66876,
+      "remaining_bytes": 0,
+      "routines": 147,
+      "recompiled_routines": 147,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "timetrial02",
+      "category": "Activities & races",
+      "bytes": 58612,
+      "recompiled_bytes": 58612,
+      "remaining_bytes": 0,
+      "routines": 133,
+      "recompiled_routines": 133,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "timetrial03",
+      "category": "Activities & races",
+      "bytes": 71972,
+      "recompiled_bytes": 71972,
+      "remaining_bytes": 0,
+      "routines": 157,
+      "recompiled_routines": 157,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "timetrial04",
+      "category": "Activities & races",
+      "bytes": 63444,
+      "recompiled_bytes": 63444,
+      "remaining_bytes": 0,
+      "routines": 145,
+      "recompiled_routines": 145,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "timetrial05",
+      "category": "Activities & races",
+      "bytes": 62996,
+      "recompiled_bytes": 62996,
+      "remaining_bytes": 0,
+      "routines": 145,
+      "recompiled_routines": 145,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "tradestatsapp",
+      "category": "UI & other apps",
+      "bytes": 47528,
+      "recompiled_bytes": 47528,
+      "remaining_bytes": 0,
+      "routines": 75,
+      "recompiled_routines": 75,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "turret",
+      "category": "Activities & races",
+      "bytes": 38388,
+      "recompiled_bytes": 38388,
+      "remaining_bytes": 0,
+      "routines": 97,
+      "recompiled_routines": 97,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "vancuttingapp",
+      "category": "Minigame overlays",
+      "bytes": 12136,
+      "recompiled_bytes": 12136,
+      "remaining_bytes": 0,
+      "routines": 38,
+      "recompiled_routines": 38,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "vigilante",
+      "category": "Activities & races",
+      "bytes": 53492,
+      "recompiled_bytes": 53492,
+      "remaining_bytes": 0,
+      "routines": 102,
+      "recompiled_routines": 102,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "vigilanteapp",
+      "category": "Activities & races",
+      "bytes": 7576,
+      "recompiled_bytes": 7576,
+      "remaining_bytes": 0,
+      "routines": 23,
+      "recompiled_routines": 23,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "warehouseoj",
+      "category": "Activities & races",
+      "bytes": 58804,
+      "recompiled_bytes": 58804,
+      "remaining_bytes": 0,
+      "routines": 130,
+      "recompiled_routines": 130,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "winchingapp",
+      "category": "Minigame overlays",
+      "bytes": 7656,
+      "recompiled_bytes": 7656,
+      "remaining_bytes": 0,
+      "routines": 23,
+      "recompiled_routines": 23,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "xin_01",
+      "category": "Mission overlays",
+      "bytes": 35324,
+      "recompiled_bytes": 35324,
+      "remaining_bytes": 0,
+      "routines": 107,
+      "recompiled_routines": 107,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "xin_02",
+      "category": "Mission overlays",
+      "bytes": 22652,
+      "recompiled_bytes": 22652,
+      "remaining_bytes": 0,
+      "routines": 71,
+      "recompiled_routines": 71,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "zho_a01",
+      "category": "Mission overlays",
+      "bytes": 92572,
+      "recompiled_bytes": 92572,
+      "remaining_bytes": 0,
+      "routines": 242,
+      "recompiled_routines": 242,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "zho_a02",
+      "category": "Mission overlays",
+      "bytes": 72116,
+      "recompiled_bytes": 72116,
+      "remaining_bytes": 0,
+      "routines": 181,
+      "recompiled_routines": 181,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "zho_a03",
+      "category": "Mission overlays",
+      "bytes": 60132,
+      "recompiled_bytes": 60132,
+      "remaining_bytes": 0,
+      "routines": 137,
+      "recompiled_routines": 137,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "zho_a04",
+      "category": "Mission overlays",
+      "bytes": 43828,
+      "recompiled_bytes": 43828,
+      "remaining_bytes": 0,
+      "routines": 116,
+      "recompiled_routines": 116,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "zho_b01",
+      "category": "Mission overlays",
+      "bytes": 90172,
+      "recompiled_bytes": 90172,
+      "remaining_bytes": 0,
+      "routines": 227,
+      "recompiled_routines": 227,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "zho_b02",
+      "category": "Mission overlays",
+      "bytes": 56772,
+      "recompiled_bytes": 56772,
+      "remaining_bytes": 0,
+      "routines": 168,
+      "recompiled_routines": 168,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "zho_b03",
+      "category": "Mission overlays",
+      "bytes": 74764,
+      "recompiled_bytes": 74764,
+      "remaining_bytes": 0,
+      "routines": 192,
+      "recompiled_routines": 192,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "zho_b04",
+      "category": "Mission overlays",
+      "bytes": 69532,
+      "recompiled_bytes": 69532,
+      "remaining_bytes": 0,
+      "routines": 166,
+      "recompiled_routines": 166,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    },
+    {
+      "name": "zho_c01",
+      "category": "Mission overlays",
+      "bytes": 176124,
+      "recompiled_bytes": 176124,
+      "remaining_bytes": 0,
+      "routines": 322,
+      "recompiled_routines": 322,
+      "percent": 100.0,
+      "display_percent": "100.00"
+    }
+  ],
+  "blocked": [
+    {
+      "module": "mapapp",
+      "bytes": 4,
+      "reason": "unsupported operation"
+    }
+  ],
+  "overlay_count": 166,
+  "generated_units": 250,
+  "verified_units": 250,
   "evidence": {
-    "private_import_table_sha256": "afb0144b5a1bdda7a20b6be21bec2f14eb8842eae8acc4a9445235e7119516d8",
-    "runtime_sources": [
-      {
-        "file": "runtime/sas/sas_glue.cpp",
-        "sha256": "bac20bebabd600a549ec5d7c0a8123eeec02ff2c5f79ea395459deac7a756927"
-      },
-      {
-        "file": "runtime/sas/SasAudio.cpp",
-        "sha256": "a71eed5ddcff17bdc70d84b21a2a84c388e9ba0703b51586d725bafc707589bc"
-      },
-      {
-        "file": "runtime/sas/SasReverb.cpp",
-        "sha256": "390bfce44cde3add2bae87973463cf40f19cab165e90a58e44ad4d0d03fe9b76"
-      },
-      {
-        "file": "runtime/src/core.cpp",
-        "sha256": "80f4a26b2761d5f767e3703c2ee527c3c6c33833ea9fd2c12b28f9a199b3761e"
-      },
-      {
-        "file": "runtime/src/game_hooks.cpp",
-        "sha256": "fd53aaff51e484816ff3c926f718b6c38b8a58b9cb46a5f64f3939f799de1677"
-      },
-      {
-        "file": "runtime/src/ge_gl.cpp",
-        "sha256": "8146438f01687809b8e9f77c08a78388134ff4312b342600f196f064c31f309b"
-      },
-      {
-        "file": "runtime/src/ge_render.cpp",
-        "sha256": "a0a7cf7e437b4e84207fd0b152c0dc697e08b15f44e4ec644f3c2614fe0eb8ea"
-      },
-      {
-        "file": "runtime/src/gl_funcs.cpp",
-        "sha256": "9c9315f5c3e50c1aa1906c179db37f2e0548816ec2ee8a40fa3652b30c64b80b"
-      },
-      {
-        "file": "runtime/src/hle_audio.cpp",
-        "sha256": "9d40d6db76a4180dc347590b9dc408ab97ea9287b3bfabd354ba012b1cdd1d38"
-      },
-      {
-        "file": "runtime/src/hle_display.cpp",
-        "sha256": "5ffaa3636331d75522c01a8152231731bdf5726ac5669bc5472a4078c5ca2564"
-      },
-      {
-        "file": "runtime/src/hle_extra.cpp",
-        "sha256": "f0a4034bd7daff9a46afc82fc93f3cb75a3038ba81deb9a4270ff4e8e58b992e"
-      },
-      {
-        "file": "runtime/src/hle_ge.cpp",
-        "sha256": "7a08edc7686b412d7dd3d6c148a169d77e12de7f607e530c2bb760533e1932df"
-      },
-      {
-        "file": "runtime/src/hle_intr.cpp",
-        "sha256": "4153172d41ac0845b70e89487622c899314a54f61b436ff0224c98b137b3ed1c"
-      },
-      {
-        "file": "runtime/src/hle_io.cpp",
-        "sha256": "289fe4a4810ad2df32f49f4614aaee54e8fdd61b92655e390b4283a08f523045"
-      },
-      {
-        "file": "runtime/src/hle_misc.cpp",
-        "sha256": "8d36166179dfe33d183749f11f0522a812a40eedc3de1d27138b4be7191c07d4"
-      },
-      {
-        "file": "runtime/src/hle_mpeg.cpp",
-        "sha256": "bd082cfa932fa6116bde6397ca0ba783e3f7a80971c69447f4365b2384bd5e21"
-      },
-      {
-        "file": "runtime/src/hle_net.cpp",
-        "sha256": "d05c37d818caf1d6ea19b71f9697a4f46ca42ce10bc90a981933743ab78f4b95"
-      },
-      {
-        "file": "runtime/src/hle_savedata.cpp",
-        "sha256": "bfcef5c174598e0a00b28b60a911fafb28c4207ff2cf613d22a9a33065d97d99"
-      },
-      {
-        "file": "runtime/src/kernel_misc.cpp",
-        "sha256": "ccdcb4fd2df4263341803dc18b313db88e3524cb754dbeefd17b2639709132af"
-      },
-      {
-        "file": "runtime/src/kernel_thread.cpp",
-        "sha256": "b84b1f0325449e86507fb1f2576cf7ef6f5c4f83bf93cf099a76311d274bb757"
-      },
-      {
-        "file": "runtime/src/main.cpp",
-        "sha256": "97797578d472879efe4c56b04edf064696307677d06f524e8f17fad1837eb959"
-      },
-      {
-        "file": "runtime/src/osd.cpp",
-        "sha256": "ab160275528f2fdabd6c92000b5039e2ab32d3b4d9520629b2ca3d7daffc199a"
-      },
-      {
-        "file": "runtime/src/platform.cpp",
-        "sha256": "0a3d9f980c68cfd1690aedb7b28ac68b92c38e67771ee01d42b85ac8dac37c8c"
-      },
-      {
-        "file": "runtime/src/savestate.cpp",
-        "sha256": "9f936c8dd6205ba203d626c7cede3c34661c844ec46b86fc9918cb15884ab06d"
-      },
-      {
-        "file": "runtime/src/settings.cpp",
-        "sha256": "fe206391b7784462b08a4b99fcd1c7b848e5cdd40e85cf90872077afc35b0c35"
-      },
-      {
-        "file": "runtime/vfpu/MIPSIntVFPU.cpp",
-        "sha256": "093c5dfdb51a318e81fed1372c2d48931743cd7463017e192305a2c5d4166de8"
-      },
-      {
-        "file": "runtime/vfpu/MIPSVFPUFallbacks.cpp",
-        "sha256": "2d7f0c9e71537c1ebb712161799a7f70ae30b806872e6495c6ec786780df9385"
-      },
-      {
-        "file": "runtime/vfpu/MIPSVFPUUtils.cpp",
-        "sha256": "c4e3b792bc1978b4b353581320f892562397a7517cf59db1c80eb322bb57185f"
-      },
-      {
-        "file": "runtime/vfpu/vfpu_glue.cpp",
-        "sha256": "45e960f7f1d66a11aca374274cfd111c0074724a8df0e2fabfbeae63a74049d1"
-      }
-    ]
-  }
+    "analysis_sha256": "65099130bf3f75385e2f49f2ee17351fdb1bfd0b4706d6df2302b04553dcbca0",
+    "private_build_recipe_sha256": "b67c551adf22cd5436b4910dcb4faf51b45d206567039b3d8800ebb0385fd740"
+  },
+  "limits": [
+    "Static translation and object compilation, not gameplay correctness or campaign completion",
+    "PSP service HLE coverage is a separate metric",
+    "One known unsupported candidate is suspected embedded data; it remains excluded pending formal code/data classification",
+    "Dynamic callback targets and analysis completeness are not proven by this percentage"
+  ],
+  "rounding": "Truncated to two decimal places; 100.00% only when no indexed bytes remain excluded"
 }

@@ -1,5 +1,11 @@
 # C++ mainline migration — 2026-11-02 (development milestone)
 
+## 2026-11-02 — Original PSP code-size progress
+
+- Replaced the primary HLE-binding metric with original PSP code recompilation coverage, weighted by original routine size.
+- Verified 34,800/34,801 indexed generated routines against compiled objects; one unsupported candidate stays excluded, so the display truncates to 99.99%.
+- Retained HLE bindings as separate diagnostics and documented static-coverage limits.
+
 ## 2026-11-02 — Full-title primary logo and C++ progress
 
 - Added CHINATOWN / WARS beneath the approved ReGTA lettering; existing CTW variants retained.

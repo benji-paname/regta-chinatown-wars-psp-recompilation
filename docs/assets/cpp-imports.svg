@@ -1,0 +1,330 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 690" role="img" aria-labelledby="title desc">
+<title id="title">PSP import source mappings — 80.56%</title>
+<desc id="desc">Green means an exact library and name provider exists in the C++ source. Grey means absent. This is not a percentage of gameplay completed or proof of correct behavior.</desc>
+<rect width="1100" height="690" rx="10" fill="#15191f"/>
+<text x="22" y="35" fill="#f2c35b" font-size="20" font-family="Arial,sans-serif" font-weight="bold">PSP import source mappings</text>
+<text x="1078" y="35" text-anchor="end" fill="#edf6ec" font-size="22" font-family="Arial,sans-serif">80.56% · 203 / 252</text>
+<rect x="18.00" y="56.00" width="515.11" height="296.92" fill="#1b2027" stroke="#818b96" stroke-width="1"/>
+<text x="25.00" y="74.00" fill="#f2f3f4" font-family="Arial,sans-serif" font-size="12" font-weight="bold">Kernel &amp; threads · 95.3%</text>
+<rect x="22.00" y="82.00" width="348.64" height="266.92" fill="#252b33" stroke="#15191f"><title>ThreadManForUser: 41/44 source mappings</title></rect>
+<text x="26.00" y="94.00" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">ThreadManForUser</text>
+<rect class="mapped" x="24.00" y="101.00" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="66.95" y="101.00" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="109.91" y="101.00" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="152.86" y="101.00" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="195.82" y="101.00" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="238.77" y="101.00" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="281.73" y="101.00" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="324.68" y="101.00" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="24.00" y="141.82" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="66.95" y="141.82" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="109.91" y="141.82" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="152.86" y="141.82" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="195.82" y="141.82" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="238.77" y="141.82" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="281.73" y="141.82" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="324.68" y="141.82" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="24.00" y="182.64" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="66.95" y="182.64" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="109.91" y="182.64" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="152.86" y="182.64" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="195.82" y="182.64" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="238.77" y="182.64" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="281.73" y="182.64" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="324.68" y="182.64" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="24.00" y="223.46" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="66.95" y="223.46" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="109.91" y="223.46" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="152.86" y="223.46" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="195.82" y="223.46" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="238.77" y="223.46" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="281.73" y="223.46" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="324.68" y="223.46" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="24.00" y="264.28" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="66.95" y="264.28" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="109.91" y="264.28" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="152.86" y="264.28" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="195.82" y="264.28" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="238.77" y="264.28" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="281.73" y="264.28" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="324.68" y="264.28" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="mapped" x="24.00" y="305.10" width="41.95" height="39.82" fill="#45ad59"><title>ThreadManForUser: 41/44 source mappings · mapped</title></rect>
+<rect class="missing" x="66.95" y="305.10" width="41.95" height="39.82" fill="#555c66"><title>ThreadManForUser: 41/44 source mappings · missing</title></rect>
+<rect class="missing" x="109.91" y="305.10" width="41.95" height="39.82" fill="#555c66"><title>ThreadManForUser: 41/44 source mappings · missing</title></rect>
+<rect class="missing" x="152.86" y="305.10" width="41.95" height="39.82" fill="#555c66"><title>ThreadManForUser: 41/44 source mappings · missing</title></rect>
+<rect x="370.64" y="82.00" width="158.47" height="93.42" fill="#252b33" stroke="#15191f"><title>SysMemUserForUser: 7/7 source mappings</title></rect>
+<text x="374.64" y="94.00" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">SysMemUserForUser</text>
+<rect class="mapped" x="372.64" y="101.00" width="37.37" height="34.71" fill="#45ad59"><title>SysMemUserForUser: 7/7 source mappings · mapped</title></rect>
+<rect class="mapped" x="411.01" y="101.00" width="37.37" height="34.71" fill="#45ad59"><title>SysMemUserForUser: 7/7 source mappings · mapped</title></rect>
+<rect class="mapped" x="449.38" y="101.00" width="37.37" height="34.71" fill="#45ad59"><title>SysMemUserForUser: 7/7 source mappings · mapped</title></rect>
+<rect class="mapped" x="487.74" y="101.00" width="37.37" height="34.71" fill="#45ad59"><title>SysMemUserForUser: 7/7 source mappings · mapped</title></rect>
+<rect class="mapped" x="372.64" y="136.71" width="37.37" height="34.71" fill="#45ad59"><title>SysMemUserForUser: 7/7 source mappings · mapped</title></rect>
+<rect class="mapped" x="411.01" y="136.71" width="37.37" height="34.71" fill="#45ad59"><title>SysMemUserForUser: 7/7 source mappings · mapped</title></rect>
+<rect class="mapped" x="449.38" y="136.71" width="37.37" height="34.71" fill="#45ad59"><title>SysMemUserForUser: 7/7 source mappings · mapped</title></rect>
+<rect x="370.64" y="175.42" width="158.47" height="66.73" fill="#252b33" stroke="#15191f"><title>ModuleMgrForUser: 5/5 source mappings</title></rect>
+<text x="374.64" y="187.42" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">ModuleMgrForUser</text>
+<rect class="mapped" x="372.64" y="194.42" width="29.69" height="43.73" fill="#45ad59"><title>ModuleMgrForUser: 5/5 source mappings · mapped</title></rect>
+<rect class="mapped" x="403.33" y="194.42" width="29.69" height="43.73" fill="#45ad59"><title>ModuleMgrForUser: 5/5 source mappings · mapped</title></rect>
+<rect class="mapped" x="434.03" y="194.42" width="29.69" height="43.73" fill="#45ad59"><title>ModuleMgrForUser: 5/5 source mappings · mapped</title></rect>
+<rect class="mapped" x="464.72" y="194.42" width="29.69" height="43.73" fill="#45ad59"><title>ModuleMgrForUser: 5/5 source mappings · mapped</title></rect>
+<rect class="mapped" x="495.42" y="194.42" width="29.69" height="43.73" fill="#45ad59"><title>ModuleMgrForUser: 5/5 source mappings · mapped</title></rect>
+<rect x="370.64" y="242.15" width="59.43" height="106.77" fill="#252b33" stroke="#15191f"><title>InterruptManager: 3/3 source mappings</title></rect>
+<text x="374.64" y="254.15" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">Interrup…</text>
+<rect class="mapped" x="372.64" y="261.15" width="26.21" height="41.38" fill="#45ad59"><title>InterruptManager: 3/3 source mappings · mapped</title></rect>
+<rect class="mapped" x="399.85" y="261.15" width="26.21" height="41.38" fill="#45ad59"><title>InterruptManager: 3/3 source mappings · mapped</title></rect>
+<rect class="mapped" x="372.64" y="303.53" width="26.21" height="41.38" fill="#45ad59"><title>InterruptManager: 3/3 source mappings · mapped</title></rect>
+<rect x="430.07" y="242.15" width="59.43" height="106.77" fill="#252b33" stroke="#15191f"><title>Kernel_Library: 3/3 source mappings</title></rect>
+<text x="434.07" y="254.15" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">Kernel_L…</text>
+<rect class="mapped" x="432.07" y="261.15" width="26.21" height="41.38" fill="#45ad59"><title>Kernel_Library: 3/3 source mappings · mapped</title></rect>
+<rect class="mapped" x="459.28" y="261.15" width="26.21" height="41.38" fill="#45ad59"><title>Kernel_Library: 3/3 source mappings · mapped</title></rect>
+<rect class="mapped" x="432.07" y="303.53" width="26.21" height="41.38" fill="#45ad59"><title>Kernel_Library: 3/3 source mappings · mapped</title></rect>
+<rect x="489.49" y="242.15" width="39.62" height="106.77" fill="#252b33" stroke="#15191f"><title>LoadExecForUser: 2/2 source mappings</title></rect>
+<rect class="mapped" x="491.49" y="244.15" width="33.62" height="49.88" fill="#45ad59"><title>LoadExecForUser: 2/2 source mappings · mapped</title></rect>
+<rect class="mapped" x="491.49" y="295.03" width="33.62" height="49.88" fill="#45ad59"><title>LoadExecForUser: 2/2 source mappings · mapped</title></rect>
+<rect x="18.00" y="352.92" width="515.11" height="269.08" fill="#1b2027" stroke="#818b96" stroke-width="1"/>
+<text x="25.00" y="370.92" fill="#f2f3f4" font-family="Arial,sans-serif" font-size="12" font-weight="bold">Network · 31.0%</text>
+<rect x="22.00" y="378.92" width="157.38" height="239.08" fill="#252b33" stroke="#15191f"><title>sceNetInet: 0/18 source mappings</title></rect>
+<text x="26.00" y="390.92" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceNetInet</text>
+<rect class="missing" x="24.00" y="397.92" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="62.09" y="397.92" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="100.19" y="397.92" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="138.28" y="397.92" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="24.00" y="441.33" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="62.09" y="441.33" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="100.19" y="441.33" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="138.28" y="441.33" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="24.00" y="484.75" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="62.09" y="484.75" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="100.19" y="484.75" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="138.28" y="484.75" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="24.00" y="528.17" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="62.09" y="528.17" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="100.19" y="528.17" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="138.28" y="528.17" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="24.00" y="571.58" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect class="missing" x="62.09" y="571.58" width="37.09" height="42.42" fill="#555c66"><title>sceNetInet: 0/18 source mappings · missing</title></rect>
+<rect x="179.38" y="378.92" width="87.43" height="239.08" fill="#252b33" stroke="#15191f"><title>sceNetAdhocctl: 6/10 source mappings</title></rect>
+<text x="183.38" y="390.92" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceNetAdhocctl</text>
+<rect class="mapped" x="181.38" y="397.92" width="40.22" height="42.42" fill="#45ad59"><title>sceNetAdhocctl: 6/10 source mappings · mapped</title></rect>
+<rect class="mapped" x="222.60" y="397.92" width="40.22" height="42.42" fill="#45ad59"><title>sceNetAdhocctl: 6/10 source mappings · mapped</title></rect>
+<rect class="mapped" x="181.38" y="441.33" width="40.22" height="42.42" fill="#45ad59"><title>sceNetAdhocctl: 6/10 source mappings · mapped</title></rect>
+<rect class="mapped" x="222.60" y="441.33" width="40.22" height="42.42" fill="#45ad59"><title>sceNetAdhocctl: 6/10 source mappings · mapped</title></rect>
+<rect class="mapped" x="181.38" y="484.75" width="40.22" height="42.42" fill="#45ad59"><title>sceNetAdhocctl: 6/10 source mappings · mapped</title></rect>
+<rect class="mapped" x="222.60" y="484.75" width="40.22" height="42.42" fill="#45ad59"><title>sceNetAdhocctl: 6/10 source mappings · mapped</title></rect>
+<rect class="missing" x="181.38" y="528.17" width="40.22" height="42.42" fill="#555c66"><title>sceNetAdhocctl: 6/10 source mappings · missing</title></rect>
+<rect class="missing" x="222.60" y="528.17" width="40.22" height="42.42" fill="#555c66"><title>sceNetAdhocctl: 6/10 source mappings · missing</title></rect>
+<rect class="missing" x="181.38" y="571.58" width="40.22" height="42.42" fill="#555c66"><title>sceNetAdhocctl: 6/10 source mappings · missing</title></rect>
+<rect class="missing" x="222.60" y="571.58" width="40.22" height="42.42" fill="#555c66"><title>sceNetAdhocctl: 6/10 source mappings · missing</title></rect>
+<rect x="266.81" y="378.92" width="78.69" height="239.08" fill="#252b33" stroke="#15191f"><title>sceNetAdhocMatching: 7/9 source mappings</title></rect>
+<text x="270.81" y="390.92" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceNetAdhoc…</text>
+<rect class="mapped" x="268.81" y="397.92" width="35.84" height="42.42" fill="#45ad59"><title>sceNetAdhocMatching: 7/9 source mappings · mapped</title></rect>
+<rect class="mapped" x="305.66" y="397.92" width="35.84" height="42.42" fill="#45ad59"><title>sceNetAdhocMatching: 7/9 source mappings · mapped</title></rect>
+<rect class="mapped" x="268.81" y="441.33" width="35.84" height="42.42" fill="#45ad59"><title>sceNetAdhocMatching: 7/9 source mappings · mapped</title></rect>
+<rect class="mapped" x="305.66" y="441.33" width="35.84" height="42.42" fill="#45ad59"><title>sceNetAdhocMatching: 7/9 source mappings · mapped</title></rect>
+<rect class="mapped" x="268.81" y="484.75" width="35.84" height="42.42" fill="#45ad59"><title>sceNetAdhocMatching: 7/9 source mappings · mapped</title></rect>
+<rect class="mapped" x="305.66" y="484.75" width="35.84" height="42.42" fill="#45ad59"><title>sceNetAdhocMatching: 7/9 source mappings · mapped</title></rect>
+<rect class="mapped" x="268.81" y="528.17" width="35.84" height="42.42" fill="#45ad59"><title>sceNetAdhocMatching: 7/9 source mappings · mapped</title></rect>
+<rect class="missing" x="305.66" y="528.17" width="35.84" height="42.42" fill="#555c66"><title>sceNetAdhocMatching: 7/9 source mappings · missing</title></rect>
+<rect class="missing" x="268.81" y="571.58" width="35.84" height="42.42" fill="#555c66"><title>sceNetAdhocMatching: 7/9 source mappings · missing</title></rect>
+<rect x="345.50" y="378.92" width="100.15" height="125.23" fill="#252b33" stroke="#15191f"><title>sceNetAdhoc: 2/6 source mappings</title></rect>
+<text x="349.50" y="390.92" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceNetAdhoc</text>
+<rect class="mapped" x="347.50" y="397.92" width="30.72" height="50.62" fill="#45ad59"><title>sceNetAdhoc: 2/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="379.22" y="397.92" width="30.72" height="50.62" fill="#45ad59"><title>sceNetAdhoc: 2/6 source mappings · mapped</title></rect>
+<rect class="missing" x="410.94" y="397.92" width="30.72" height="50.62" fill="#555c66"><title>sceNetAdhoc: 2/6 source mappings · missing</title></rect>
+<rect class="missing" x="347.50" y="449.53" width="30.72" height="50.62" fill="#555c66"><title>sceNetAdhoc: 2/6 source mappings · missing</title></rect>
+<rect class="missing" x="379.22" y="449.53" width="30.72" height="50.62" fill="#555c66"><title>sceNetAdhoc: 2/6 source mappings · missing</title></rect>
+<rect class="missing" x="410.94" y="449.53" width="30.72" height="50.62" fill="#555c66"><title>sceNetAdhoc: 2/6 source mappings · missing</title></rect>
+<rect x="445.65" y="378.92" width="83.46" height="125.23" fill="#252b33" stroke="#15191f"><title>sceNetApctl: 0/5 source mappings</title></rect>
+<text x="449.65" y="390.92" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceNetApctl</text>
+<rect class="missing" x="447.65" y="397.92" width="38.23" height="33.41" fill="#555c66"><title>sceNetApctl: 0/5 source mappings · missing</title></rect>
+<rect class="missing" x="486.88" y="397.92" width="38.23" height="33.41" fill="#555c66"><title>sceNetApctl: 0/5 source mappings · missing</title></rect>
+<rect class="missing" x="447.65" y="432.33" width="38.23" height="33.41" fill="#555c66"><title>sceNetApctl: 0/5 source mappings · missing</title></rect>
+<rect class="missing" x="486.88" y="432.33" width="38.23" height="33.41" fill="#555c66"><title>sceNetApctl: 0/5 source mappings · missing</title></rect>
+<rect class="missing" x="447.65" y="466.74" width="38.23" height="33.41" fill="#555c66"><title>sceNetApctl: 0/5 source mappings · missing</title></rect>
+<rect x="345.50" y="504.15" width="91.80" height="113.85" fill="#252b33" stroke="#15191f"><title>sceNetResolver: 0/5 source mappings</title></rect>
+<text x="349.50" y="516.15" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceNetResolver</text>
+<rect class="missing" x="347.50" y="523.15" width="27.93" height="44.92" fill="#555c66"><title>sceNetResolver: 0/5 source mappings · missing</title></rect>
+<rect class="missing" x="376.44" y="523.15" width="27.93" height="44.92" fill="#555c66"><title>sceNetResolver: 0/5 source mappings · missing</title></rect>
+<rect class="missing" x="405.37" y="523.15" width="27.93" height="44.92" fill="#555c66"><title>sceNetResolver: 0/5 source mappings · missing</title></rect>
+<rect class="missing" x="347.50" y="569.08" width="27.93" height="44.92" fill="#555c66"><title>sceNetResolver: 0/5 source mappings · missing</title></rect>
+<rect class="missing" x="376.44" y="569.08" width="27.93" height="44.92" fill="#555c66"><title>sceNetResolver: 0/5 source mappings · missing</title></rect>
+<rect x="437.31" y="504.15" width="91.80" height="91.08" fill="#252b33" stroke="#15191f"><title>sceNet: 3/4 source mappings</title></rect>
+<text x="441.31" y="516.15" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceNet</text>
+<rect class="mapped" x="439.31" y="523.15" width="27.93" height="33.54" fill="#45ad59"><title>sceNet: 3/4 source mappings · mapped</title></rect>
+<rect class="mapped" x="468.24" y="523.15" width="27.93" height="33.54" fill="#45ad59"><title>sceNet: 3/4 source mappings · mapped</title></rect>
+<rect class="mapped" x="497.18" y="523.15" width="27.93" height="33.54" fill="#45ad59"><title>sceNet: 3/4 source mappings · mapped</title></rect>
+<rect class="missing" x="439.31" y="557.69" width="27.93" height="33.54" fill="#555c66"><title>sceNet: 3/4 source mappings · missing</title></rect>
+<rect x="437.31" y="595.23" width="91.80" height="22.77" fill="#252b33" stroke="#15191f"><title>sceWlanDrv: 0/1 source mappings</title></rect>
+<rect class="missing" x="439.31" y="597.23" width="27.93" height="16.77" fill="#555c66"><title>sceWlanDrv: 0/1 source mappings · missing</title></rect>
+<rect x="533.11" y="56.00" width="219.56" height="566.00" fill="#1b2027" stroke="#818b96" stroke-width="1"/>
+<text x="540.11" y="74.00" fill="#f2f3f4" font-family="Arial,sans-serif" font-size="12" font-weight="bold">Audio · 100.0%</text>
+<rect x="537.11" y="82.00" width="211.56" height="278.31" fill="#252b33" stroke="#15191f"><title>sceSasCore: 27/27 source mappings</title></rect>
+<text x="541.11" y="94.00" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceSasCore</text>
+<rect class="mapped" x="539.11" y="101.00" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="580.42" y="101.00" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="621.73" y="101.00" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="663.04" y="101.00" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="704.36" y="101.00" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="539.11" y="143.72" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="580.42" y="143.72" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="621.73" y="143.72" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="663.04" y="143.72" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="704.36" y="143.72" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="539.11" y="186.44" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="580.42" y="186.44" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="621.73" y="186.44" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="663.04" y="186.44" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="704.36" y="186.44" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="539.11" y="229.15" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="580.42" y="229.15" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="621.73" y="229.15" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="663.04" y="229.15" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="704.36" y="229.15" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="539.11" y="271.87" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="580.42" y="271.87" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="621.73" y="271.87" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="663.04" y="271.87" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="704.36" y="271.87" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="539.11" y="314.59" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect class="mapped" x="580.42" y="314.59" width="40.31" height="41.72" fill="#45ad59"><title>sceSasCore: 27/27 source mappings · mapped</title></rect>
+<rect x="537.11" y="360.31" width="211.56" height="144.31" fill="#252b33" stroke="#15191f"><title>sceAtrac3plus: 14/14 source mappings</title></rect>
+<text x="541.11" y="372.31" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceAtrac3plus</text>
+<rect class="mapped" x="539.11" y="379.31" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect class="mapped" x="580.42" y="379.31" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect class="mapped" x="621.73" y="379.31" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect class="mapped" x="663.04" y="379.31" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect class="mapped" x="704.36" y="379.31" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect class="mapped" x="539.11" y="420.08" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect class="mapped" x="580.42" y="420.08" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect class="mapped" x="621.73" y="420.08" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect class="mapped" x="663.04" y="420.08" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect class="mapped" x="704.36" y="420.08" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect class="mapped" x="539.11" y="460.85" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect class="mapped" x="580.42" y="460.85" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect class="mapped" x="621.73" y="460.85" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect class="mapped" x="663.04" y="460.85" width="40.31" height="39.77" fill="#45ad59"><title>sceAtrac3plus: 14/14 source mappings · mapped</title></rect>
+<rect x="537.11" y="504.62" width="211.56" height="113.38" fill="#252b33" stroke="#15191f"><title>sceAudio: 11/11 source mappings</title></rect>
+<text x="541.11" y="516.62" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceAudio</text>
+<rect class="mapped" x="539.11" y="523.62" width="40.31" height="29.46" fill="#45ad59"><title>sceAudio: 11/11 source mappings · mapped</title></rect>
+<rect class="mapped" x="580.42" y="523.62" width="40.31" height="29.46" fill="#45ad59"><title>sceAudio: 11/11 source mappings · mapped</title></rect>
+<rect class="mapped" x="621.73" y="523.62" width="40.31" height="29.46" fill="#45ad59"><title>sceAudio: 11/11 source mappings · mapped</title></rect>
+<rect class="mapped" x="663.04" y="523.62" width="40.31" height="29.46" fill="#45ad59"><title>sceAudio: 11/11 source mappings · mapped</title></rect>
+<rect class="mapped" x="704.36" y="523.62" width="40.31" height="29.46" fill="#45ad59"><title>sceAudio: 11/11 source mappings · mapped</title></rect>
+<rect class="mapped" x="539.11" y="554.08" width="40.31" height="29.46" fill="#45ad59"><title>sceAudio: 11/11 source mappings · mapped</title></rect>
+<rect class="mapped" x="580.42" y="554.08" width="40.31" height="29.46" fill="#45ad59"><title>sceAudio: 11/11 source mappings · mapped</title></rect>
+<rect class="mapped" x="621.73" y="554.08" width="40.31" height="29.46" fill="#45ad59"><title>sceAudio: 11/11 source mappings · mapped</title></rect>
+<rect class="mapped" x="663.04" y="554.08" width="40.31" height="29.46" fill="#45ad59"><title>sceAudio: 11/11 source mappings · mapped</title></rect>
+<rect class="mapped" x="704.36" y="554.08" width="40.31" height="29.46" fill="#45ad59"><title>sceAudio: 11/11 source mappings · mapped</title></rect>
+<rect class="mapped" x="539.11" y="584.54" width="40.31" height="29.46" fill="#45ad59"><title>sceAudio: 11/11 source mappings · mapped</title></rect>
+<rect x="752.67" y="56.00" width="329.33" height="283.00" fill="#1b2027" stroke="#818b96" stroke-width="1"/>
+<text x="759.67" y="74.00" fill="#f2f3f4" font-family="Arial,sans-serif" font-size="12" font-weight="bold">Input &amp; system · 92.3%</text>
+<rect x="756.67" y="82.00" width="181.26" height="184.00" fill="#252b33" stroke="#15191f"><title>sceUtility: 15/16 source mappings</title></rect>
+<text x="760.67" y="94.00" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceUtility</text>
+<rect class="mapped" x="758.67" y="101.00" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="793.92" y="101.00" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="829.17" y="101.00" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="864.43" y="101.00" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="899.68" y="101.00" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="758.67" y="141.50" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="793.92" y="141.50" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="829.17" y="141.50" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="864.43" y="141.50" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="899.68" y="141.50" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="758.67" y="182.00" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="793.92" y="182.00" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="829.17" y="182.00" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="864.43" y="182.00" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="mapped" x="899.68" y="182.00" width="34.25" height="39.50" fill="#45ad59"><title>sceUtility: 15/16 source mappings · mapped</title></rect>
+<rect class="missing" x="758.67" y="222.50" width="34.25" height="39.50" fill="#555c66"><title>sceUtility: 15/16 source mappings · missing</title></rect>
+<rect x="756.67" y="266.00" width="181.26" height="69.00" fill="#252b33" stroke="#15191f"><title>UtilsForUser: 6/6 source mappings</title></rect>
+<text x="760.67" y="278.00" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">UtilsForUser</text>
+<rect class="mapped" x="758.67" y="285.00" width="34.25" height="22.50" fill="#45ad59"><title>UtilsForUser: 6/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="793.92" y="285.00" width="34.25" height="22.50" fill="#45ad59"><title>UtilsForUser: 6/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="829.17" y="285.00" width="34.25" height="22.50" fill="#45ad59"><title>UtilsForUser: 6/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="864.43" y="285.00" width="34.25" height="22.50" fill="#45ad59"><title>UtilsForUser: 6/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="899.68" y="285.00" width="34.25" height="22.50" fill="#45ad59"><title>UtilsForUser: 6/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="758.67" y="308.50" width="34.25" height="22.50" fill="#45ad59"><title>UtilsForUser: 6/6 source mappings · mapped</title></rect>
+<rect x="937.93" y="82.00" width="140.07" height="74.41" fill="#252b33" stroke="#15191f"><title>sceRtc: 5/5 source mappings</title></rect>
+<text x="941.93" y="94.00" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceRtc</text>
+<rect class="mapped" x="939.93" y="101.00" width="32.77" height="25.21" fill="#45ad59"><title>sceRtc: 5/5 source mappings · mapped</title></rect>
+<rect class="mapped" x="973.70" y="101.00" width="32.77" height="25.21" fill="#45ad59"><title>sceRtc: 5/5 source mappings · mapped</title></rect>
+<rect class="mapped" x="1007.47" y="101.00" width="32.77" height="25.21" fill="#45ad59"><title>sceRtc: 5/5 source mappings · mapped</title></rect>
+<rect class="mapped" x="1041.23" y="101.00" width="32.77" height="25.21" fill="#45ad59"><title>sceRtc: 5/5 source mappings · mapped</title></rect>
+<rect class="mapped" x="939.93" y="127.21" width="32.77" height="25.21" fill="#45ad59"><title>sceRtc: 5/5 source mappings · mapped</title></rect>
+<rect x="937.93" y="156.41" width="140.07" height="74.41" fill="#252b33" stroke="#15191f"><title>sceSuspendForUser: 5/5 source mappings</title></rect>
+<text x="941.93" y="168.41" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceSuspendForUser</text>
+<rect class="mapped" x="939.93" y="175.41" width="32.77" height="25.21" fill="#45ad59"><title>sceSuspendForUser: 5/5 source mappings · mapped</title></rect>
+<rect class="mapped" x="973.70" y="175.41" width="32.77" height="25.21" fill="#45ad59"><title>sceSuspendForUser: 5/5 source mappings · mapped</title></rect>
+<rect class="mapped" x="1007.47" y="175.41" width="32.77" height="25.21" fill="#45ad59"><title>sceSuspendForUser: 5/5 source mappings · mapped</title></rect>
+<rect class="mapped" x="1041.23" y="175.41" width="32.77" height="25.21" fill="#45ad59"><title>sceSuspendForUser: 5/5 source mappings · mapped</title></rect>
+<rect class="mapped" x="939.93" y="201.62" width="32.77" height="25.21" fill="#45ad59"><title>sceSuspendForUser: 5/5 source mappings · mapped</title></rect>
+<rect x="937.93" y="230.82" width="60.03" height="104.18" fill="#252b33" stroke="#15191f"><title>sceCtrl: 3/3 source mappings</title></rect>
+<text x="941.93" y="242.82" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceCtrl</text>
+<rect class="mapped" x="939.93" y="249.82" width="26.51" height="40.09" fill="#45ad59"><title>sceCtrl: 3/3 source mappings · mapped</title></rect>
+<rect class="mapped" x="967.45" y="249.82" width="26.51" height="40.09" fill="#45ad59"><title>sceCtrl: 3/3 source mappings · mapped</title></rect>
+<rect class="mapped" x="939.93" y="290.91" width="26.51" height="40.09" fill="#45ad59"><title>sceCtrl: 3/3 source mappings · mapped</title></rect>
+<rect x="997.96" y="230.82" width="60.03" height="104.18" fill="#252b33" stroke="#15191f"><title>scePower: 1/3 source mappings</title></rect>
+<text x="1001.96" y="242.82" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">scePower</text>
+<rect class="mapped" x="999.96" y="249.82" width="26.51" height="40.09" fill="#45ad59"><title>scePower: 1/3 source mappings · mapped</title></rect>
+<rect class="missing" x="1027.48" y="249.82" width="26.51" height="40.09" fill="#555c66"><title>scePower: 1/3 source mappings · missing</title></rect>
+<rect class="missing" x="999.96" y="290.91" width="26.51" height="40.09" fill="#555c66"><title>scePower: 1/3 source mappings · missing</title></rect>
+<rect x="1057.99" y="230.82" width="20.01" height="104.18" fill="#252b33" stroke="#15191f"><title>sceImpose: 1/1 source mappings</title></rect>
+<rect class="mapped" x="1059.99" y="232.82" width="14.01" height="98.18" fill="#45ad59"><title>sceImpose: 1/1 source mappings · mapped</title></rect>
+<rect x="752.67" y="339.00" width="228.00" height="283.00" fill="#1b2027" stroke="#818b96" stroke-width="1"/>
+<text x="759.67" y="357.00" fill="#f2f3f4" font-family="Arial,sans-serif" font-size="12" font-weight="bold">Files &amp; media · 96.3%</text>
+<rect x="756.67" y="365.00" width="220.00" height="140.56" fill="#252b33" stroke="#15191f"><title>IoFileMgrForUser: 15/15 source mappings</title></rect>
+<text x="760.67" y="377.00" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">IoFileMgrForUser</text>
+<rect class="mapped" x="758.67" y="384.00" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="794.50" y="384.00" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="830.33" y="384.00" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="866.17" y="384.00" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="902.00" y="384.00" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="937.83" y="384.00" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="758.67" y="423.52" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="794.50" y="423.52" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="830.33" y="423.52" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="866.17" y="423.52" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="902.00" y="423.52" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="937.83" y="423.52" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="758.67" y="463.04" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="794.50" y="463.04" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect class="mapped" x="830.33" y="463.04" width="34.83" height="38.52" fill="#45ad59"><title>IoFileMgrForUser: 15/15 source mappings · mapped</title></rect>
+<rect x="756.67" y="505.56" width="128.33" height="112.44" fill="#252b33" stroke="#15191f"><title>sceUmdUser: 6/7 source mappings</title></rect>
+<text x="760.67" y="517.56" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceUmdUser</text>
+<rect class="mapped" x="758.67" y="524.56" width="29.83" height="44.22" fill="#45ad59"><title>sceUmdUser: 6/7 source mappings · mapped</title></rect>
+<rect class="mapped" x="789.50" y="524.56" width="29.83" height="44.22" fill="#45ad59"><title>sceUmdUser: 6/7 source mappings · mapped</title></rect>
+<rect class="mapped" x="820.33" y="524.56" width="29.83" height="44.22" fill="#45ad59"><title>sceUmdUser: 6/7 source mappings · mapped</title></rect>
+<rect class="mapped" x="851.17" y="524.56" width="29.83" height="44.22" fill="#45ad59"><title>sceUmdUser: 6/7 source mappings · mapped</title></rect>
+<rect class="mapped" x="758.67" y="569.78" width="29.83" height="44.22" fill="#45ad59"><title>sceUmdUser: 6/7 source mappings · mapped</title></rect>
+<rect class="mapped" x="789.50" y="569.78" width="29.83" height="44.22" fill="#45ad59"><title>sceUmdUser: 6/7 source mappings · mapped</title></rect>
+<rect class="missing" x="820.33" y="569.78" width="29.83" height="44.22" fill="#555c66"><title>sceUmdUser: 6/7 source mappings · missing</title></rect>
+<rect x="885.00" y="505.56" width="91.67" height="67.47" fill="#252b33" stroke="#15191f"><title>StdioForUser: 3/3 source mappings</title></rect>
+<text x="889.00" y="517.56" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">StdioForUser</text>
+<rect class="mapped" x="887.00" y="524.56" width="27.89" height="44.47" fill="#45ad59"><title>StdioForUser: 3/3 source mappings · mapped</title></rect>
+<rect class="mapped" x="915.89" y="524.56" width="27.89" height="44.47" fill="#45ad59"><title>StdioForUser: 3/3 source mappings · mapped</title></rect>
+<rect class="mapped" x="944.78" y="524.56" width="27.89" height="44.47" fill="#45ad59"><title>StdioForUser: 3/3 source mappings · mapped</title></rect>
+<rect x="885.00" y="573.02" width="91.67" height="44.98" fill="#252b33" stroke="#15191f"><title>scePspNpDrm_user: 2/2 source mappings</title></rect>
+<text x="889.00" y="585.02" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">scePspNpDrm_u…</text>
+<rect class="mapped" x="887.00" y="592.02" width="27.89" height="21.98" fill="#45ad59"><title>scePspNpDrm_user: 2/2 source mappings · mapped</title></rect>
+<rect class="mapped" x="915.89" y="592.02" width="27.89" height="21.98" fill="#45ad59"><title>scePspNpDrm_user: 2/2 source mappings · mapped</title></rect>
+<rect x="980.67" y="339.00" width="101.33" height="283.00" fill="#1b2027" stroke="#818b96" stroke-width="1"/>
+<text x="987.67" y="357.00" fill="#f2f3f4" font-family="Arial,sans-serif" font-size="12" font-weight="bold">Graphics &amp; display · 83.3%</text>
+<rect x="984.67" y="365.00" width="93.33" height="126.50" fill="#252b33" stroke="#15191f"><title>sceDisplay: 4/6 source mappings</title></rect>
+<text x="988.67" y="377.00" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceDisplay</text>
+<rect class="mapped" x="986.67" y="384.00" width="28.44" height="51.25" fill="#45ad59"><title>sceDisplay: 4/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="1016.11" y="384.00" width="28.44" height="51.25" fill="#45ad59"><title>sceDisplay: 4/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="1045.56" y="384.00" width="28.44" height="51.25" fill="#45ad59"><title>sceDisplay: 4/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="986.67" y="436.25" width="28.44" height="51.25" fill="#45ad59"><title>sceDisplay: 4/6 source mappings · mapped</title></rect>
+<rect class="missing" x="1016.11" y="436.25" width="28.44" height="51.25" fill="#555c66"><title>sceDisplay: 4/6 source mappings · missing</title></rect>
+<rect class="missing" x="1045.56" y="436.25" width="28.44" height="51.25" fill="#555c66"><title>sceDisplay: 4/6 source mappings · missing</title></rect>
+<rect x="984.67" y="491.50" width="93.33" height="126.50" fill="#252b33" stroke="#15191f"><title>sceGe_user: 6/6 source mappings</title></rect>
+<text x="988.67" y="503.50" fill="#cbd2da" font-family="Arial,sans-serif" font-size="10">sceGe_user</text>
+<rect class="mapped" x="986.67" y="510.50" width="28.44" height="51.25" fill="#45ad59"><title>sceGe_user: 6/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="1016.11" y="510.50" width="28.44" height="51.25" fill="#45ad59"><title>sceGe_user: 6/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="1045.56" y="510.50" width="28.44" height="51.25" fill="#45ad59"><title>sceGe_user: 6/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="986.67" y="562.75" width="28.44" height="51.25" fill="#45ad59"><title>sceGe_user: 6/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="1016.11" y="562.75" width="28.44" height="51.25" fill="#45ad59"><title>sceGe_user: 6/6 source mappings · mapped</title></rect>
+<rect class="mapped" x="1045.56" y="562.75" width="28.44" height="51.25" fill="#45ad59"><title>sceGe_user: 6/6 source mappings · mapped</title></rect>
+<rect x="22" y="642" width="13" height="13" fill="#45ad59"/><text x="43" y="653" fill="#dbe2e8" font-family="Arial,sans-serif" font-size="13">Source provider found</text>
+<rect x="227" y="642" width="13" height="13" fill="#555c66"/><text x="248" y="653" fill="#dbe2e8" font-family="Arial,sans-serif" font-size="13">Missing source provider</text>
+<text x="22" y="675" fill="#a4afba" font-family="Arial,sans-serif" font-size="12">Each tile is one selected PSP import. A mapping may be partial or a stub; green does not certify gameplay fidelity.</text></svg>

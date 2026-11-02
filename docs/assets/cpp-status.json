@@ -17,6 +17,15 @@
   "generated_units_reused": 250,
   "overlay_count": 166,
   "completion_percent": null,
+  "psp_recompilation": {
+    "bytes": 12307576,
+    "recompiled_bytes": 12307572,
+    "remaining_bytes": 4,
+    "routines": 34801,
+    "recompiled_routines": 34800,
+    "percent": 99.99996749969287,
+    "display_percent": "99.99"
+  },
   "user_report": {
     "completed_story_missions": 2,
     "reported_by": "Benjamin Paname",
