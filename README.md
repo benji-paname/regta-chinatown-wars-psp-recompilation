@@ -15,19 +15,15 @@ C++20 is now the mainline of this independent project by **Benji Paname**, targe
 <!-- CPP_RECOMP_PROGRESS_START -->
 ![Playable recompilation](docs/assets/badge-playable.svg)
 
-[![Visual status map — observed portions and remaining work](docs/assets/cpp-status-map.svg)](docs/CPP_PROGRESS.md)
+[![Playable-port validation mosaic](docs/assets/cpp-validation-map.svg)](docs/CPP_PROGRESS.md)
 
 **The playable recompilation is in development. No reliable global completion percentage is available yet.** 100% is reserved for the completed, playable PSP port across its explicitly agreed feature/mode scope, after required services and end-to-end validation pass.
 
 Benjamin has completed the first two story missions in the private Playtest. This is a tested milestone; full campaign coverage, PSP service behavior, stability and performance still need work. [Readiness definition and evidence](docs/CPP_PROGRESS.md).
 
-Green records show bounded observations; amber shows partial work; grey shows unvalidated scope. The visual stays visible; technical code-generation counters remain separate.
+The mosaic tracks explicit scenarios: **green = observed or tested within the named scope; orange = partial; red = unfinished work or validation still open.** It is an expanding checklist, not a complete feature inventory. Tile sizes do not estimate effort or an overall completion percentage.
 
-### PSP code mosaic
-
-[![PSP code map — generated output, not gameplay completion](docs/assets/cpp-code-map.svg)](docs/CPP_CODEGEN.md)
-
-The dense map stays visible: each tile is one indexed PSP routine, grouped by module and sized by its original bytes. **Blue = generated and compiled; grey = not counted.** This is a technical code inventory, not functional completion. Green observations belong to the gameplay status map above.
+[![Detailed system observations and remaining work](docs/assets/cpp-status-map.svg)](docs/CPP_PROGRESS.md)
 
 <details>
 <summary>Technical diagnostics — generated-code coverage, not finished-port progress</summary>
@@ -36,7 +32,7 @@ The dense map stays visible: each tile is one indexed PSP routine, grouped by mo
 
 These two badges describe the same static inventory: original-byte-weighted translation coverage and its routine count. Automated generation/compilation is not equivalent to Kryo.to's source-porting workflow and does not establish playable-port completion. [Method and limits](docs/CPP_CODEGEN.md).
 
-[![Static code-generation treemap](docs/assets/cpp-codegen-progress.svg)](docs/CPP_CODEGEN.md)
+[![Static code-generation treemap](docs/assets/cpp-code-map.svg)](docs/CPP_CODEGEN.md)
 
 [PSP service bindings — another separate diagnostic](docs/CPP_IMPORTS.md).
 

@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 850" role="img" aria-labelledby="title desc">
+<title id="title">Playable port — validation mosaic</title>
+<desc id="desc">Green: observed or tested within the stated scope. Amber: partial. Red: work or validation still open, including known issues. Cells are checklist items, not PSP routines or weighted work percentages. This expanding checklist is not the complete original-game scope.</desc>
+<rect width="1100" height="850" rx="6" fill="#14191e"/>
+<text x="18" y="32" fill="#f2c35b" font-size="23" font-weight="bold" font-family="Arial,sans-serif">Playable port — validation mosaic</text>
+<text x="18" y="56" fill="#d4dce3" font-size="13" font-family="Arial,sans-serif">Two story missions owner-tested. Campaign, PSP services, fidelity and performance validation continue.</text>
+<text x="18" y="77" fill="#aebbc7" font-size="12" font-family="Arial,sans-serif">Each tile is a specific scenario or check — automatic code generation does not turn it green.</text>
+<rect x="16" y="96" width="352" height="212" fill="#202932" stroke="#596572"/>
+<text x="24" y="118" fill="#eef1f4" font-size="14" font-weight="bold" font-family="Arial,sans-serif">Story and activities</text>
+<rect class="observed" x="22" y="129" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>First story mission: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="29" y="141" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="29" y="158" fill="#fff" font-size="11" font-family="Arial,sans-serif">First story mission</text>
+<rect class="observed" x="193" y="129" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Second story mission: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="200" y="141" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="200" y="158" fill="#fff" font-size="11" font-family="Arial,sans-serif">Second story mission</text>
+<rect class="pending" x="22" y="187" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Remaining story: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="29" y="199" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="29" y="216" fill="#fff" font-size="11" font-family="Arial,sans-serif">Remaining story</text>
+<rect class="pending" x="193" y="187" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Mission retries: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="200" y="199" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="200" y="216" fill="#fff" font-size="11" font-family="Arial,sans-serif">Mission retries</text>
+<rect class="pending" x="22" y="245" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Activity coverage: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="29" y="257" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="29" y="274" fill="#fff" font-size="11" font-family="Arial,sans-serif">Activity coverage</text>
+<rect class="pending" x="193" y="245" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>End-to-end campaign: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="200" y="257" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="200" y="274" fill="#fff" font-size="11" font-family="Arial,sans-serif">End-to-end campaign</text>
+<rect x="378" y="96" width="352" height="212" fill="#202932" stroke="#596572"/>
+<text x="386" y="118" fill="#eef1f4" font-size="14" font-weight="bold" font-family="Arial,sans-serif">Player and world</text>
+<rect class="observed" x="384" y="129" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Walking: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="391" y="141" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="391" y="158" fill="#fff" font-size="11" font-family="Arial,sans-serif">Walking</text>
+<rect class="observed" x="555" y="129" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Swimming: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="562" y="141" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="562" y="158" fill="#fff" font-size="11" font-family="Arial,sans-serif">Swimming</text>
+<rect class="pending" x="384" y="187" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Collision fidelity: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="391" y="199" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="391" y="216" fill="#fff" font-size="11" font-family="Arial,sans-serif">Collision fidelity</text>
+<rect class="pending" x="555" y="187" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Combat coverage: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="562" y="199" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="562" y="216" fill="#fff" font-size="11" font-family="Arial,sans-serif">Combat coverage</text>
+<rect class="pending" x="384" y="245" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Weapon coverage: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="391" y="257" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="391" y="274" fill="#fff" font-size="11" font-family="Arial,sans-serif">Weapon coverage</text>
+<rect class="partial" x="555" y="245" width="169" height="56" fill="#bd8738" stroke="#14191e"><title>Wider world traversal: Traversal observed in the opening missions; broader streaming and transition checks are open.</title></rect>
+<text x="562" y="257" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">PARTIAL</text>
+<text x="562" y="274" fill="#fff" font-size="11" font-family="Arial,sans-serif">Wider world traversal</text>
+<rect x="740" y="96" width="352" height="212" fill="#202932" stroke="#596572"/>
+<text x="748" y="118" fill="#eef1f4" font-size="14" font-weight="bold" font-family="Arial,sans-serif">Vehicles and traffic</text>
+<rect class="observed" x="746" y="129" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Driving in opening: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="753" y="141" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="753" y="158" fill="#fff" font-size="11" font-family="Arial,sans-serif">Driving in opening</text>
+<rect class="observed" x="917" y="129" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Traffic in opening: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="924" y="141" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="924" y="158" fill="#fff" font-size="11" font-family="Arial,sans-serif">Traffic in opening</text>
+<rect class="observed" x="746" y="187" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Car-start mini-game: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="753" y="199" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="753" y="216" fill="#fff" font-size="11" font-family="Arial,sans-serif">Car-start mini-game</text>
+<rect class="observed" x="917" y="187" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Window-break mini-game: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="924" y="199" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="924" y="216" fill="#fff" font-size="11" font-family="Arial,sans-serif">Window-break mini-game</text>
+<rect class="pending" x="746" y="245" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Vehicle-range checks: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="753" y="257" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="753" y="274" fill="#fff" font-size="11" font-family="Arial,sans-serif">Vehicle-range checks</text>
+<rect class="pending" x="917" y="245" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Traffic stress checks: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="924" y="257" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="924" y="274" fill="#fff" font-size="11" font-family="Arial,sans-serif">Traffic stress checks</text>
+<rect x="16" y="318" width="352" height="212" fill="#202932" stroke="#596572"/>
+<text x="24" y="340" fill="#eef1f4" font-size="14" font-weight="bold" font-family="Arial,sans-serif">Police and NPCs</text>
+<rect class="observed" x="22" y="351" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Police in opening: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="29" y="363" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="29" y="380" fill="#fff" font-size="11" font-family="Arial,sans-serif">Police in opening</text>
+<rect class="observed" x="193" y="351" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>NPC interactions: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="200" y="363" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="200" y="380" fill="#fff" font-size="11" font-family="Arial,sans-serif">NPC interactions</text>
+<rect class="pending" x="22" y="409" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Wanted-level coverage: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="29" y="421" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="29" y="438" fill="#fff" font-size="11" font-family="Arial,sans-serif">Wanted-level coverage</text>
+<rect class="pending" x="193" y="409" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Pursuit scenarios: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="200" y="421" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="200" y="438" fill="#fff" font-size="11" font-family="Arial,sans-serif">Pursuit scenarios</text>
+<rect class="pending" x="22" y="467" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Combat AI scenarios: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="29" y="479" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="29" y="496" fill="#fff" font-size="11" font-family="Arial,sans-serif">Combat AI scenarios</text>
+<rect class="issue" x="193" y="467" width="169" height="56" fill="#cf4149" stroke="#14191e"><title>Dense-scene frame time: Benjamin reports irregular frametimes with many NPCs and vehicles.</title></rect>
+<text x="200" y="479" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">ISSUE</text>
+<text x="200" y="496" fill="#fff" font-size="11" font-family="Arial,sans-serif">Dense-scene frame time</text>
+<rect x="378" y="318" width="352" height="212" fill="#202932" stroke="#596572"/>
+<text x="386" y="340" fill="#eef1f4" font-size="14" font-weight="bold" font-family="Arial,sans-serif">HUD, map and controls</text>
+<rect class="observed" x="384" y="351" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>HUD in opening: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="391" y="363" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="391" y="380" fill="#fff" font-size="11" font-family="Arial,sans-serif">HUD in opening</text>
+<rect class="observed" x="555" y="351" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Map in opening: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="562" y="363" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="562" y="380" fill="#fff" font-size="11" font-family="Arial,sans-serif">Map in opening</text>
+<rect class="observed" x="384" y="409" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Controller in opening: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="391" y="421" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="391" y="438" fill="#fff" font-size="11" font-family="Arial,sans-serif">Controller in opening</text>
+<rect class="pending" x="555" y="409" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Full menu coverage: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="562" y="421" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="562" y="438" fill="#fff" font-size="11" font-family="Arial,sans-serif">Full menu coverage</text>
+<rect class="pending" x="384" y="467" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Input-binding coverage: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="391" y="479" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="391" y="496" fill="#fff" font-size="11" font-family="Arial,sans-serif">Input-binding coverage</text>
+<rect class="pending" x="555" y="467" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Wider device testing: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="562" y="479" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="562" y="496" fill="#fff" font-size="11" font-family="Arial,sans-serif">Wider device testing</text>
+<rect x="740" y="318" width="352" height="212" fill="#202932" stroke="#596572"/>
+<text x="748" y="340" fill="#eef1f4" font-size="14" font-weight="bold" font-family="Arial,sans-serif">Graphics and audio</text>
+<rect class="observed" x="746" y="351" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Opening cutscenes: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="753" y="363" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="753" y="380" fill="#fff" font-size="11" font-family="Arial,sans-serif">Opening cutscenes</text>
+<rect class="observed" x="917" y="351" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Opening dialogue: Benjamin reports this in the first two missions; no broader validation is implied.</title></rect>
+<text x="924" y="363" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="924" y="380" fill="#fff" font-size="11" font-family="Arial,sans-serif">Opening dialogue</text>
+<rect class="pending" x="746" y="409" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Wider PSP comparisons: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="753" y="421" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="753" y="438" fill="#fff" font-size="11" font-family="Arial,sans-serif">Wider PSP comparisons</text>
+<rect class="pending" x="917" y="409" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Rendering edge cases: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="924" y="421" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="924" y="438" fill="#fff" font-size="11" font-family="Arial,sans-serif">Rendering edge cases</text>
+<rect class="pending" x="746" y="467" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Audio-event coverage: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="753" y="479" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="753" y="496" fill="#fff" font-size="11" font-family="Arial,sans-serif">Audio-event coverage</text>
+<rect class="pending" x="917" y="467" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Longer A/V sync checks: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="924" y="479" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="924" y="496" fill="#fff" font-size="11" font-family="Arial,sans-serif">Longer A/V sync checks</text>
+<rect x="16" y="540" width="352" height="212" fill="#202932" stroke="#596572"/>
+<text x="24" y="562" fill="#eef1f4" font-size="14" font-weight="bold" font-family="Arial,sans-serif">PSP runtime services</text>
+<rect class="tested" x="22" y="573" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Mutex fixture checks: Covered by the previously executed 35-check real-runtime fixture; not a full PSP kernel certificate.</title></rect>
+<text x="29" y="585" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">TESTED</text>
+<text x="29" y="602" fill="#fff" font-size="11" font-family="Arial,sans-serif">Mutex fixture checks</text>
+<rect class="tested" x="193" y="573" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Thread-end checks: Owner-exit cleanup and thread termination are covered by the existing fixture.</title></rect>
+<text x="200" y="585" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">TESTED</text>
+<text x="200" y="602" fill="#fff" font-size="11" font-family="Arial,sans-serif">Thread-end checks</text>
+<rect class="tested" x="22" y="631" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Mailbox-order checks: FIFO/priority mailbox selections are covered by the existing fixture.</title></rect>
+<text x="29" y="643" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">TESTED</text>
+<text x="29" y="660" fill="#fff" font-size="11" font-family="Arial,sans-serif">Mailbox-order checks</text>
+<rect class="partial" x="193" y="631" width="169" height="56" fill="#bd8738" stroke="#14191e"><title>Required HLE behavior: 203/252 source bindings are recorded; bindings do not prove required service semantics.</title></rect>
+<text x="200" y="643" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">PARTIAL</text>
+<text x="200" y="660" fill="#fff" font-size="11" font-family="Arial,sans-serif">Required HLE behavior</text>
+<rect class="pending" x="22" y="689" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Unbound-import review: 49 selected imports lack explicit HLE bindings; required paths and semantics need review.</title></rect>
+<text x="29" y="701" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="29" y="718" fill="#fff" font-size="11" font-family="Arial,sans-serif">Unbound-import review</text>
+<rect class="pending" x="193" y="689" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Dynamic path coverage: Dynamic callback and dispatch coverage still requires validation.</title></rect>
+<text x="200" y="701" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="200" y="718" fill="#fff" font-size="11" font-family="Arial,sans-serif">Dynamic path coverage</text>
+<rect x="378" y="540" width="352" height="212" fill="#202932" stroke="#596572"/>
+<text x="386" y="562" fill="#eef1f4" font-size="14" font-weight="bold" font-family="Arial,sans-serif">Stability and performance</text>
+<rect class="observed" x="384" y="573" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Bounded boot checks: Earlier supervised boots and the migration smoke succeeded; broader repeatability is open.</title></rect>
+<text x="391" y="585" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="391" y="602" fill="#fff" font-size="11" font-family="Arial,sans-serif">Bounded boot checks</text>
+<rect class="issue" x="555" y="573" width="169" height="56" fill="#cf4149" stroke="#14191e"><title>Frame pacing: Benjamin reports irregular frametimes, especially in dense driving.</title></rect>
+<text x="562" y="585" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">ISSUE</text>
+<text x="562" y="602" fill="#fff" font-size="11" font-family="Arial,sans-serif">Frame pacing</text>
+<rect class="issue" x="384" y="631" width="169" height="56" fill="#cf4149" stroke="#14191e"><title>Dense-driving FPS: Benjamin reports drops toward 20 FPS in dense driving.</title></rect>
+<text x="391" y="643" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">ISSUE</text>
+<text x="391" y="660" fill="#fff" font-size="11" font-family="Arial,sans-serif">Dense-driving FPS</text>
+<rect class="pending" x="555" y="631" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Long-session stability: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="562" y="643" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="562" y="660" fill="#fff" font-size="11" font-family="Arial,sans-serif">Long-session stability</text>
+<rect class="pending" x="384" y="689" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Transition stress: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="391" y="701" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="391" y="718" fill="#fff" font-size="11" font-family="Arial,sans-serif">Transition stress</text>
+<rect class="pending" x="555" y="689" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>PC compatibility: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="562" y="701" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="562" y="718" fill="#fff" font-size="11" font-family="Arial,sans-serif">PC compatibility</text>
+<rect x="740" y="540" width="352" height="212" fill="#202932" stroke="#596572"/>
+<text x="748" y="562" fill="#eef1f4" font-size="14" font-weight="bold" font-family="Arial,sans-serif">Saves and local setup</text>
+<rect class="observed" x="746" y="573" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Prepared local build: Canonical local build/link previously succeeded; fresh owner-ISO setup is not packaged.</title></rect>
+<text x="753" y="585" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="753" y="602" fill="#fff" font-size="11" font-family="Arial,sans-serif">Prepared local build</text>
+<rect class="observed" x="917" y="573" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Prepared Playtest launch: The isolated migration smoke launched successfully; original Playtest was preserved.</title></rect>
+<text x="924" y="585" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="924" y="602" fill="#fff" font-size="11" font-family="Arial,sans-serif">Prepared Playtest</text>
+<text x="924" y="615" fill="#fff" font-size="11" font-family="Arial,sans-serif">launch</text>
+<rect class="observed" x="746" y="631" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Existing local savedata: The migration smoke loaded copied savedata successfully; broader save regressions remain open.</title></rect>
+<text x="753" y="643" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OBSERVED</text>
+<text x="753" y="660" fill="#fff" font-size="11" font-family="Arial,sans-serif">Existing local savedata</text>
+<rect class="pending" x="917" y="631" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Save/load coverage: Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent.</title></rect>
+<text x="924" y="643" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="924" y="660" fill="#fff" font-size="11" font-family="Arial,sans-serif">Save/load coverage</text>
+<rect class="pending" x="746" y="689" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Fresh ISO setup: Complete documented fresh ISO-to-build preparation is not yet packaged.</title></rect>
+<text x="753" y="701" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="753" y="718" fill="#fff" font-size="11" font-family="Arial,sans-serif">Fresh ISO setup</text>
+<rect class="pending" x="917" y="689" width="169" height="56" fill="#a83d43" stroke="#14191e"><title>Full PSP scope sign-off: The complete original-game feature/mode checklist has not been accepted.</title></rect>
+<text x="924" y="701" fill="#eff5f1" font-size="8" font-weight="bold" font-family="Arial,sans-serif">OPEN</text>
+<text x="924" y="718" fill="#fff" font-size="11" font-family="Arial,sans-serif">Full PSP scope sign-off</text>
+<rect x="18" y="782" width="12" height="12" fill="#3fa34d"/><text x="38" y="793" fill="#d4dce3" font-size="12" font-family="Arial,sans-serif">Observed / bounded test</text>
+<rect x="280" y="782" width="12" height="12" fill="#bd8738"/><text x="300" y="793" fill="#d4dce3" font-size="12" font-family="Arial,sans-serif">Partial</text>
+<rect x="420" y="782" width="12" height="12" fill="#a83d43"/><text x="440" y="793" fill="#d4dce3" font-size="12" font-family="Arial,sans-serif">Not finished / validation open</text>
+<text x="18" y="819" fill="#b6c1cb" font-size="12" font-family="Arial,sans-serif">Green applies only to each named check. Red does not assert a missing implementation; it also includes untested behavior.</text>
+<text x="18" y="839" fill="#b6c1cb" font-size="12" font-family="Arial,sans-serif">Expanding validation checklist, not a complete feature inventory. Tile areas do not measure remaining effort or overall completion.</text></svg>

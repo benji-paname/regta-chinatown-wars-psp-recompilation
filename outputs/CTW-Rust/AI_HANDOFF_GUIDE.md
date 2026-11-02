@@ -577,3 +577,5 @@ powershell -ExecutionPolicy Bypass -File .\Compiler.ps1 -Test
 The main visible visual is now cpp-status-map.svg: bounded green observations and amber/grey remaining work per system. Keep it above explanations in README/site; do not hide all status visuals inside diagnostics. Overall percentage remains unmeasured.
 
 The additional cpp-code-map.svg mosaic is also visible by default: blue generated/compiled routines, grey excluded candidates, areas weighted by original PSP bytes. No global completion score is inferred. Current tooling validation: 29 tests passed; site EN/FR/ES links/translations checked. Resume dashboard work with `python tools/progress/cpp_status.py`; do not rebuild or launch the game for a visual-only change.
+
+LATEST override: cpp-validation-map.svg is the primary green/orange/red mosaic, using scenario_groups in PLAYABLE_VALIDATION.json. Generated code coverage is now only in technical diagnostics. The 54 scenarios track bounded owner observations/tests and open validation, not an exhaustive feature inventory or global percentage. Red includes untested behavior, not just bugs. Preserve this distinction and require sources for green entries.

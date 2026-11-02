@@ -6,7 +6,11 @@ Benjamin's current definition is **100% = a finished, playable PSP recompilation
 
 ![Visual status map](assets/cpp-status-map.svg)
 
-A second, always-visible [dense PSP code mosaic](assets/cpp-code-map.svg) is shown in README and on the site. Its blue tiles describe generated/compiled routines and its areas follow original PSP byte sizes. It does not display a completion percentage or establish gameplay validation. The green cells in the functional map above describe bounded test observations.
+![Playable-port validation mosaic](assets/cpp-validation-map.svg)
+
+The main mosaic shows explicit scenarios, not generated routines. Green means observed or tested in the named bounded scope, orange means partial, and red means work or validation is still open. Red does not establish that a feature is absent or broken. This expanding checklist is not the complete original-game inventory; its equal cells do not estimate effort or define a global completion percentage. Evidence for each cell is in PLAYABLE_VALIDATION.json under scenario_groups. Owner observations and automated kernel checks are labelled separately. The technical routine mosaic is confined to diagnostics.
+
+The checklist was populated from existing owner reports and earlier tests. This status update did not execute new game or kernel tests. Every green cell requires a named evidence source. Add scenarios as the original-game inventory is established; never mark a scenario green merely because its code compiles.
 
 The working private build has a real milestone: Benjamin reports two story missions completed using normal controls. The migration also passed 35 bounded kernel checks. Neither establishes a percentage of the complete game validated.
 

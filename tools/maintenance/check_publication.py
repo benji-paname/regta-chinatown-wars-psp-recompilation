@@ -19,7 +19,7 @@ def inspect(path, data, branding):
     if len(data)>5_000_000:problems.append('large unreviewed blob')
     if data.startswith((b'MZ',b'\x7fELF',b'PK\x03\x04',b'RIFF',b'OggS',b'BIK')) or data[32769:32774]==b'CD001':problems.append('binary/game/archive signature')
     media=p.suffix.lower() in {'.png','.jpg','.jpeg','.webp','.gif','.svg'}
-    if media and p.name not in {'progress.svg','badge-overall.svg','badge-routines.svg','badge-cpp.svg','cpp-progress.svg','badge-cpp-imports.svg','badge-cpp-recomp.svg','badge-cpp-routines.svg','cpp-imports.svg','cpp-codegen-progress.svg','badge-playable.svg','cpp-status-map.svg','cpp-code-map.svg'}:
+    if media and p.name not in {'progress.svg','badge-overall.svg','badge-routines.svg','badge-cpp.svg','cpp-progress.svg','badge-cpp-imports.svg','badge-cpp-recomp.svg','badge-cpp-routines.svg','cpp-imports.svg','cpp-codegen-progress.svg','badge-playable.svg','cpp-status-map.svg','cpp-code-map.svg','cpp-validation-map.svg'}:
         if branding.get(path)!=hashlib.sha256(data).hexdigest():problems.append('image not in reviewed branding allowlist')
     if re.search(rb'(ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|-----BEGIN (?:RSA |OPENSSH )?PRIVATE KEY-----)',data):problems.append('possible secret')
     if p.suffix.lower()=='.svg' and re.search(rb'(?:href|src)\s*=\s*[\x22\x27]data:',data,re.I):problems.append('embedded image payload')

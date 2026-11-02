@@ -89,5 +89,403 @@
       "observed": "Prepared Windows Playtest launches",
       "remaining": "Fresh ISO-to-build setup not packaged"
     }
+  ],
+  "scenario_groups": [
+    {
+      "name": "Story and activities",
+      "checks": [
+        {
+          "id": "mission1",
+          "label": "First story mission",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "mission2",
+          "label": "Second story mission",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "rest_story",
+          "label": "Remaining story",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "retries",
+          "label": "Mission retries",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "activities",
+          "label": "Activity coverage",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "campaign_end",
+          "label": "End-to-end campaign",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        }
+      ]
+    },
+    {
+      "name": "Player and world",
+      "checks": [
+        {
+          "id": "walking",
+          "label": "Walking",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "swimming",
+          "label": "Swimming",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "collision",
+          "label": "Collision fidelity",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "combat",
+          "label": "Combat coverage",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "weapons",
+          "label": "Weapon coverage",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "world",
+          "label": "Wider world traversal",
+          "state": "partial",
+          "evidence": "Traversal observed in the opening missions; broader streaming and transition checks are open.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        }
+      ]
+    },
+    {
+      "name": "Vehicles and traffic",
+      "checks": [
+        {
+          "id": "driving",
+          "label": "Driving in opening",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "traffic",
+          "label": "Traffic in opening",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "car_start",
+          "label": "Car-start mini-game",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "window",
+          "label": "Window-break mini-game",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "vehicle_range",
+          "label": "Vehicle-range checks",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "traffic_scale",
+          "label": "Traffic stress checks",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        }
+      ]
+    },
+    {
+      "name": "Police and NPCs",
+      "checks": [
+        {
+          "id": "police",
+          "label": "Police in opening",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "npc",
+          "label": "NPC interactions",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "wanted",
+          "label": "Wanted-level coverage",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "pursuit",
+          "label": "Pursuit scenarios",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "combat_ai",
+          "label": "Combat AI scenarios",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "npc_scale",
+          "label": "Dense-scene frame time",
+          "state": "issue",
+          "evidence": "Benjamin reports irregular frametimes with many NPCs and vehicles.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        }
+      ]
+    },
+    {
+      "name": "HUD, map and controls",
+      "checks": [
+        {
+          "id": "hud",
+          "label": "HUD in opening",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "map",
+          "label": "Map in opening",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "controller",
+          "label": "Controller in opening",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "menus",
+          "label": "Full menu coverage",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "bindings",
+          "label": "Input-binding coverage",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "devices",
+          "label": "Wider device testing",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        }
+      ]
+    },
+    {
+      "name": "Graphics and audio",
+      "checks": [
+        {
+          "id": "cutscenes",
+          "label": "Opening cutscenes",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "dialogue",
+          "label": "Opening dialogue",
+          "state": "observed",
+          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "psp_compare",
+          "label": "Wider PSP comparisons",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "ge",
+          "label": "Rendering edge cases",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "audio",
+          "label": "Audio-event coverage",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "avsync",
+          "label": "Longer A/V sync checks",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        }
+      ]
+    },
+    {
+      "name": "PSP runtime services",
+      "checks": [
+        {
+          "id": "mutex",
+          "label": "Mutex fixture checks",
+          "state": "tested",
+          "evidence": "Covered by the previously executed 35-check real-runtime fixture; not a full PSP kernel certificate.",
+          "source": "tests/kernel/mutex_scheduler.cpp"
+        },
+        {
+          "id": "thread_end",
+          "label": "Thread-end checks",
+          "state": "tested",
+          "evidence": "Owner-exit cleanup and thread termination are covered by the existing fixture.",
+          "source": "tests/kernel/mutex_scheduler.cpp"
+        },
+        {
+          "id": "mailbox",
+          "label": "Mailbox-order checks",
+          "state": "tested",
+          "evidence": "FIFO/priority mailbox selections are covered by the existing fixture.",
+          "source": "tests/kernel/mutex_scheduler.cpp"
+        },
+        {
+          "id": "hle",
+          "label": "Required HLE behavior",
+          "state": "partial",
+          "evidence": "203/252 source bindings are recorded; bindings do not prove required service semantics.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "imports",
+          "label": "Unbound-import review",
+          "state": "pending",
+          "evidence": "49 selected imports lack explicit HLE bindings; required paths and semantics need review."
+        },
+        {
+          "id": "callbacks",
+          "label": "Dynamic path coverage",
+          "state": "pending",
+          "evidence": "Dynamic callback and dispatch coverage still requires validation."
+        }
+      ]
+    },
+    {
+      "name": "Stability and performance",
+      "checks": [
+        {
+          "id": "boot",
+          "label": "Bounded boot checks",
+          "state": "observed",
+          "evidence": "Earlier supervised boots and the migration smoke succeeded; broader repeatability is open.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "frame_pacing",
+          "label": "Frame pacing",
+          "state": "issue",
+          "evidence": "Benjamin reports irregular frametimes, especially in dense driving.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "fps",
+          "label": "Dense-driving FPS",
+          "state": "issue",
+          "evidence": "Benjamin reports drops toward 20 FPS in dense driving.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "long_play",
+          "label": "Long-session stability",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "transitions",
+          "label": "Transition stress",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "pc_matrix",
+          "label": "PC compatibility",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        }
+      ]
+    },
+    {
+      "name": "Saves and local setup",
+      "checks": [
+        {
+          "id": "local_build",
+          "label": "Prepared local build",
+          "state": "observed",
+          "evidence": "Canonical local build/link previously succeeded; fresh owner-ISO setup is not packaged.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "launcher",
+          "label": "Prepared Playtest launch",
+          "state": "observed",
+          "evidence": "The isolated migration smoke launched successfully; original Playtest was preserved.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "savedata",
+          "label": "Existing local savedata",
+          "state": "observed",
+          "evidence": "The migration smoke loaded copied savedata successfully; broader save regressions remain open.",
+          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+        },
+        {
+          "id": "save_coverage",
+          "label": "Save/load coverage",
+          "state": "pending",
+          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+        },
+        {
+          "id": "fresh_iso",
+          "label": "Fresh ISO setup",
+          "state": "pending",
+          "evidence": "Complete documented fresh ISO-to-build preparation is not yet packaged."
+        },
+        {
+          "id": "full_scope",
+          "label": "Full PSP scope sign-off",
+          "state": "pending",
+          "evidence": "The complete original-game feature/mode checklist has not been accepted."
+        }
+      ]
+    }
   ]
 }

@@ -1,6 +1,6 @@
 {
-  "checked_at": "2026-11-02T00:52:18+00:00",
-  "task": "Restore prominent visual playable-port status without misleading completion percentages",
+  "checked_at": "2026-11-02T01:12:26+00:00",
+  "task": "Apply requested green and red colors to the PSP routine mosaic",
   "repositories": [
     {
       "id": "ctw-native",

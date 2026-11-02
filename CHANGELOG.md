@@ -4,7 +4,7 @@
 
 - Restored a prominent, always-visible visual status map in README and on the site.
 - Each system separates demonstrated test observations from remaining work; the global completion percentage stays unmeasured.
-- Added an always-visible dense PSP module/routine mosaic with blue compiled-output cells and no overall completion score.
+- Added a green/orange/red scenario-validation mosaic as the primary visual. Nearly complete automatic-code-generation maps remain secondary diagnostics; no global completion score is inferred.
 
 ## 2026-11-02 — Playable readiness replaces generated-code completion
 
