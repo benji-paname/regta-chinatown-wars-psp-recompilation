@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "updated": "2026-11-02",
+  "goal": "100% means a completed playable PSP recompilation across the agreed original-game scope, not generated-code coverage.",
+  "scope_confirmed": false,
+  "completion_accepted": false,
+  "scope_note": "The original PSP feature/mode inventory must be explicit before final acceptance; no original mode is silently excluded. Future optional PC enhancements are not original-game completeness requirements.",
+  "owner_observations": {
+    "story_missions_completed": 2,
+    "source": "Benjamin owner playtest report",
+    "automated_full_campaign_validation": false
+  },
+  "known_blockers": [
+    "The rest of the campaign and original feature/mode scope are not validated.",
+    "Required PSP service semantics remain incomplete or unaudited; source-name bindings are insufficient evidence.",
+    "Dense driving scenes have reported drops toward 20 FPS and unstable frametimes.",
+    "A known code/data candidate and dynamic callback coverage still need review."
+  ],
+  "gates": [
+    {
+      "id": "scope",
+      "name": "Original-game scope",
+      "state": "unverified",
+      "evidence": "A complete original PSP feature/mode checklist is not yet signed off."
+    },
+    {
+      "id": "translation",
+      "name": "Native translation",
+      "state": "partial",
+      "evidence": "250 generated units verified; one unsupported candidate remains excluded. This only establishes static coverage."
+    },
+    {
+      "id": "services",
+      "name": "PSP runtime services",
+      "state": "partial",
+      "evidence": "35 bounded kernel checks pass. 203/252 source bindings are not proof of complete required PSP service behavior."
+    },
+    {
+      "id": "campaign",
+      "name": "Campaign and activities",
+      "state": "partial",
+      "evidence": "Benjamin reports the first two story missions completed. Remaining missions, activities and mini-games lack comprehensive validation."
+    },
+    {
+      "id": "presentation",
+      "name": "Rendering and audio",
+      "state": "partial",
+      "evidence": "Observed in tested sequences; broader PSP rendering/audio comparisons remain open."
+    },
+    {
+      "id": "controls_saves",
+      "name": "Controls and saves",
+      "state": "partial",
+      "evidence": "Controller and savedata worked in bounded tests. Wider input and save/load regression coverage remains open."
+    },
+    {
+      "id": "stability",
+      "name": "Stability and performance",
+      "state": "partial",
+      "evidence": "Boot synchronization fixes are integrated; dense-driving frametimes remain irregular and repeatability needs broader testing."
+    },
+    {
+      "id": "local_build",
+      "name": "Reproducible local setup",
+      "state": "partial",
+      "evidence": "The prepared Windows Playtest works; a complete documented fresh local setup from the owner ISO remains to be packaged."
+    }
+  ]
+}

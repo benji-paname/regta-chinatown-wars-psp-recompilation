@@ -14,9 +14,11 @@ def main():
     mappings=generate()
     from cpp_recomp_progress import generate as generate_recomp
     recompilation=generate_recomp()
+    from playable_status import generate as generate_playable
+    readiness=generate_playable(codegen=recompilation)
     data={'mainline':'C++20','target':'Windows x64 / PSP Europe ULES-01347 v1.01','validation_date':validated_date,
           'kernel_checks':tests,'psp_import_source_mappings':{key:mappings[key] for key in ['mapped','selected_imports','missing','percent']},'runtime_units_compiled':build['runtime_units_compiled'],
-          'generated_units_reused':250-build['generated_units_compiled'],'overlay_count':166,'completion_percent':None,'psp_recompilation':{key:recompilation[key] for key in ['bytes','recompiled_bytes','remaining_bytes','routines','recompiled_routines','percent','display_percent']},
+          'generated_units_reused':250-build['generated_units_compiled'],'overlay_count':166,'completion_percent':readiness['completion_percent'],'playable_status':readiness['status'],'static_codegen':{key:recompilation[key] for key in ['bytes','recompiled_bytes','remaining_bytes','routines','recompiled_routines','percent','display_percent']},
           'user_report':{'completed_story_missions':2,'reported_by':'Benjamin Paname','independently_replayed_in_migration':False},
           'known_limits':['Unvalidated remainder of campaign','Drops toward 20 FPS and uneven frametimes in dense driving scenes','Existing compiler warnings','Private Playtest only; no cleared public binary package']}
     (ROOT/'docs/assets/cpp-status.json').write_text(json.dumps(data,indent=2)+'\n',encoding='utf-8')

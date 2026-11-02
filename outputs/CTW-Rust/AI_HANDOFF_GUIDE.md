@@ -1,6 +1,6 @@
 # Mainline migration handoff — 2026-11-02
 
-Current presentation: full-title logo-chinatown-wars.svg is primary; CTW variants retained. The main C++ treemap now measures original PSP code recompilation by byte size (99.99% displayed; 34,800/34,801 indexed routines). HLE source mappings 203/252 = 80.56% are separate in docs/CPP_IMPORTS.md. Read docs/CPP_PROGRESS.md for scope and limits.
+Current presentation: full-title logo-chinatown-wars.svg is primary; CTW variants retained. Primary readiness is now In development, with no reliable global percentage. 100% requires finished/playable acceptance gates. The 99.99% / 34,800-of-34,801 numbers are secondary static-generation diagnostics in CPP_CODEGEN.md; HLE source mappings remain separate. Read docs/CPP_PROGRESS.md and PLAYABLE_VALIDATION.json; do not equate static generation with finished porting.
 
 C++20 is now canonical: runtime/. Rust sources are preserved in legacy/rust/src/. Read docs/AI_HANDOFF.md and docs/CPP_MAINLINE_MIGRATION.md first. Resume validation with .\Compiler.ps1 -Check. The rebuilt 29 runtime components link against 250 preserved generated objects; 35 kernel checks pass. Existing Playtest binary and saves were not replaced. No test captures may be published. Benjamin confirms logo font authorization. The local directory rename is blocked by a Windows lock; do not force it.
 

@@ -13,13 +13,26 @@ C++20 is now the mainline of this independent project by **Benji Paname**, targe
 ## Progress
 
 <!-- CPP_RECOMP_PROGRESS_START -->
-![Original PSP code recompiled](docs/assets/badge-cpp-recomp.svg) ![PSP routines](docs/assets/badge-cpp-routines.svg)
+![Playable recompilation](docs/assets/badge-playable.svg)
 
-**Original PSP code recompiled: 99.99% — 34,800 / 34,801 indexed routines, weighted by original code size.** Green routines have native C++ bodies in verified compiled objects, without a known unsupported operation. This measures static recompilation of the indexed PSP executable and 166 overlays. Runtime services, correctness and campaign validation remain separate.
+**The playable recompilation is in development. No reliable global completion percentage is available yet.** 100% is reserved for the completed, playable PSP port across its explicitly agreed feature/mode scope, after required services and end-to-end validation pass.
 
-[![Original PSP code recompilation treemap](docs/assets/cpp-progress.svg)](docs/CPP_PROGRESS.md)
+Benjamin has completed the first two story missions in the private Playtest. This is a tested milestone; full campaign coverage, PSP service behavior, stability and performance still need work. [Readiness definition and evidence](docs/CPP_PROGRESS.md).
 
-[PSP service bindings: a separate diagnostic](docs/CPP_IMPORTS.md).
+[![Playable recompilation readiness](docs/assets/cpp-progress.svg)](docs/CPP_PROGRESS.md)
+
+<details>
+<summary>Technical diagnostics — generated-code coverage, not finished-port progress</summary>
+
+![Static PSP translation](docs/assets/badge-cpp-recomp.svg) ![Translated routine candidates](docs/assets/badge-cpp-routines.svg)
+
+These two badges describe the same static inventory: original-byte-weighted translation coverage and its routine count. Automated generation/compilation is not equivalent to Kryo.to's source-porting workflow and does not establish playable-port completion. [Method and limits](docs/CPP_CODEGEN.md).
+
+[![Static code-generation treemap](docs/assets/cpp-codegen-progress.svg)](docs/CPP_CODEGEN.md)
+
+[PSP service bindings — another separate diagnostic](docs/CPP_IMPORTS.md).
+
+</details>
 <!-- CPP_RECOMP_PROGRESS_END -->
 
 ## Playable progress, with clear limits

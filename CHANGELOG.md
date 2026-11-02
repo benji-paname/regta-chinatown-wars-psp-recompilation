@@ -1,5 +1,11 @@
 # C++ mainline migration — 2026-11-02 (development milestone)
 
+## 2026-11-02 — Playable readiness replaces generated-code completion
+
+- Reserved overall 100% for a finished, playable PSP recompilation across the accepted scope. Global completion remains unmeasured.
+- Moved automatic code-generation coverage and its routine-count badge into clearly separated technical diagnostics.
+- Added an evidence ledger and tests preventing compiler/codegen metrics from implying completed gameplay.
+
 ## 2026-11-02 — Original PSP code-size progress
 
 - Replaced the primary HLE-binding metric with original PSP code recompilation coverage, weighted by original routine size.

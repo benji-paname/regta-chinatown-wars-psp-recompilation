@@ -17,7 +17,8 @@
   "generated_units_reused": 250,
   "overlay_count": 166,
   "completion_percent": null,
-  "psp_recompilation": {
+  "playable_status": "in_development",
+  "static_codegen": {
     "bytes": 12307576,
     "recompiled_bytes": 12307572,
     "remaining_bytes": 4,

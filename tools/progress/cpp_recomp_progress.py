@@ -87,7 +87,7 @@ def measure(root=ROOT):
         summaries.append({'name':module['name'],'category':classify(module['name']),**summary})
         routines.extend(records)
     result=summarise(routines)
-    result.update(metric='Original PSP code recompiled, weighted by original routine size',build='PSP Europe ULES-01347 v1.01',
+    result.update(metric='Static PSP translation coverage, weighted by original routine size',build='PSP Europe ULES-01347 v1.01',
                   scope='Indexed executable .text and all 166 analyzed code overlays; original analysis boundaries may include embedded data',
                   modules=summaries,blocked=blocked,overlay_count=len(data['overlays']),generated_units=len(units),verified_units=sum(u['verified'] for u in units),
                   evidence={'analysis_sha256':digest(analysis_path),'private_build_recipe_sha256':digest(recipe_path)},
@@ -116,10 +116,10 @@ def treemap(result,routines):
     by_module={}
     for routine in routines:by_module.setdefault(routine['module'],[]).append(routine)
     out=['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 730" role="img" aria-labelledby="title desc">',
-         '<title id="title">Original PSP code recompiled: '+result['display_percent']+'%, weighted by original code size</title>',
+         '<title id="title">Static PSP translation coverage: '+result['display_percent']+'%, weighted by original code size</title>',
          '<desc id="desc">Main executable and 166 European PSP overlays. Green: original routine has a matching compiled C++ body without a known unsupported operation. Grey: not yet counted. Static coverage only; runtime fidelity and PSP HLE services are separate.</desc>',
          '<style>.recompiled{fill:#3fa34d}.remaining{fill:#555b64}.recompiled,.remaining{stroke:#28332b;stroke-width:.18}</style><rect width="1100" height="730" fill="#16191c"/>',
-         f'<text x="14" y="27" fill="#e6e8ea" font-size="16" font-family="Verdana,sans-serif">Original PSP code recompiled: {result["display_percent"]}%</text>',
+         f'<text x="14" y="27" fill="#e6e8ea" font-size="16" font-family="Verdana,sans-serif">Static PSP translation coverage: {result["display_percent"]}%</text>',
          f'<text x="14" y="50" fill="#bac5cf" font-size="12" font-family="Verdana,sans-serif">{result["recompiled_routines"]:,} / {result["routines"]:,} routines · weighted by original PSP bytes · ELF + 166 overlays</text>']
     for group,x,y,w,h in rectangles(sorted(groups,key=lambda g:-g['weight']),12,65,1076,596):
         summary=summarise([r for m in group['modules'] for r in by_module[m['name']]])
@@ -153,29 +153,21 @@ def badge(label,value,width):
 
 def generate(root=ROOT):
     result,routines=measure(root);assets=root/'docs/assets'
-    (assets/'cpp-progress.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
-    (assets/'cpp-progress.svg').write_text(treemap(result,routines),encoding='utf-8')
-    (assets/'badge-cpp-recomp.svg').write_text(badge('Original PSP code recompiled',result['display_percent']+'%',318),encoding='utf-8')
-    (assets/'badge-cpp-routines.svg').write_text(badge('PSP routines',f"{result['recompiled_routines']} / {result['routines']}",236),encoding='utf-8')
-    metric=f"<!-- CPP_RECOMP_PROGRESS_START -->\n![Original PSP code recompiled](docs/assets/badge-cpp-recomp.svg) ![PSP routines](docs/assets/badge-cpp-routines.svg)\n\n**Original PSP code recompiled: {result['display_percent']}% — {result['recompiled_routines']:,} / {result['routines']:,} indexed routines, weighted by original code size.** Green routines have native C++ bodies in verified compiled objects, without a known unsupported operation. This measures static recompilation of the indexed PSP executable and 166 overlays. Runtime services, correctness and campaign validation remain separate.\n\n[![Original PSP code recompilation treemap](docs/assets/cpp-progress.svg)](docs/CPP_PROGRESS.md)\n\n[PSP service bindings: a separate diagnostic](docs/CPP_IMPORTS.md).\n<!-- CPP_RECOMP_PROGRESS_END -->"
-    readme=root/'README.md';text=readme.read_text(encoding='utf-8')
-    text=re.sub(r'<!-- CPP_RECOMP_PROGRESS_START -->.*?<!-- CPP_RECOMP_PROGRESS_END -->',lambda _:metric,text,flags=re.S)
-    readme.write_text(text,encoding='utf-8')
-    site=root/'docs/index.html';text=site.read_text(encoding='utf-8')
-    text=re.sub(r'(<strong data-recomp-percent>)[^<]+',lambda m:m[1]+result['display_percent']+'%',text)
-    text=re.sub(r'(<code data-recomp-count>)[^<]+',lambda m:m[1]+f"{result['recompiled_routines']:,} / {result['routines']:,}",text)
-    site.write_text(text,encoding='utf-8')
+    (assets/'cpp-codegen-progress.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
+    (assets/'cpp-codegen-progress.svg').write_text(treemap(result,routines),encoding='utf-8')
+    (assets/'badge-cpp-recomp.svg').write_text(badge('Static PSP translation coverage',result['display_percent']+'%',318),encoding='utf-8')
+    (assets/'badge-cpp-routines.svg').write_text(badge('Translated candidates',f"{result['recompiled_routines']} / {result['routines']}",236),encoding='utf-8')
     rows=['| PSP module | Original bytes | Recompiled bytes | Routines recompiled |','| --- | ---: | ---: | ---: |']
     for m in result['modules']:rows.append(f"| {m['name']} | {m['bytes']:,} | {m['recompiled_bytes']:,} | {m['recompiled_routines']:,}/{m['routines']:,} |")
-    report=f"""# Original PSP code recompilation progress
+    report=f"""# Static PSP code-generation diagnostics
 
 **{result['display_percent']}% displayed — {result['recompiled_routines']:,}/{result['routines']:,} indexed PSP routines.**
 
-![Original PSP code recompiled](assets/cpp-progress.svg)
+![Static PSP translation coverage](assets/cpp-codegen-progress.svg)
 
-## Definition requested by Benjamin
+## Technical diagnostic only
 
-100% means all code in the PSP reference inventory has been translated to native C++ and compiled with no known unsupported routine in that inventory. The calculation follows CTW-Native's original-size weighting principle, adapted to the European PSP executable and all 166 overlays:
+For this secondary diagnostic only, 100% means that every indexed routine meets the generated-body/object-compilation criterion. **It is not completed playable recompilation.** Overall readiness is defined in [CPP_PROGRESS.md](CPP_PROGRESS.md). This diagnostic uses original-routine-size weighting for the European PSP executable and all 166 overlays:
 
 `100 × sum(original byte size of counted routines) / sum(original byte size of all indexed routines)`
 
@@ -191,13 +183,13 @@ One four-byte candidate in `mapapp` still contains a generated unsupported-opera
 
 This high percentage reflects **automatic static translation**, which can translate most indexed code before all PSP runtime services work. It is not a percentage of gameplay validated, faithful behavior, performance, campaign completion or public-release readiness. Only two missions have been owner-tested so far. See [STATUS.md](STATUS.md).
 
-The older **80.56% (203/252)** figure measures [PSP service source bindings](CPP_IMPORTS.md). It is a separate diagnostic and no longer the primary recompilation-progress figure.
+PSP service source bindings are [another technical diagnostic](CPP_IMPORTS.md). Neither metric measures completed playable-port readiness.
 
 ## Method and provenance
 
-The arithmetic uses the same original-routine-size weighting principle documented in [CTW-Native's progress script](https://github.com/official-kryo-to/ctw-native/blob/108320b137c3ca748d697838f86c8919c12b3f2c/scripts/progress.py). CTW-Native identifies manually ported routines by source names. This PSP project identifies compiled generated bodies by their native symbols and pinned build evidence. No Android counts, routine sizes, addresses or completion claims are transplanted.
+The arithmetic uses the same original-routine-size weighting principle documented in [CTW-Native's progress script](https://github.com/official-kryo-to/ctw-native/blob/108320b137c3ca748d697838f86c8919c12b3f2c/scripts/progress.py). CTW-Native identifies routines in its port source by name references. This PSP diagnostic identifies automatically generated bodies and compiled objects. The source-name and generated-body criteria differ, so these percentages are not comparable port-completion scores. No Android counts, routine sizes, addresses or completion claims are transplanted.
 
-Regenerate locally: `python tools/progress/cpp_status.py`. Implementation: tools/progress/cpp_recomp_progress.py. The original function inventory, source translations and objects remain private. Only aggregate module counts/byte totals, hashes and a generated visualization are published in [cpp-progress.json](assets/cpp-progress.json).
+Regenerate locally: `python tools/progress/cpp_status.py`. Implementation: tools/progress/cpp_recomp_progress.py. The original function inventory, source translations and objects remain private. Only aggregate module counts/byte totals, hashes and a generated visualization are published in [cpp-codegen-progress.json](assets/cpp-codegen-progress.json).
 
 """+'\n'.join(rows)+'\n'
     old_note='One four-byte candidate in `mapapp` still contains a generated unsupported-operation trap. Earlier static analysis strongly suggests embedded data misidentified as code. It remains grey and excluded until the code/data classification is formally resolved; this task does not edit the original data, generated code or runtime to obtain 100%.'
@@ -207,8 +199,8 @@ Regenerate locally: `python tools/progress/cpp_status.py`. Implementation: tools
         note+='No original data, generated code or runtime is changed by the progress generator.'
     else:note='No indexed routine remains excluded by the current source/object/unsupported-operation checks. Static coverage still does not establish gameplay correctness or completeness of the analysis boundaries.'
     report=report.replace(old_note,note)
-    (root/'docs/CPP_PROGRESS.md').write_text(report,encoding='utf-8')
-    print(f"Original PSP code recompiled: {result['display_percent']}%, {result['recompiled_routines']}/{result['routines']} routines by original bytes")
+    (root/'docs/CPP_CODEGEN.md').write_text(report,encoding='utf-8')
+    print(f"Static PSP translation coverage: {result['display_percent']}%, {result['recompiled_routines']}/{result['routines']} routines by original bytes")
     return result
 
 if __name__=='__main__':generate()

@@ -13,10 +13,10 @@ Known: drops toward 20 FPS and uneven frametimes in dense driving scenes. Remain
 
 No public download or completion percentage. No gameplay captures published. [Migration evidence](CPP_MAINLINE_MIGRATION.md) · [Historical Rust inventory](legacy/progress.html).
 
-## Original PSP code recompilation progress
+## Completed playable recompilation readiness
 
-The [main C++ treemap](CPP_PROGRESS.md) now measures **original PSP code recompiled, weighted by original routine size**, as requested by Benjamin. Current evidence: **34,800/34,801 indexed routines**, **12,307,572/12,307,576 original bytes**. It displays **99.99%**, truncated to avoid rounding known remaining work to 100.00%. One four-byte mapapp candidate still contains an unsupported-operation trap; earlier evidence suggests data, but it remains excluded pending reviewed classification.
+**In development. A reliable global completion percentage is not yet established.** Benjamin's definition is 100% = a finished, playable PSP port across its agreed original feature/mode scope. See [CPP_PROGRESS.md](CPP_PROGRESS.md) and the evidence ledger [PLAYABLE_VALIDATION.json](PLAYABLE_VALIDATION.json).
 
-This measures automatic static translation and verified object compilation across the indexed European executable and 166 overlays. It does not establish gameplay fidelity, campaign completion, all indirect callback targets or perfect code/data boundaries. The high figure reflects the automated recompilation process; runtime compatibility, performance and gameplay validation remain in progress.
+The first two missions were completed by Benjamin; 35 bounded kernel checks passed. Required PSP service behavior, broader campaign/features, stability, performance and reproducible setup remain open. No arbitrary intermediate percentage is assigned from these milestones.
 
-[PSP HLE source mappings](CPP_IMPORTS.md), 203/252 = 80.56%, remain a separate diagnostic. The old Rust statistics remain historical and are not mixed into either C++ metric.
+The former main 99.99% figure now appears only in [static code-generation diagnostics](CPP_CODEGEN.md), alongside its 34,800/34,801 routine count. It measures automatic translation and object compilation, not functional port completion. Kryo.to's code-porting badges use different inclusion criteria, despite similar original-byte-size weighting. The historical Rust figure is not an equivalent baseline either. [HLE source bindings](CPP_IMPORTS.md) remain separate.
