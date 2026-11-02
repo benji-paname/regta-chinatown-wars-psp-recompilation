@@ -6,7 +6,7 @@
   "completion_accepted": false,
   "scope_note": "The original PSP feature/mode inventory must be explicit before final acceptance; no original mode is silently excluded. Future optional PC enhancements are not original-game completeness requirements.",
   "owner_observations": {
-    "story_missions_completed": 2,
+    "story_missions_completed": 5,
     "source": "Benjamin owner playtest report",
     "automated_full_campaign_validation": false
   },
@@ -490,4 +490,4 @@
       ]
     }
   ]
-}
+}

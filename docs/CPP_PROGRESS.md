@@ -12,7 +12,7 @@ The main mosaic shows explicit scenarios, not generated routines. Green means ob
 
 The checklist was populated from existing owner reports and earlier tests. This status update did not execute new game or kernel tests. Every green cell requires a named evidence source. Add scenarios as the original-game inventory is established; never mark a scenario green merely because its code compiles.
 
-The working private build has a real milestone: Benjamin reports two story missions completed using normal controls. The migration also passed 35 bounded kernel checks. Neither establishes a percentage of the complete game validated.
+The working private build has a real milestone: Benjamin reports five story missions completed consecutively (up to 'The Wheelman') and a taxi activity using normal controls. The migration also passed 35 bounded kernel checks. Neither establishes a percentage of the complete game validated.
 
 ## What must be established before 100%
 

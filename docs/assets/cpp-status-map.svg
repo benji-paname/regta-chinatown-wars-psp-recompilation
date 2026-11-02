@@ -2,10 +2,10 @@
 <title id="title">Playable PSP status map: observed portions and remaining work</title>
 <desc id="desc">Green cells show bounded test observations, amber cells show partial work and grey cells show unvalidated scope. A green observation is not full-system validation. Equal tiles are not weighted progress or a global percentage.</desc>
 <rect width="1100" height="740" rx="8" fill="#11161c"/>
-<text x="22" y="34" fill="#f2c35b" font-size="23" font-weight="bold" font-family="Arial,sans-serif">Playable build — visual status map</text>
+<text x="22" y="34" fill="#f2c35b" font-size="23" font-weight="bold" font-family="Arial,sans-serif">Playable build &#8212; visual status map</text>
 <text x="22" y="59" fill="#b8c4d0" font-size="13" font-family="Arial,sans-serif">What has been observed, what is partial, and what still needs validation.</text>
 <rect x="22" y="78" width="1056" height="54" rx="5" fill="#203b2a"/>
-<text x="38" y="101" fill="#dcefe0" font-size="15" font-weight="bold" font-family="Arial,sans-serif">Playable milestone: 2 story missions completed by Benjamin</text>
+<text x="38" y="101" fill="#dcefe0" font-size="15" font-weight="bold" font-family="Arial,sans-serif">Playable milestone: 5 story missions completed by Benjamin</text>
 <text x="38" y="120" fill="#aac8b2" font-size="12" font-family="Arial,sans-serif">Observed in those sequences: walking, swimming, driving, traffic, NPCs, police, mini-games, HUD, map and controller.</text>
 <rect x="22" y="154" width="252" height="226" rx="5" fill="#1d252e" stroke="#455260"/>
 <rect x="22" y="154" width="252" height="6" fill="#69727e"/>

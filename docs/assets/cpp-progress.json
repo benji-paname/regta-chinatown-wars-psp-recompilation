@@ -5,7 +5,7 @@
   "definition": "100% means a completed playable PSP recompilation across the agreed original-game scope, not generated-code coverage.",
   "reason": "No reliable global completion percentage is established yet",
   "owner_observations": {
-    "story_missions_completed": 2,
+    "story_missions_completed": 5,
     "source": "Benjamin owner playtest report",
     "automated_full_campaign_validation": false
   },

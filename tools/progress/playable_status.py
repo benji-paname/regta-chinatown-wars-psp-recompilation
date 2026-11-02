@@ -24,7 +24,7 @@ def evaluate(ledger,codegen=None):
 def treemap(status):
     colors={'passed':'#3fa34d','partial':'#c58e3c','unverified':'#69727e'}
     complete=status['status']=='complete'
-    heading='Completed playable PSP recompilation — 100%' if complete else 'Playable build — visual status map'
+    heading='Completed playable PSP recompilation &#8212; 100%' if complete else 'Playable build &#8212; visual status map'
     out=['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 740" role="img" aria-labelledby="title desc">',
          '<title id="title">Playable PSP status map: observed portions and remaining work</title>',
          '<desc id="desc">Green cells show bounded test observations, amber cells show partial work and grey cells show unvalidated scope. A green observation is not full-system validation. Equal tiles are not weighted progress or a global percentage.</desc>',
@@ -96,7 +96,7 @@ def generate(root=ROOT,codegen=None):
 
 **The playable recompilation is in development. No reliable global completion percentage is available yet.** 100% is reserved for the completed, playable PSP port across its explicitly agreed feature/mode scope, after required services and end-to-end validation pass.
 
-Benjamin has completed the first two story missions in the private Playtest. This is a tested milestone; full campaign coverage, PSP service behavior, stability and performance still need work. [Readiness definition and evidence](docs/CPP_PROGRESS.md).
+Benjamin has completed the first five story missions (up to 'The Wheelman') and a taxi activity in the private Playtest. This is a tested milestone; full campaign coverage, PSP service behavior, stability and performance still need work. [Readiness definition and evidence](docs/CPP_PROGRESS.md).
 
 The mosaic tracks explicit scenarios: **green = observed or tested within the named scope; orange = partial; red = unfinished work or validation still open.** It is an expanding checklist, not a complete feature inventory. Tile sizes do not estimate effort or an overall completion percentage.
 
@@ -134,7 +134,7 @@ The main mosaic shows explicit scenarios, not generated routines. Green means ob
 
 The checklist was populated from existing owner reports and earlier tests. This status update did not execute new game or kernel tests. Every green cell requires a named evidence source. Add scenarios as the original-game inventory is established; never mark a scenario green merely because its code compiles.
 
-The working private build has a real milestone: Benjamin reports two story missions completed using normal controls. The migration also passed 35 bounded kernel checks. Neither establishes a percentage of the complete game validated.
+The working private build has a real milestone: Benjamin reports five story missions completed consecutively (up to 'The Wheelman') and a taxi activity using normal controls. The migration also passed 35 bounded kernel checks. Neither establishes a percentage of the complete game validated.
 
 ## What must be established before 100%
 

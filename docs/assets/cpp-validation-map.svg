@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 850" role="img" aria-labelledby="title desc">
-<title id="title">Playable port — validation mosaic</title>
+<title id="title">Playable port &#8212; validation mosaic</title>
 <desc id="desc">Green: observed or tested within the stated scope. Amber: partial. Red: work or validation still open, including known issues. Cells are checklist items, not PSP routines or weighted work percentages. This expanding checklist is not the complete original-game scope.</desc>
 <rect width="1100" height="850" rx="6" fill="#14191e"/>
-<text x="18" y="32" fill="#f2c35b" font-size="23" font-weight="bold" font-family="Arial,sans-serif">Playable port — validation mosaic</text>
-<text x="18" y="56" fill="#d4dce3" font-size="13" font-family="Arial,sans-serif">Five story missions & taxi activity owner-tested. Campaign, PSP services, fidelity and performance validation continue.</text>
-<text x="18" y="77" fill="#aebbc7" font-size="12" font-family="Arial,sans-serif">Each tile is a specific scenario or check — automatic code generation does not turn it green.</text>
+<text x="18" y="32" fill="#f2c35b" font-size="23" font-weight="bold" font-family="Arial,sans-serif">Playable port &#8212; validation mosaic</text>
+<text x="18" y="56" fill="#d4dce3" font-size="13" font-family="Arial,sans-serif">Five story missions &amp; taxi activity owner-tested. Campaign, PSP services, fidelity and performance validation continue.</text>
+<text x="18" y="77" fill="#aebbc7" font-size="12" font-family="Arial,sans-serif">Each tile is a specific scenario or check &#8212; automatic code generation does not turn it green.</text>
 <rect x="16" y="96" width="352" height="212" fill="#202932" stroke="#596572"/>
 <text x="24" y="118" fill="#eef1f4" font-size="14" font-weight="bold" font-family="Arial,sans-serif">Story and activities</text>
 <rect class="observed" x="22" y="129" width="169" height="56" fill="#3fa34d" stroke="#14191e"><title>Missions 1-2 (Yu Jian, Pursuit): Benjamin completed the first two story missions in the playtest.</title></rect>

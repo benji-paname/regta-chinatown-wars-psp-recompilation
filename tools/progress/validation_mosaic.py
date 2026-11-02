@@ -22,12 +22,12 @@ def validate(groups):
 def render(groups):
     validate(groups)
     out=['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 850" role="img" aria-labelledby="title desc">',
-         '<title id="title">Playable port — validation mosaic</title>',
+         '<title id="title">Playable port &#8212; validation mosaic</title>',
          '<desc id="desc">Green: observed or tested within the stated scope. Amber: partial. Red: work or validation still open, including known issues. Cells are checklist items, not PSP routines or weighted work percentages. This expanding checklist is not the complete original-game scope.</desc>',
          '<rect width="1100" height="850" rx="6" fill="#14191e"/>',
-         '<text x="18" y="32" fill="#f2c35b" font-size="23" font-weight="bold" font-family="Arial,sans-serif">Playable port — validation mosaic</text>',
-         '<text x="18" y="56" fill="#d4dce3" font-size="13" font-family="Arial,sans-serif">Five story missions & taxi activity owner-tested. Campaign, PSP services, fidelity and performance validation continue.</text>',
-         '<text x="18" y="77" fill="#aebbc7" font-size="12" font-family="Arial,sans-serif">Each tile is a specific scenario or check — automatic code generation does not turn it green.</text>']
+         '<text x="18" y="32" fill="#f2c35b" font-size="23" font-weight="bold" font-family="Arial,sans-serif">Playable port &#8212; validation mosaic</text>',
+         '<text x="18" y="56" fill="#d4dce3" font-size="13" font-family="Arial,sans-serif">Five story missions &amp; taxi activity owner-tested. Campaign, PSP services, fidelity and performance validation continue.</text>',
+         '<text x="18" y="77" fill="#aebbc7" font-size="12" font-family="Arial,sans-serif">Each tile is a specific scenario or check &#8212; automatic code generation does not turn it green.</text>']
     for i,group in enumerate(groups):
         x=16+(i%3)*362;y=96+(i//3)*222
         out.extend([f'<rect x="{x}" y="{y}" width="352" height="212" fill="#202932" stroke="#596572"/>',
