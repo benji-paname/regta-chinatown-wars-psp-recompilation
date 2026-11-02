@@ -1865,7 +1865,7 @@
   "limits": [
     "Static translation and object compilation, not gameplay correctness or campaign completion",
     "PSP service HLE coverage is a separate metric",
-    "One known unsupported candidate is suspected embedded data; it remains excluded pending formal code/data classification",
+    "A mapapp candidate is suspected embedded data; it remains excluded pending formal code/data classification",
     "Dynamic callback targets and analysis completeness are not proven by this percentage"
   ],
   "rounding": "Truncated to two decimal places; 100.00% only when no indexed bytes remain excluded"

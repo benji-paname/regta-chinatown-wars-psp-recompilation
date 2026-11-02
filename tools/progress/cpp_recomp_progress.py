@@ -93,7 +93,7 @@ def measure(root=ROOT):
                   evidence={'analysis_sha256':digest(analysis_path),'private_build_recipe_sha256':digest(recipe_path)},
                   limits=['Static translation and object compilation, not gameplay correctness or campaign completion',
                           'PSP service HLE coverage is a separate metric',
-                          'One known unsupported candidate is suspected embedded data; it remains excluded pending formal code/data classification',
+                          *(['A mapapp candidate is suspected embedded data; it remains excluded pending formal code/data classification'] if any(b['module']=='mapapp' and b['bytes']==4 and b['reason']=='unsupported operation' for b in blocked) else []),
                           'Dynamic callback targets and analysis completeness are not proven by this percentage'],
                   rounding='Truncated to two decimal places; 100.00% only when no indexed bytes remain excluded')
     return result,routines
@@ -124,7 +124,11 @@ def treemap(result,routines):
     for group,x,y,w,h in rectangles(sorted(groups,key=lambda g:-g['weight']),12,65,1076,596):
         summary=summarise([r for m in group['modules'] for r in by_module[m['name']]])
         out.append(f'<rect x="{x:.2f}" y="{y:.2f}" width="{w:.2f}" height="{h:.2f}" fill="#24282d" stroke="#87909a"/>')
-        out.append(f'<text x="{x+4:.2f}" y="{y+16:.2f}" fill="#fff" font-size="11" font-family="Verdana,sans-serif">{html.escape(group["name"])} {summary["display_percent"]}%</text>')
+        label=group['name']+' '+summary['display_percent']+'%'
+        capacity=max(3,int((w-8)/5.8))
+        if len(label)>capacity:label=group['name'].replace(' overlays','')+' '+summary['display_percent']+'%'
+        if len(label)>capacity:label=label[:capacity-1]+'…'
+        out.append(f'<text x="{x+4:.2f}" y="{y+16:.2f}" fill="#fff" font-size="11" font-family="Verdana,sans-serif">{html.escape(label)}</text>')
         modules=[dict(m,weight=m['bytes']) for m in group['modules']]
         for module,mx,my,mw,mh in rectangles(sorted(modules,key=lambda m:-m['weight']),x+2,y+22,w-4,h-24):
             out.append(f'<rect x="{mx:.2f}" y="{my:.2f}" width="{mw:.2f}" height="{mh:.2f}" fill="#343a42" stroke="#16191c"><title>{html.escape(module["name"])}: {module["recompiled_routines"]}/{module["routines"]} routines</title></rect>')
@@ -196,6 +200,13 @@ The arithmetic uses the same original-routine-size weighting principle documente
 Regenerate locally: `python tools/progress/cpp_status.py`. Implementation: tools/progress/cpp_recomp_progress.py. The original function inventory, source translations and objects remain private. Only aggregate module counts/byte totals, hashes and a generated visualization are published in [cpp-progress.json](assets/cpp-progress.json).
 
 """+'\n'.join(rows)+'\n'
+    old_note='One four-byte candidate in `mapapp` still contains a generated unsupported-operation trap. Earlier static analysis strongly suggests embedded data misidentified as code. It remains grey and excluded until the code/data classification is formally resolved; this task does not edit the original data, generated code or runtime to obtain 100%.'
+    if result['blocked']:
+        note='Excluded candidates: '+ '; '.join(f"{b['module']} — {b['bytes']} original bytes ({b['reason']})" for b in result['blocked'])+'. '
+        if any(b['module']=='mapapp' and b['bytes']==4 and b['reason']=='unsupported operation' for b in result['blocked']):note+='Earlier static analysis strongly suggests that the mapapp candidate is embedded data misidentified as code. It remains grey until the classification is formally resolved. '
+        note+='No original data, generated code or runtime is changed by the progress generator.'
+    else:note='No indexed routine remains excluded by the current source/object/unsupported-operation checks. Static coverage still does not establish gameplay correctness or completeness of the analysis boundaries.'
+    report=report.replace(old_note,note)
     (root/'docs/CPP_PROGRESS.md').write_text(report,encoding='utf-8')
     print(f"Original PSP code recompiled: {result['display_percent']}%, {result['recompiled_routines']}/{result['routines']} routines by original bytes")
     return result

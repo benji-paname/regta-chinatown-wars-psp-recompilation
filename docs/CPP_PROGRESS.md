@@ -18,7 +18,7 @@ The original-size reference is `end - start` from the existing European function
 
 ## Remaining excluded candidate and practical limits
 
-One four-byte candidate in `mapapp` still contains a generated unsupported-operation trap. Earlier static analysis strongly suggests embedded data misidentified as code. It remains grey and excluded until the code/data classification is formally resolved; this task does not edit the original data, generated code or runtime to obtain 100%.
+Excluded candidates: mapapp — 4 original bytes (unsupported operation). Earlier static analysis strongly suggests that the mapapp candidate is embedded data misidentified as code. It remains grey until the classification is formally resolved. No original data, generated code or runtime is changed by the progress generator.
 
 This high percentage reflects **automatic static translation**, which can translate most indexed code before all PSP runtime services work. It is not a percentage of gameplay validated, faithful behavior, performance, campaign completion or public-release readiness. Only two missions have been owner-tested so far. See [STATUS.md](STATUS.md).
 
