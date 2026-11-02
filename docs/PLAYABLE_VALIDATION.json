@@ -48,9 +48,9 @@
       "id": "campaign",
       "name": "Campaign and activities",
       "state": "partial",
-      "evidence": "Benjamin reports the first two story missions completed. Remaining missions, activities and mini-games lack comprehensive validation.",
+      "evidence": "Benjamin reports five story missions completed consecutively (up to 'The Wheelman') and a taxi side activity. Remaining missions and secondary activities lack comprehensive validation.",
       "display_name": "Missions and activities",
-      "observed": "First two story missions completed",
+      "observed": "Five story missions & taxi activity completed",
       "remaining": "Rest of campaign and activities unvalidated"
     },
     {
@@ -66,9 +66,9 @@
       "id": "controls_saves",
       "name": "Controls and saves",
       "state": "partial",
-      "evidence": "Controller and savedata worked in bounded tests. Wider input and save/load regression coverage remains open.",
+      "evidence": "Controller, keyboard, and savedata persistence (saving and reloading progress across sessions) verified in Benjamin's playtest. Broader device configurations remain open.",
       "display_name": "Controls and saves",
-      "observed": "Controller and savedata observed",
+      "observed": "Controller and working save/reload verified",
       "remaining": "Broader device and save/load regressions"
     },
     {
@@ -96,23 +96,23 @@
       "checks": [
         {
           "id": "mission1",
-          "label": "First story mission",
+          "label": "Missions 1-2 (Yu Jian, Pursuit)",
           "state": "observed",
-          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
-          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+          "evidence": "Benjamin completed the first two story missions in the playtest.",
+          "source": "docs/STATUS.md"
         },
         {
           "id": "mission2",
-          "label": "Second story mission",
+          "label": "Missions 3-5 (Wheelman)",
           "state": "observed",
-          "evidence": "Benjamin reports this in the first two missions; no broader validation is implied.",
-          "source": "docs/CPP_MAINLINE_MIGRATION.md"
+          "evidence": "Benjamin completed Under the Gun, Payback, and The Wheelman in the playtest.",
+          "source": "docs/STATUS.md"
         },
         {
           "id": "rest_story",
           "label": "Remaining story",
           "state": "pending",
-          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+          "evidence": "Missions beyond The Wheelman remain to be validated in subsequent playtests."
         },
         {
           "id": "retries",
@@ -122,9 +122,10 @@
         },
         {
           "id": "activities",
-          "label": "Activity coverage",
-          "state": "pending",
-          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+          "label": "Taxi side activity",
+          "state": "observed",
+          "evidence": "Benjamin completed a taxi side activity in the playtest.",
+          "source": "docs/STATUS.md"
         },
         {
           "id": "campaign_end",
@@ -469,9 +470,10 @@
         },
         {
           "id": "save_coverage",
-          "label": "Save/load coverage",
-          "state": "pending",
-          "evidence": "Not covered by the current owner report or bounded automated validation; this is not a claim that the implementation is absent."
+          "label": "Save/load persistence",
+          "state": "observed",
+          "evidence": "Benjamin confirmed save and reload persistence works across game sessions in the playtest.",
+          "source": "docs/STATUS.md"
         },
         {
           "id": "fresh_iso",

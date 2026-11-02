@@ -4,7 +4,7 @@
 
 **The original Chinatown Wars PSP game, recompiled natively for Windows x64.**
 
-C++20 is now the mainline of this independent project by **Benji Paname**, targeting **PSP Europe ULES-01347 v1.01**. Original MIPS control flow is compiled ahead of time; the runtime provides PSP services, graphics and audio. This is an unfinished native port, not a complete-fidelity certification.
+C++20 is now the mainline of this independent project by **[Benji Paname (@benji-paname)](https://github.com/benji-paname)**, targeting **PSP Europe ULES-01347 v1.01**. Original MIPS control flow is compiled ahead of time; the runtime provides PSP services, graphics and audio. This is an unfinished native port, not a complete-fidelity certification.
 
 [Website](https://benji-paname.github.io/regta-chinatown-wars-pc-port/) · [Status](docs/STATUS.md) · [Local build](docs/BUILD_CPP.md) · [Playtest guide](docs/PLAYTEST.md) · [Contributing](CONTRIBUTING.md)
 
@@ -41,7 +41,7 @@ These two badges describe the same static inventory: original-byte-weighted tran
 
 ## Playable progress, with clear limits
 
-**Benjamin reports completing the first two story missions in the private PC Playtest using normal controls.** His test covered cinematics/dialogue, walking/swimming, driving/traffic, police/NPC interactions, window-breaking and vehicle-start mini-games, HUD/map and controller input. These are observations from tested sequences, not a claim that every system or mission is finished.
+**Benjamin reports completing five story missions (up to 'The Wheelman') and a taxi activity in the private PC Playtest using normal controls.** His test covered cinematics/dialogue, walking/swimming, driving/traffic, police/NPC interactions, window-breaking and vehicle-start mini-games, HUD/map, controller input, and verified save/reload persistence. These are observations from tested sequences, not a claim that every system or mission is finished.
 
 The current local validation rebuilt **29 runtime components**, reused **250 generated translation units** covering the executable and **166 overlays**, and passed **35 deterministic kernel checks**. Bink thread-owner cleanup and FIFO/priority handling for mutexes and mailboxes are integrated. Compiler warnings remain; detailed evidence is in the [migration report](docs/CPP_MAINLINE_MIGRATION.md).
 

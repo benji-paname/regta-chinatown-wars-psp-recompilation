@@ -18,6 +18,10 @@ Publish NO proprietary game content: no ISO, PSP executable, generated/recompile
 
 Publication gate: `python tools/maintenance/check_publication.py --tree HEAD --outgoing`. Install the versioned pre-push hook with `git config core.hooksPath .githooks`. Review actual content/provenance as well; an extension filter is not legal clearance. No commit/push unless authorized by the current user mission. The official repository and Pages URLs must not be renamed.
 
+## Commit attribution
+
+Benjamin's account is `benji-paname`. For his authorized AI-assisted work in this checkout, preserve the repository-local author identity `Benji Paname <324261208+benji-paname@users.noreply.github.com>`. Do not replace it with fictitious `@local` / `@localhost` addresses or publish his personal email. Verify `git var GIT_AUTHOR_IDENT` before an authorized commit. Other contributors keep their own identities. `.mailmap` maps only the historical project-local aliases; it does not rewrite old commits or establish GitHub credit by itself. Never force-push/rewrite history to adjust attribution without explicit authorization.
+
 ## Active layout and commands
 
 - `runtime/src/`, `runtime/vfpu/`, `runtime/sas/`: canonical licensed runtime, provenance in `runtime/provenance.json` and `THIRD_PARTY.md`.
@@ -54,3 +58,73 @@ Read/update `docs/AI_HANDOFF.md` and `docs/CPP_MAINLINE_MIGRATION.md`. Historica
 ## Ghidra
 
 Use the existing CTW_Working project only with `-noanalysis -readOnly`, exact European function entries, and compare decompiler output with Allegrex instructions. No project writes, memory dumps, permission bypass or guessed USA-to-Europe offsets. See `docs/REVERSE_ENGINEERING.md` for reference paths.
+
+
+## Règle permanente — Mise à jour du GitHub et du site officiel
+
+À partir de maintenant, chaque avancée majeure et validée du projet ReGTA Chinatown Wars doit également être documentée sur le GitHub et le site officiel.
+
+### 1. Quand effectuer une mise à jour ?
+Lorsqu'un jalon important est terminé et validé, notamment :
+- Nouvelle fonctionnalité majeure.
+- Correction importante du moteur C++.
+- Amélioration significative des performances.
+- Nouvelle option graphique.
+- Compatibilité avec davantage de missions.
+- Intégration de fonctionnalités DS/Android.
+- Nouvelle version du Playtest.
+- Amélioration importante de la stabilité.
+
+**Important** : Ne pas publier une fonctionnalité comme opérationnelle si elle n'a réussi que des tests unitaires et nécessite encore une validation en jeu.
+
+### 2. GitHub
+Maintenir à jour :
+- README.md
+- La feuille de route (Roadmap).
+- Le journal des modifications (CHANGELOG / releases).
+- Les rapports de progression publics (docs/CPP_PROGRESS.md, docs/STATUS.md).
+- La documentation technique utile aux contributeurs (docs/BUILD_CPP.md, CONTRIBUTING.md).
+
+Vérifier l'URL et la branche officielles du dépôt (https://github.com/benji-paname/regta-chinatown-wars-pc-port.git, branche main) avant toute intervention.
+
+### 3. Site officiel (docs/index.html)
+Mettre à jour les trois langues existantes :
+- Anglais (data-en).
+- Français (data-fr).
+- Espagnol (data-es).
+
+Présenter les nouveautés de manière claire, professionnelle et accessible.
+Afficher distinctement :
+- Fonctionnalités opérationnelles.
+- Fonctionnalités expérimentales.
+- Fonctionnalités prévues.
+
+### 4. Avancées déjà validées
+La documentation publique doit notamment refléter les résultats des tests personnels de Benjamin :
+- Cinq missions principales terminées.
+- Une activité secondaire de taxi effectuée.
+- Gameplay jugé fidèle à la PSP sur les activités testées.
+- Sauvegarde et rechargement de la progression fonctionnels.
+- Problèmes de performances, d'audio et de rendu encore en cours de correction.
+
+Ne pas présenter ces résultats comme une validation de l'intégralité du jeu.
+
+### 5. Sécurité et confidentialité
+Ne jamais publier :
+- ISO ou données commerciales du jeu.
+- Sauvegardes personnelles (ms0/PSP/SAVEDATA/).
+- Textures extraites ou modifiées sans droits de redistribution vérifiés.
+- Fichiers locaux privés ou recettes privées de build.
+- Identifiants, secrets ou chemins personnels locaux (C:\Users\...).
+
+Toujours valider la publication avec : python tools/maintenance/check_publication.py --tree HEAD --outgoing.
+
+### 6. Processus de publication
+Après chaque jalon majeur :
+1. Vérifier les résultats.
+2. Préparer les modifications GitHub et site.
+3. Présenter un récapitulatif à Benjamin.
+4. Après validation, effectuer le commit, le push et le déploiement.
+5. Vérifier que GitHub et les trois versions linguistiques du site sont correctement actualisés.
+
+**Important pour le Jalon 2C : conserver l'interdiction de commit et de push tant que le moteur unifié n'a pas été validé en jeu.**

@@ -4,7 +4,7 @@ The active implementation is native C++20 for Windows x64, targeting PSP Europe 
 
 | Evidence | What it establishes | Limit |
 |---|---|---|
-| Benjamin completed two story missions with normal controls | A playable local build in those sequences, including swimming, driving, mini-games, HUD and controller use | Owner-reported; not a full campaign test or independent replay during migration |
+| Benjamin completed five story missions and taxi activity with normal controls | Playable local build up to 'The Wheelman', with functional save/reload, swimming, driving, mini-games, HUD and controller | Owner-reported; not a full campaign test or independent replay during migration |
 | 29 runtime components rebuilt and linked | Current canonical source builds with the prepared Clang/MSVC environment | Existing compiler warnings retained; no fresh-machine setup claim |
 | 35 deterministic kernel checks passed | Covered mutex ownership, FIFO/priority, mailbox and StateIO cases | Not a complete PSP scheduler/hardware equivalence proof |
 | 250 generated units and 166 overlays retained locally | Existing game-code compilation assets preserved | Generated code and all game data remain private |
@@ -17,6 +17,6 @@ No public download or completion percentage. No gameplay captures published. [Mi
 
 **In development. A reliable global completion percentage is not yet established.** Benjamin's definition is 100% = a finished, playable PSP port across its agreed original feature/mode scope. See [CPP_PROGRESS.md](CPP_PROGRESS.md) and the evidence ledger [PLAYABLE_VALIDATION.json](PLAYABLE_VALIDATION.json).
 
-The first two missions were completed by Benjamin; 35 bounded kernel checks passed. Required PSP service behavior, broader campaign/features, stability, performance and reproducible setup remain open. No arbitrary intermediate percentage is assigned from these milestones.
+Five story missions and a taxi activity were completed by Benjamin; save/load persistence is verified; 35 bounded kernel checks passed. Required PSP service behavior, broader campaign/features, stability, performance and reproducible setup remain open. No arbitrary intermediate percentage is assigned from these milestones.
 
 The former main 99.99% figure now appears only in [static code-generation diagnostics](CPP_CODEGEN.md), alongside its 34,800/34,801 routine count. It measures automatic translation and object compilation, not functional port completion. Kryo.to's code-porting badges use different inclusion criteria, despite similar original-byte-size weighting. The historical Rust figure is not an equivalent baseline either. [HLE source bindings](CPP_IMPORTS.md) remain separate.

@@ -23,9 +23,9 @@ All gates below must have documented passing evidence, the original-game scope m
 | Original-game scope | unverified | A complete original PSP feature/mode checklist is not yet signed off. |
 | Native translation | partial | 250 generated units verified; one unsupported candidate remains excluded. This only establishes static coverage. |
 | PSP runtime services | partial | 35 bounded kernel checks pass. 203/252 source bindings are not proof of complete required PSP service behavior. |
-| Campaign and activities | partial | Benjamin reports the first two story missions completed. Remaining missions, activities and mini-games lack comprehensive validation. |
+| Campaign and activities | partial | Benjamin reports five story missions completed consecutively (up to 'The Wheelman') and a taxi side activity. Remaining missions and secondary activities lack comprehensive validation. |
 | Rendering and audio | partial | Observed in tested sequences; broader PSP rendering/audio comparisons remain open. |
-| Controls and saves | partial | Controller and savedata worked in bounded tests. Wider input and save/load regression coverage remains open. |
+| Controls and saves | partial | Controller, keyboard, and savedata persistence (saving and reloading progress across sessions) verified in Benjamin's playtest. Broader device configurations remain open. |
 | Stability and performance | partial | Boot synchronization fixes are integrated; dense-driving frametimes remain irregular and repeatability needs broader testing. |
 | Reproducible local setup | partial | The prepared Windows Playtest works; a complete documented fresh local setup from the owner ISO remains to be packaged. |
 

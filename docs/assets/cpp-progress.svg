@@ -47,8 +47,8 @@
 <text x="838" y="214" fill="#c58e3c" font-size="10" font-weight="bold" font-family="Arial,sans-serif">PARTIAL</text>
 <rect x="835" y="226" width="234" height="64" rx="3" fill="#294e34"/>
 <text x="843" y="243" fill="#b9d9c0" font-size="9" font-weight="bold" font-family="Arial,sans-serif">OBSERVED IN TESTED SCOPE</text>
-<text x="843" y="263" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">First two story missions</text>
-<text x="843" y="279" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">completed</text>
+<text x="843" y="263" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">Five story missions &amp; taxi</text>
+<text x="843" y="279" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">activity completed</text>
 <rect x="835" y="299" width="234" height="69" rx="3" fill="#3c3325"/>
 <text x="843" y="317" fill="#e2c38b" font-size="9" font-weight="bold" font-family="Arial,sans-serif">REMAINING WORK</text>
 <text x="843" y="338" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">Rest of campaign and activities</text>
@@ -70,7 +70,8 @@
 <text x="302" y="460" fill="#c58e3c" font-size="10" font-weight="bold" font-family="Arial,sans-serif">PARTIAL</text>
 <rect x="299" y="472" width="234" height="64" rx="3" fill="#294e34"/>
 <text x="307" y="489" fill="#b9d9c0" font-size="9" font-weight="bold" font-family="Arial,sans-serif">OBSERVED IN TESTED SCOPE</text>
-<text x="307" y="509" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">Controller and savedata observed</text>
+<text x="307" y="509" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">Controller and working</text>
+<text x="307" y="525" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">save/reload verified</text>
 <rect x="299" y="545" width="234" height="69" rx="3" fill="#3c3325"/>
 <text x="307" y="563" fill="#e2c38b" font-size="9" font-weight="bold" font-family="Arial,sans-serif">REMAINING WORK</text>
 <text x="307" y="584" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">Broader device and save/load</text>

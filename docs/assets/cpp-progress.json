@@ -41,9 +41,9 @@
       "id": "campaign",
       "name": "Campaign and activities",
       "state": "partial",
-      "evidence": "Benjamin reports the first two story missions completed. Remaining missions, activities and mini-games lack comprehensive validation.",
+      "evidence": "Benjamin reports five story missions completed consecutively (up to 'The Wheelman') and a taxi side activity. Remaining missions and secondary activities lack comprehensive validation.",
       "display_name": "Missions and activities",
-      "observed": "First two story missions completed",
+      "observed": "Five story missions & taxi activity completed",
       "remaining": "Rest of campaign and activities unvalidated"
     },
     {
@@ -59,9 +59,9 @@
       "id": "controls_saves",
       "name": "Controls and saves",
       "state": "partial",
-      "evidence": "Controller and savedata worked in bounded tests. Wider input and save/load regression coverage remains open.",
+      "evidence": "Controller, keyboard, and savedata persistence (saving and reloading progress across sessions) verified in Benjamin's playtest. Broader device configurations remain open.",
       "display_name": "Controls and saves",
-      "observed": "Controller and savedata observed",
+      "observed": "Controller and working save/reload verified",
       "remaining": "Broader device and save/load regressions"
     },
     {
