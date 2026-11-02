@@ -21,49 +21,73 @@
       "id": "scope",
       "name": "Original-game scope",
       "state": "unverified",
-      "evidence": "A complete original PSP feature/mode checklist is not yet signed off."
+      "evidence": "A complete original PSP feature/mode checklist is not yet signed off.",
+      "display_name": "PSP feature scope",
+      "observed": "",
+      "remaining": "Original features and modes to catalogue"
     },
     {
       "id": "translation",
       "name": "Native translation",
       "state": "partial",
-      "evidence": "250 generated units verified; one unsupported candidate remains excluded. This only establishes static coverage."
+      "evidence": "250 generated units verified; one unsupported candidate remains excluded. This only establishes static coverage.",
+      "display_name": "Native game code",
+      "observed": "250 generated units verified",
+      "remaining": "One unsupported candidate to review"
     },
     {
       "id": "services",
       "name": "PSP runtime services",
       "state": "partial",
-      "evidence": "35 bounded kernel checks pass. 203/252 source bindings are not proof of complete required PSP service behavior."
+      "evidence": "35 bounded kernel checks pass. 203/252 source bindings are not proof of complete required PSP service behavior.",
+      "display_name": "PSP services",
+      "observed": "35 bounded kernel checks passed",
+      "remaining": "Required service behavior still to validate"
     },
     {
       "id": "campaign",
       "name": "Campaign and activities",
       "state": "partial",
-      "evidence": "Benjamin reports the first two story missions completed. Remaining missions, activities and mini-games lack comprehensive validation."
+      "evidence": "Benjamin reports the first two story missions completed. Remaining missions, activities and mini-games lack comprehensive validation.",
+      "display_name": "Missions and activities",
+      "observed": "First two story missions completed",
+      "remaining": "Rest of campaign and activities unvalidated"
     },
     {
       "id": "presentation",
       "name": "Rendering and audio",
       "state": "partial",
-      "evidence": "Observed in tested sequences; broader PSP rendering/audio comparisons remain open."
+      "evidence": "Observed in tested sequences; broader PSP rendering/audio comparisons remain open.",
+      "display_name": "Graphics and audio",
+      "observed": "Opening cutscenes observed",
+      "remaining": "Wider PSP scene comparisons still open"
     },
     {
       "id": "controls_saves",
       "name": "Controls and saves",
       "state": "partial",
-      "evidence": "Controller and savedata worked in bounded tests. Wider input and save/load regression coverage remains open."
+      "evidence": "Controller and savedata worked in bounded tests. Wider input and save/load regression coverage remains open.",
+      "display_name": "Controls and saves",
+      "observed": "Controller and savedata observed",
+      "remaining": "Broader device and save/load regressions"
     },
     {
       "id": "stability",
       "name": "Stability and performance",
       "state": "partial",
-      "evidence": "Boot synchronization fixes are integrated; dense-driving frametimes remain irregular and repeatability needs broader testing."
+      "evidence": "Boot synchronization fixes are integrated; dense-driving frametimes remain irregular and repeatability needs broader testing.",
+      "display_name": "Stability and performance",
+      "observed": "Boot fixes work in tested sequences",
+      "remaining": "Dense driving: FPS and frame pacing issues"
     },
     {
       "id": "local_build",
       "name": "Reproducible local setup",
       "state": "partial",
-      "evidence": "The prepared Windows Playtest works; a complete documented fresh local setup from the owner ISO remains to be packaged."
+      "evidence": "The prepared Windows Playtest works; a complete documented fresh local setup from the owner ISO remains to be packaged.",
+      "display_name": "Local installation",
+      "observed": "Prepared Windows Playtest launches",
+      "remaining": "Fresh ISO-to-build setup not packaged"
     }
   ]
 }

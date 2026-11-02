@@ -25,6 +25,16 @@ class RecompilationProgressTests(unittest.TestCase):
     def test_reject_bad_sizes_and_empty_inventory(self):
         for records in [[],[{'bytes':0,'recompiled':True}]]:
             with self.assertRaises(ValueError):p.summarise(records)
+    def test_visible_overview_has_no_percentage_or_green_validation_claim(self):
+        routines=[{'module':'main','bytes':24,'recompiled':True},{'module':'main','bytes':4,'recompiled':False}]
+        summary=p.summarise(routines)
+        result={**summary,'modules':[{'name':'main','category':'Main executable',**summary}]}
+        svg=p.treemap(result,routines,overview=True)
+        self.assertNotIn('%',svg)
+        self.assertIn('#4785b5',svg)
+        self.assertNotIn('#3fa34d',svg)
+        self.assertEqual(svg.count('class="recompiled"'),1)
+        self.assertEqual(svg.count('class="remaining"'),1)
     def test_stale_object_or_source_is_not_green(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);base=root/'work/cpp-recomp-feasibility/data';base.mkdir(parents=True)

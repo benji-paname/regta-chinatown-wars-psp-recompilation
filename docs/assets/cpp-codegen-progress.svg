@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 730" role="img" aria-labelledby="title desc">
-<title id="title">Static PSP translation coverage: 99.99%, weighted by original code size</title>
+<title id="title">Static PSP translation coverage: 99.99%</title>
 <desc id="desc">Main executable and 166 European PSP overlays. Green: original routine has a matching compiled C++ body without a known unsupported operation. Grey: not yet counted. Static coverage only; runtime fidelity and PSP HLE services are separate.</desc>
-<style>.recompiled{fill:#3fa34d}.remaining{fill:#555b64}.recompiled,.remaining{stroke:#28332b;stroke-width:.18}</style><rect width="1100" height="730" fill="#16191c"/>
+<style>.recompiled{fill:#3fa34d}.remaining{fill:#555b64}.recompiled,.remaining{stroke:#26323d;stroke-width:.18}</style><rect width="1100" height="730" fill="#16191c"/>
 <text x="14" y="27" fill="#e6e8ea" font-size="16" font-family="Verdana,sans-serif">Static PSP translation coverage: 99.99%</text>
 <text x="14" y="50" fill="#bac5cf" font-size="12" font-family="Verdana,sans-serif">34,800 / 34,801 routines · weighted by original PSP bytes · ELF + 166 overlays</text>
 <rect x="12.00" y="65.00" width="571.33" height="596.00" fill="#24282d" stroke="#87909a"/>

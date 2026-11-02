@@ -2,6 +2,7 @@
 import html
 import json
 import re
+import textwrap
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 REQUIRED={'scope','translation','services','campaign','presentation','controls_saves','stability','local_build'}
@@ -21,25 +22,42 @@ def evaluate(ledger,codegen=None):
 
 
 def treemap(status):
-    colors={'passed':'#3fa34d','partial':'#a8752f','unverified':'#555b64'}
-    heading='Completed playable PSP recompilation — 100%' if status['status']=='complete' else 'Playable PSP recompilation — in development'
-    subheading='All readiness gates and the original-game scope are accepted.' if status['status']=='complete' else '100% is reserved for the completed playable port. A reliable global percentage is not established.'
-    out=['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 460" role="img" aria-labelledby="title desc">',
-         '<title id="title">Playable recompilation: readiness evidence, no global percentage</title>',
-         '<desc id="desc">Qualitative gates. Amber means partial, grey means unverified, green means a gate has passed. Box sizes carry no completion weighting. Generated routines are a separate diagnostic.</desc>',
-         '<rect width="1100" height="460" rx="8" fill="#16191c"/>',
-         f'<text x="22" y="34" fill="#f2c35b" font-size="21" font-family="Arial,sans-serif">{heading}</text>',
-         f'<text x="22" y="58" fill="#c2c9d0" font-size="13" font-family="Arial,sans-serif">{subheading}</text>']
+    colors={'passed':'#3fa34d','partial':'#c58e3c','unverified':'#69727e'}
+    complete=status['status']=='complete'
+    heading='Completed playable PSP recompilation — 100%' if complete else 'Playable build — visual status map'
+    out=['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 740" role="img" aria-labelledby="title desc">',
+         '<title id="title">Playable PSP status map: observed portions and remaining work</title>',
+         '<desc id="desc">Green cells show bounded test observations, amber cells show partial work and grey cells show unvalidated scope. A green observation is not full-system validation. Equal tiles are not weighted progress or a global percentage.</desc>',
+         '<rect width="1100" height="740" rx="8" fill="#11161c"/>',
+         f'<text x="22" y="34" fill="#f2c35b" font-size="23" font-weight="bold" font-family="Arial,sans-serif">{heading}</text>',
+         '<text x="22" y="59" fill="#b8c4d0" font-size="13" font-family="Arial,sans-serif">What has been observed, what is partial, and what still needs validation.</text>']
+    owner_count=status['owner_observations']['story_missions_completed']
+    out.extend(['<rect x="22" y="78" width="1056" height="54" rx="5" fill="#203b2a"/>',
+                f'<text x="38" y="101" fill="#dcefe0" font-size="15" font-weight="bold" font-family="Arial,sans-serif">Playable milestone: {owner_count} story missions completed by Benjamin</text>',
+                '<text x="38" y="120" fill="#aac8b2" font-size="12" font-family="Arial,sans-serif">Observed in those sequences: walking, swimming, driving, traffic, NPCs, police, mini-games, HUD, map and controller.</text>'])
+    def lines(text,x,y,color,size=12,width=31):
+        return [f'<text x="{x}" y="{y+i*16}" fill="{color}" font-size="{size}" font-family="Arial,sans-serif">{html.escape(line)}</text>' for i,line in enumerate(textwrap.wrap(text,width=width)[:2])]
     for i,gate in enumerate(status['gates']):
-        x=22+(i%4)*268;y=82+(i//4)*126
-        out.extend([f'<rect x="{x}" y="{y}" width="252" height="108" rx="5" fill="#232930" stroke="#424b55"/>',
-                    f'<rect x="{x}" y="{y}" width="6" height="108" fill="{colors[gate["state"]]}"/>',
-                    f'<text x="{x+16}" y="{y+29}" fill="#eef1f4" font-size="14" font-family="Arial,sans-serif">{html.escape(gate["name"])}</text>',
-                    f'<text x="{x+16}" y="{y+58}" fill="{colors[gate["state"]]}" font-size="13" font-family="Arial,sans-serif">{gate["state"].replace("_"," ").upper()}</text>',
-                    f'<text x="{x+16}" y="{y+84}" fill="#aeb7c1" font-size="11" font-family="Arial,sans-serif">Evidence: see validation ledger</text>'])
-    out.extend(['<text x="22" y="365" fill="#aeb7c1" font-size="12" font-family="Arial,sans-serif">Qualitative gates; equal boxes do not imply equal effort or an arithmetic completion score.</text>',
-                '<rect x="22" y="389" width="1056" height="48" rx="5" fill="#203326"/>',
-                '<text x="38" y="418" fill="#d8efdc" font-size="14" font-family="Arial,sans-serif">Bounded evidence: 2 owner-tested story missions · 35 kernel checks passed — broader validation remains open.</text></svg>'])
+        x=22+(i%4)*268;y=154+(i//4)*246
+        observed=gate.get('observed','');remaining=gate.get('remaining','See the validation record')
+        observed_color='#294e34' if observed else '#303842'
+        observed_label='OBSERVED IN TESTED SCOPE' if observed else 'NO VALIDATED SCOPE RECORD'
+        out.extend([f'<rect x="{x}" y="{y}" width="252" height="226" rx="5" fill="#1d252e" stroke="#455260"/>',
+                    f'<rect x="{x}" y="{y}" width="252" height="6" fill="{colors[gate["state"]]}"/>'])
+        out.extend(lines(gate.get('display_name',gate['name']),x+12,y+28,'#f0f3f6',14,29))
+        out.append(f'<text x="{x+12}" y="{y+60}" fill="{colors[gate["state"]]}" font-size="10" font-weight="bold" font-family="Arial,sans-serif">{gate["state"].upper()}</text>')
+        out.extend([f'<rect x="{x+9}" y="{y+72}" width="234" height="64" rx="3" fill="{observed_color}"/>',
+                    f'<text x="{x+17}" y="{y+89}" fill="#b9d9c0" font-size="9" font-weight="bold" font-family="Arial,sans-serif">{observed_label}</text>'])
+        out.extend(lines(observed or 'Original PSP feature list pending',x+17,y+109,'#e0eee4',11,32))
+        pending_color='#294e34' if gate['state']=='passed' else '#3c3325' if gate['state']=='partial' else '#303842'
+        out.extend([f'<rect x="{x+9}" y="{y+145}" width="234" height="69" rx="3" fill="{pending_color}"/>',
+                    f'<text x="{x+17}" y="{y+163}" fill="#e2c38b" font-size="9" font-weight="bold" font-family="Arial,sans-serif">'+('VALIDATION ACCEPTED' if gate['state']=='passed' else 'REMAINING WORK')+'</text>'])
+        out.extend(lines('Accepted validation evidence' if gate['state']=='passed' else remaining,x+17,y+184,'#d0c9bc',11,32))
+    out.extend(['<rect x="22" y="670" width="12" height="12" fill="#3fa34d"/><text x="42" y="681" fill="#d3dce5" font-size="12" font-family="Arial,sans-serif">Observed portion</text>',
+                '<rect x="224" y="670" width="12" height="12" fill="#c58e3c"/><text x="244" y="681" fill="#d3dce5" font-size="12" font-family="Arial,sans-serif">Partial / open work</text>',
+                '<rect x="444" y="670" width="12" height="12" fill="#69727e"/><text x="464" y="681" fill="#d3dce5" font-size="12" font-family="Arial,sans-serif">Not validated</text>',
+                '<text x="22" y="709" fill="#a9b6c3" font-size="12" font-family="Arial,sans-serif">Green observations cover bounded tests, not the whole system. Tile sizes do not represent a completion percentage.</text>',
+                '<text x="22" y="730" fill="#f2c35b" font-size="12" font-family="Arial,sans-serif">100% remains reserved for a finished, playable PSP port across the accepted scope.</text></svg>'])
     return '\n'.join(out)+'\n'
 
 
@@ -48,7 +66,9 @@ def generate(root=ROOT,codegen=None):
     codegen=codegen if codegen is not None else json.loads((root/'docs/assets/cpp-codegen-progress.json').read_text(encoding='utf-8'))
     status=evaluate(ledger,codegen)
     (root/'docs/assets/cpp-progress.json').write_text(json.dumps(status,indent=2)+'\n',encoding='utf-8')
-    (root/'docs/assets/cpp-progress.svg').write_text(treemap(status),encoding='utf-8')
+    visual=treemap(status)
+    (root/'docs/assets/cpp-progress.svg').write_text(visual,encoding='utf-8')
+    (root/'docs/assets/cpp-status-map.svg').write_text(visual,encoding='utf-8')
     label='Complete' if status['status']=='complete' else 'In development'
     badge_color='#2f6239' if status['status']=='complete' else '#655124'
     badge=f'<svg xmlns="http://www.w3.org/2000/svg" width="300" height="24" role="img" aria-label="Playable recompilation: {label}"><rect width="300" height="24" rx="3" fill="{badge_color}"/><text x="150" y="16" text-anchor="middle" fill="#fff" font-size="11" font-family="Verdana,sans-serif">Playable recompilation: {label}</text></svg>\n'
@@ -70,11 +90,19 @@ def generate(root=ROOT,codegen=None):
     block='''<!-- CPP_RECOMP_PROGRESS_START -->
 ![Playable recompilation](docs/assets/badge-playable.svg)
 
+[![Visual status map — observed portions and remaining work](docs/assets/cpp-status-map.svg)](docs/CPP_PROGRESS.md)
+
 **The playable recompilation is in development. No reliable global completion percentage is available yet.** 100% is reserved for the completed, playable PSP port across its explicitly agreed feature/mode scope, after required services and end-to-end validation pass.
 
 Benjamin has completed the first two story missions in the private Playtest. This is a tested milestone; full campaign coverage, PSP service behavior, stability and performance still need work. [Readiness definition and evidence](docs/CPP_PROGRESS.md).
 
-[![Playable recompilation readiness](docs/assets/cpp-progress.svg)](docs/CPP_PROGRESS.md)
+Green records show bounded observations; amber shows partial work; grey shows unvalidated scope. The visual stays visible; technical code-generation counters remain separate.
+
+### PSP code mosaic
+
+[![PSP code map — generated output, not gameplay completion](docs/assets/cpp-code-map.svg)](docs/CPP_CODEGEN.md)
+
+The dense map stays visible: each tile is one indexed PSP routine, grouped by module and sized by its original bytes. **Blue = generated and compiled; grey = not counted.** This is a technical code inventory, not functional completion. Green observations belong to the gameplay status map above.
 
 <details>
 <summary>Technical diagnostics — generated-code coverage, not finished-port progress</summary>
@@ -100,7 +128,9 @@ These two badges describe the same static inventory: original-byte-weighted tran
 
 Benjamin's current definition is **100% = a finished, playable PSP recompilation**, not simply source generation or successful object compilation. The original-game scope must be explicit and accepted: original features/modes are not silently dropped, while optional future PC enhancements are separate.
 
-![Playable recompilation readiness](assets/cpp-progress.svg)
+![Visual status map](assets/cpp-status-map.svg)
+
+A second, always-visible [dense PSP code mosaic](assets/cpp-code-map.svg) is shown in README and on the site. Its blue tiles describe generated/compiled routines and its areas follow original PSP byte sizes. It does not display a completion percentage or establish gameplay validation. The green cells in the functional map above describe bounded test observations.
 
 The working private build has a real milestone: Benjamin reports two story missions completed using normal controls. The migration also passed 35 bounded kernel checks. Neither establishes a percentage of the complete game validated.
 

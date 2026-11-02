@@ -15,11 +15,19 @@ C++20 is now the mainline of this independent project by **Benji Paname**, targe
 <!-- CPP_RECOMP_PROGRESS_START -->
 ![Playable recompilation](docs/assets/badge-playable.svg)
 
+[![Visual status map — observed portions and remaining work](docs/assets/cpp-status-map.svg)](docs/CPP_PROGRESS.md)
+
 **The playable recompilation is in development. No reliable global completion percentage is available yet.** 100% is reserved for the completed, playable PSP port across its explicitly agreed feature/mode scope, after required services and end-to-end validation pass.
 
 Benjamin has completed the first two story missions in the private Playtest. This is a tested milestone; full campaign coverage, PSP service behavior, stability and performance still need work. [Readiness definition and evidence](docs/CPP_PROGRESS.md).
 
-[![Playable recompilation readiness](docs/assets/cpp-progress.svg)](docs/CPP_PROGRESS.md)
+Green records show bounded observations; amber shows partial work; grey shows unvalidated scope. The visual stays visible; technical code-generation counters remain separate.
+
+### PSP code mosaic
+
+[![PSP code map — generated output, not gameplay completion](docs/assets/cpp-code-map.svg)](docs/CPP_CODEGEN.md)
+
+The dense map stays visible: each tile is one indexed PSP routine, grouped by module and sized by its original bytes. **Blue = generated and compiled; grey = not counted.** This is a technical code inventory, not functional completion. Green observations belong to the gameplay status map above.
 
 <details>
 <summary>Technical diagnostics — generated-code coverage, not finished-port progress</summary>

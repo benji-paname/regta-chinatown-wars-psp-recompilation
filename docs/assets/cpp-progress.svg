@@ -1,49 +1,106 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 460" role="img" aria-labelledby="title desc">
-<title id="title">Playable recompilation: readiness evidence, no global percentage</title>
-<desc id="desc">Qualitative gates. Amber means partial, grey means unverified, green means a gate has passed. Box sizes carry no completion weighting. Generated routines are a separate diagnostic.</desc>
-<rect width="1100" height="460" rx="8" fill="#16191c"/>
-<text x="22" y="34" fill="#f2c35b" font-size="21" font-family="Arial,sans-serif">Playable PSP recompilation — in development</text>
-<text x="22" y="58" fill="#c2c9d0" font-size="13" font-family="Arial,sans-serif">100% is reserved for the completed playable port. A reliable global percentage is not established.</text>
-<rect x="22" y="82" width="252" height="108" rx="5" fill="#232930" stroke="#424b55"/>
-<rect x="22" y="82" width="6" height="108" fill="#555b64"/>
-<text x="38" y="111" fill="#eef1f4" font-size="14" font-family="Arial,sans-serif">Original-game scope</text>
-<text x="38" y="140" fill="#555b64" font-size="13" font-family="Arial,sans-serif">UNVERIFIED</text>
-<text x="38" y="166" fill="#aeb7c1" font-size="11" font-family="Arial,sans-serif">Evidence: see validation ledger</text>
-<rect x="290" y="82" width="252" height="108" rx="5" fill="#232930" stroke="#424b55"/>
-<rect x="290" y="82" width="6" height="108" fill="#a8752f"/>
-<text x="306" y="111" fill="#eef1f4" font-size="14" font-family="Arial,sans-serif">Native translation</text>
-<text x="306" y="140" fill="#a8752f" font-size="13" font-family="Arial,sans-serif">PARTIAL</text>
-<text x="306" y="166" fill="#aeb7c1" font-size="11" font-family="Arial,sans-serif">Evidence: see validation ledger</text>
-<rect x="558" y="82" width="252" height="108" rx="5" fill="#232930" stroke="#424b55"/>
-<rect x="558" y="82" width="6" height="108" fill="#a8752f"/>
-<text x="574" y="111" fill="#eef1f4" font-size="14" font-family="Arial,sans-serif">PSP runtime services</text>
-<text x="574" y="140" fill="#a8752f" font-size="13" font-family="Arial,sans-serif">PARTIAL</text>
-<text x="574" y="166" fill="#aeb7c1" font-size="11" font-family="Arial,sans-serif">Evidence: see validation ledger</text>
-<rect x="826" y="82" width="252" height="108" rx="5" fill="#232930" stroke="#424b55"/>
-<rect x="826" y="82" width="6" height="108" fill="#a8752f"/>
-<text x="842" y="111" fill="#eef1f4" font-size="14" font-family="Arial,sans-serif">Campaign and activities</text>
-<text x="842" y="140" fill="#a8752f" font-size="13" font-family="Arial,sans-serif">PARTIAL</text>
-<text x="842" y="166" fill="#aeb7c1" font-size="11" font-family="Arial,sans-serif">Evidence: see validation ledger</text>
-<rect x="22" y="208" width="252" height="108" rx="5" fill="#232930" stroke="#424b55"/>
-<rect x="22" y="208" width="6" height="108" fill="#a8752f"/>
-<text x="38" y="237" fill="#eef1f4" font-size="14" font-family="Arial,sans-serif">Rendering and audio</text>
-<text x="38" y="266" fill="#a8752f" font-size="13" font-family="Arial,sans-serif">PARTIAL</text>
-<text x="38" y="292" fill="#aeb7c1" font-size="11" font-family="Arial,sans-serif">Evidence: see validation ledger</text>
-<rect x="290" y="208" width="252" height="108" rx="5" fill="#232930" stroke="#424b55"/>
-<rect x="290" y="208" width="6" height="108" fill="#a8752f"/>
-<text x="306" y="237" fill="#eef1f4" font-size="14" font-family="Arial,sans-serif">Controls and saves</text>
-<text x="306" y="266" fill="#a8752f" font-size="13" font-family="Arial,sans-serif">PARTIAL</text>
-<text x="306" y="292" fill="#aeb7c1" font-size="11" font-family="Arial,sans-serif">Evidence: see validation ledger</text>
-<rect x="558" y="208" width="252" height="108" rx="5" fill="#232930" stroke="#424b55"/>
-<rect x="558" y="208" width="6" height="108" fill="#a8752f"/>
-<text x="574" y="237" fill="#eef1f4" font-size="14" font-family="Arial,sans-serif">Stability and performance</text>
-<text x="574" y="266" fill="#a8752f" font-size="13" font-family="Arial,sans-serif">PARTIAL</text>
-<text x="574" y="292" fill="#aeb7c1" font-size="11" font-family="Arial,sans-serif">Evidence: see validation ledger</text>
-<rect x="826" y="208" width="252" height="108" rx="5" fill="#232930" stroke="#424b55"/>
-<rect x="826" y="208" width="6" height="108" fill="#a8752f"/>
-<text x="842" y="237" fill="#eef1f4" font-size="14" font-family="Arial,sans-serif">Reproducible local setup</text>
-<text x="842" y="266" fill="#a8752f" font-size="13" font-family="Arial,sans-serif">PARTIAL</text>
-<text x="842" y="292" fill="#aeb7c1" font-size="11" font-family="Arial,sans-serif">Evidence: see validation ledger</text>
-<text x="22" y="365" fill="#aeb7c1" font-size="12" font-family="Arial,sans-serif">Qualitative gates; equal boxes do not imply equal effort or an arithmetic completion score.</text>
-<rect x="22" y="389" width="1056" height="48" rx="5" fill="#203326"/>
-<text x="38" y="418" fill="#d8efdc" font-size="14" font-family="Arial,sans-serif">Bounded evidence: 2 owner-tested story missions · 35 kernel checks passed — broader validation remains open.</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 740" role="img" aria-labelledby="title desc">
+<title id="title">Playable PSP status map: observed portions and remaining work</title>
+<desc id="desc">Green cells show bounded test observations, amber cells show partial work and grey cells show unvalidated scope. A green observation is not full-system validation. Equal tiles are not weighted progress or a global percentage.</desc>
+<rect width="1100" height="740" rx="8" fill="#11161c"/>
+<text x="22" y="34" fill="#f2c35b" font-size="23" font-weight="bold" font-family="Arial,sans-serif">Playable build — visual status map</text>
+<text x="22" y="59" fill="#b8c4d0" font-size="13" font-family="Arial,sans-serif">What has been observed, what is partial, and what still needs validation.</text>
+<rect x="22" y="78" width="1056" height="54" rx="5" fill="#203b2a"/>
+<text x="38" y="101" fill="#dcefe0" font-size="15" font-weight="bold" font-family="Arial,sans-serif">Playable milestone: 2 story missions completed by Benjamin</text>
+<text x="38" y="120" fill="#aac8b2" font-size="12" font-family="Arial,sans-serif">Observed in those sequences: walking, swimming, driving, traffic, NPCs, police, mini-games, HUD, map and controller.</text>
+<rect x="22" y="154" width="252" height="226" rx="5" fill="#1d252e" stroke="#455260"/>
+<rect x="22" y="154" width="252" height="6" fill="#69727e"/>
+<text x="34" y="182" fill="#f0f3f6" font-size="14" font-family="Arial,sans-serif">PSP feature scope</text>
+<text x="34" y="214" fill="#69727e" font-size="10" font-weight="bold" font-family="Arial,sans-serif">UNVERIFIED</text>
+<rect x="31" y="226" width="234" height="64" rx="3" fill="#303842"/>
+<text x="39" y="243" fill="#b9d9c0" font-size="9" font-weight="bold" font-family="Arial,sans-serif">NO VALIDATED SCOPE RECORD</text>
+<text x="39" y="263" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">Original PSP feature list</text>
+<text x="39" y="279" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">pending</text>
+<rect x="31" y="299" width="234" height="69" rx="3" fill="#303842"/>
+<text x="39" y="317" fill="#e2c38b" font-size="9" font-weight="bold" font-family="Arial,sans-serif">REMAINING WORK</text>
+<text x="39" y="338" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">Original features and modes to</text>
+<text x="39" y="354" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">catalogue</text>
+<rect x="290" y="154" width="252" height="226" rx="5" fill="#1d252e" stroke="#455260"/>
+<rect x="290" y="154" width="252" height="6" fill="#c58e3c"/>
+<text x="302" y="182" fill="#f0f3f6" font-size="14" font-family="Arial,sans-serif">Native game code</text>
+<text x="302" y="214" fill="#c58e3c" font-size="10" font-weight="bold" font-family="Arial,sans-serif">PARTIAL</text>
+<rect x="299" y="226" width="234" height="64" rx="3" fill="#294e34"/>
+<text x="307" y="243" fill="#b9d9c0" font-size="9" font-weight="bold" font-family="Arial,sans-serif">OBSERVED IN TESTED SCOPE</text>
+<text x="307" y="263" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">250 generated units verified</text>
+<rect x="299" y="299" width="234" height="69" rx="3" fill="#3c3325"/>
+<text x="307" y="317" fill="#e2c38b" font-size="9" font-weight="bold" font-family="Arial,sans-serif">REMAINING WORK</text>
+<text x="307" y="338" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">One unsupported candidate to</text>
+<text x="307" y="354" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">review</text>
+<rect x="558" y="154" width="252" height="226" rx="5" fill="#1d252e" stroke="#455260"/>
+<rect x="558" y="154" width="252" height="6" fill="#c58e3c"/>
+<text x="570" y="182" fill="#f0f3f6" font-size="14" font-family="Arial,sans-serif">PSP services</text>
+<text x="570" y="214" fill="#c58e3c" font-size="10" font-weight="bold" font-family="Arial,sans-serif">PARTIAL</text>
+<rect x="567" y="226" width="234" height="64" rx="3" fill="#294e34"/>
+<text x="575" y="243" fill="#b9d9c0" font-size="9" font-weight="bold" font-family="Arial,sans-serif">OBSERVED IN TESTED SCOPE</text>
+<text x="575" y="263" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">35 bounded kernel checks passed</text>
+<rect x="567" y="299" width="234" height="69" rx="3" fill="#3c3325"/>
+<text x="575" y="317" fill="#e2c38b" font-size="9" font-weight="bold" font-family="Arial,sans-serif">REMAINING WORK</text>
+<text x="575" y="338" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">Required service behavior still</text>
+<text x="575" y="354" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">to validate</text>
+<rect x="826" y="154" width="252" height="226" rx="5" fill="#1d252e" stroke="#455260"/>
+<rect x="826" y="154" width="252" height="6" fill="#c58e3c"/>
+<text x="838" y="182" fill="#f0f3f6" font-size="14" font-family="Arial,sans-serif">Missions and activities</text>
+<text x="838" y="214" fill="#c58e3c" font-size="10" font-weight="bold" font-family="Arial,sans-serif">PARTIAL</text>
+<rect x="835" y="226" width="234" height="64" rx="3" fill="#294e34"/>
+<text x="843" y="243" fill="#b9d9c0" font-size="9" font-weight="bold" font-family="Arial,sans-serif">OBSERVED IN TESTED SCOPE</text>
+<text x="843" y="263" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">First two story missions</text>
+<text x="843" y="279" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">completed</text>
+<rect x="835" y="299" width="234" height="69" rx="3" fill="#3c3325"/>
+<text x="843" y="317" fill="#e2c38b" font-size="9" font-weight="bold" font-family="Arial,sans-serif">REMAINING WORK</text>
+<text x="843" y="338" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">Rest of campaign and activities</text>
+<text x="843" y="354" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">unvalidated</text>
+<rect x="22" y="400" width="252" height="226" rx="5" fill="#1d252e" stroke="#455260"/>
+<rect x="22" y="400" width="252" height="6" fill="#c58e3c"/>
+<text x="34" y="428" fill="#f0f3f6" font-size="14" font-family="Arial,sans-serif">Graphics and audio</text>
+<text x="34" y="460" fill="#c58e3c" font-size="10" font-weight="bold" font-family="Arial,sans-serif">PARTIAL</text>
+<rect x="31" y="472" width="234" height="64" rx="3" fill="#294e34"/>
+<text x="39" y="489" fill="#b9d9c0" font-size="9" font-weight="bold" font-family="Arial,sans-serif">OBSERVED IN TESTED SCOPE</text>
+<text x="39" y="509" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">Opening cutscenes observed</text>
+<rect x="31" y="545" width="234" height="69" rx="3" fill="#3c3325"/>
+<text x="39" y="563" fill="#e2c38b" font-size="9" font-weight="bold" font-family="Arial,sans-serif">REMAINING WORK</text>
+<text x="39" y="584" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">Wider PSP scene comparisons</text>
+<text x="39" y="600" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">still open</text>
+<rect x="290" y="400" width="252" height="226" rx="5" fill="#1d252e" stroke="#455260"/>
+<rect x="290" y="400" width="252" height="6" fill="#c58e3c"/>
+<text x="302" y="428" fill="#f0f3f6" font-size="14" font-family="Arial,sans-serif">Controls and saves</text>
+<text x="302" y="460" fill="#c58e3c" font-size="10" font-weight="bold" font-family="Arial,sans-serif">PARTIAL</text>
+<rect x="299" y="472" width="234" height="64" rx="3" fill="#294e34"/>
+<text x="307" y="489" fill="#b9d9c0" font-size="9" font-weight="bold" font-family="Arial,sans-serif">OBSERVED IN TESTED SCOPE</text>
+<text x="307" y="509" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">Controller and savedata observed</text>
+<rect x="299" y="545" width="234" height="69" rx="3" fill="#3c3325"/>
+<text x="307" y="563" fill="#e2c38b" font-size="9" font-weight="bold" font-family="Arial,sans-serif">REMAINING WORK</text>
+<text x="307" y="584" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">Broader device and save/load</text>
+<text x="307" y="600" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">regressions</text>
+<rect x="558" y="400" width="252" height="226" rx="5" fill="#1d252e" stroke="#455260"/>
+<rect x="558" y="400" width="252" height="6" fill="#c58e3c"/>
+<text x="570" y="428" fill="#f0f3f6" font-size="14" font-family="Arial,sans-serif">Stability and performance</text>
+<text x="570" y="460" fill="#c58e3c" font-size="10" font-weight="bold" font-family="Arial,sans-serif">PARTIAL</text>
+<rect x="567" y="472" width="234" height="64" rx="3" fill="#294e34"/>
+<text x="575" y="489" fill="#b9d9c0" font-size="9" font-weight="bold" font-family="Arial,sans-serif">OBSERVED IN TESTED SCOPE</text>
+<text x="575" y="509" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">Boot fixes work in tested</text>
+<text x="575" y="525" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">sequences</text>
+<rect x="567" y="545" width="234" height="69" rx="3" fill="#3c3325"/>
+<text x="575" y="563" fill="#e2c38b" font-size="9" font-weight="bold" font-family="Arial,sans-serif">REMAINING WORK</text>
+<text x="575" y="584" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">Dense driving: FPS and frame</text>
+<text x="575" y="600" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">pacing issues</text>
+<rect x="826" y="400" width="252" height="226" rx="5" fill="#1d252e" stroke="#455260"/>
+<rect x="826" y="400" width="252" height="6" fill="#c58e3c"/>
+<text x="838" y="428" fill="#f0f3f6" font-size="14" font-family="Arial,sans-serif">Local installation</text>
+<text x="838" y="460" fill="#c58e3c" font-size="10" font-weight="bold" font-family="Arial,sans-serif">PARTIAL</text>
+<rect x="835" y="472" width="234" height="64" rx="3" fill="#294e34"/>
+<text x="843" y="489" fill="#b9d9c0" font-size="9" font-weight="bold" font-family="Arial,sans-serif">OBSERVED IN TESTED SCOPE</text>
+<text x="843" y="509" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">Prepared Windows Playtest</text>
+<text x="843" y="525" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">launches</text>
+<rect x="835" y="545" width="234" height="69" rx="3" fill="#3c3325"/>
+<text x="843" y="563" fill="#e2c38b" font-size="9" font-weight="bold" font-family="Arial,sans-serif">REMAINING WORK</text>
+<text x="843" y="584" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">Fresh ISO-to-build setup not</text>
+<text x="843" y="600" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">packaged</text>
+<rect x="22" y="670" width="12" height="12" fill="#3fa34d"/><text x="42" y="681" fill="#d3dce5" font-size="12" font-family="Arial,sans-serif">Observed portion</text>
+<rect x="224" y="670" width="12" height="12" fill="#c58e3c"/><text x="244" y="681" fill="#d3dce5" font-size="12" font-family="Arial,sans-serif">Partial / open work</text>
+<rect x="444" y="670" width="12" height="12" fill="#69727e"/><text x="464" y="681" fill="#d3dce5" font-size="12" font-family="Arial,sans-serif">Not validated</text>
+<text x="22" y="709" fill="#a9b6c3" font-size="12" font-family="Arial,sans-serif">Green observations cover bounded tests, not the whole system. Tile sizes do not represent a completion percentage.</text>
+<text x="22" y="730" fill="#f2c35b" font-size="12" font-family="Arial,sans-serif">100% remains reserved for a finished, playable PSP port across the accepted scope.</text></svg>

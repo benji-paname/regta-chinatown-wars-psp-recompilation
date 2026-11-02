@@ -1,5 +1,11 @@
 # C++ mainline migration — 2026-11-02 (development milestone)
 
+## 2026-11-02 — Visible status map
+
+- Restored a prominent, always-visible visual status map in README and on the site.
+- Each system separates demonstrated test observations from remaining work; the global completion percentage stays unmeasured.
+- Added an always-visible dense PSP module/routine mosaic with blue compiled-output cells and no overall completion score.
+
 ## 2026-11-02 — Playable readiness replaces generated-code completion
 
 - Reserved overall 100% for a finished, playable PSP recompilation across the accepted scope. Global completion remains unmeasured.

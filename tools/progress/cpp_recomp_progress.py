@@ -109,24 +109,29 @@ def rectangles(items,x,y,w,h):
     return rectangles(first,x,y,w,h*ratio)+rectangles(second,x,y+h*ratio,w,h*(1-ratio))
 
 
-def treemap(result,routines):
+def treemap(result,routines,overview=False):
     grouped={}
     for module in result['modules']:grouped.setdefault(module['category'],[]).append(module)
     groups=[{'name':name,'weight':sum(m['bytes'] for m in modules),'modules':modules} for name,modules in grouped.items()]
     by_module={}
     for routine in routines:by_module.setdefault(routine['module'],[]).append(routine)
+    heading='PSP code map — generated compiler output, functionality not scored' if overview else 'Static PSP translation coverage: '+result['display_percent']+'%'
+    color='#4785b5' if overview else '#3fa34d'
+    style='<style>.recompiled{fill:COLOR}.remaining{fill:#555b64}.recompiled,.remaining{stroke:#26323d;stroke-width:.18}</style>'.replace('COLOR',color)
+    description='Blue: generated native bodies with compiled-object evidence. Grey: not yet counted. No per-routine gameplay validation is implied. Module area follows original PSP byte size.' if overview else 'Main executable and 166 European PSP overlays. Green: original routine has a matching compiled C++ body without a known unsupported operation. Grey: not yet counted. Static coverage only; runtime fidelity and PSP HLE services are separate.'
     out=['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 730" role="img" aria-labelledby="title desc">',
-         '<title id="title">Static PSP translation coverage: '+result['display_percent']+'%, weighted by original code size</title>',
-         '<desc id="desc">Main executable and 166 European PSP overlays. Green: original routine has a matching compiled C++ body without a known unsupported operation. Grey: not yet counted. Static coverage only; runtime fidelity and PSP HLE services are separate.</desc>',
-         '<style>.recompiled{fill:#3fa34d}.remaining{fill:#555b64}.recompiled,.remaining{stroke:#28332b;stroke-width:.18}</style><rect width="1100" height="730" fill="#16191c"/>',
-         f'<text x="14" y="27" fill="#e6e8ea" font-size="16" font-family="Verdana,sans-serif">Static PSP translation coverage: {result["display_percent"]}%</text>',
+         '<title id="title">'+heading+'</title>',
+         '<desc id="desc">'+description+'</desc>',
+         style+'<rect width="1100" height="730" fill="#16191c"/>',
+         f'<text x="14" y="27" fill="#e6e8ea" font-size="16" font-family="Verdana,sans-serif">{heading}</text>',
          f'<text x="14" y="50" fill="#bac5cf" font-size="12" font-family="Verdana,sans-serif">{result["recompiled_routines"]:,} / {result["routines"]:,} routines · weighted by original PSP bytes · ELF + 166 overlays</text>']
     for group,x,y,w,h in rectangles(sorted(groups,key=lambda g:-g['weight']),12,65,1076,596):
         summary=summarise([r for m in group['modules'] for r in by_module[m['name']]])
         out.append(f'<rect x="{x:.2f}" y="{y:.2f}" width="{w:.2f}" height="{h:.2f}" fill="#24282d" stroke="#87909a"/>')
-        label=group['name']+' '+summary['display_percent']+'%'
+        suffix='' if overview else ' '+summary['display_percent']+'%'
+        label=group['name']+suffix
         capacity=max(3,int((w-8)/5.8))
-        if len(label)>capacity:label=group['name'].replace(' overlays','')+' '+summary['display_percent']+'%'
+        if len(label)>capacity:label=group['name'].replace(' overlays','')+suffix
         if len(label)>capacity:label=label[:capacity-1]+'…'
         out.append(f'<text x="{x+4:.2f}" y="{y+16:.2f}" fill="#fff" font-size="11" font-family="Verdana,sans-serif">{html.escape(label)}</text>')
         modules=[dict(m,weight=m['bytes']) for m in group['modules']]
@@ -144,7 +149,9 @@ def treemap(result,routines):
     out+=['<rect x="14" y="678" width="12" height="12" fill="#3fa34d"/><text x="34" y="689" fill="#d3dde5" font-size="12" font-family="Verdana,sans-serif">Recompiled + compiled</text>',
           '<rect x="240" y="678" width="12" height="12" fill="#555b64"/><text x="260" y="689" fill="#d3dde5" font-size="12" font-family="Verdana,sans-serif">Not yet counted</text>',
           f'<text x="14" y="713" fill="#bac5cf" font-size="12" font-family="Verdana,sans-serif">{result["routines"]-result["recompiled_routines"]} candidate excluded · static recompilation coverage, not a gameplay completion score.</text></svg>']
-    return '\n'.join(out)+'\n'
+    svg='\n'.join(out)+'\n'
+    if overview:svg=svg.replace('fill="#3fa34d"','fill="#4785b5"').replace('>Recompiled + compiled</text>','>Generated + compiled</text>').replace('static recompilation coverage, not a gameplay completion score.','technical inventory only; gameplay validation remains a separate task.')
+    return svg
 
 
 def badge(label,value,width):
@@ -155,6 +162,7 @@ def generate(root=ROOT):
     result,routines=measure(root);assets=root/'docs/assets'
     (assets/'cpp-codegen-progress.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
     (assets/'cpp-codegen-progress.svg').write_text(treemap(result,routines),encoding='utf-8')
+    (assets/'cpp-code-map.svg').write_text(treemap(result,routines,overview=True),encoding='utf-8')
     (assets/'badge-cpp-recomp.svg').write_text(badge('Static PSP translation coverage',result['display_percent']+'%',318),encoding='utf-8')
     (assets/'badge-cpp-routines.svg').write_text(badge('Translated candidates',f"{result['recompiled_routines']} / {result['routines']}",236),encoding='utf-8')
     rows=['| PSP module | Original bytes | Recompiled bytes | Routines recompiled |','| --- | ---: | ---: | ---: |']

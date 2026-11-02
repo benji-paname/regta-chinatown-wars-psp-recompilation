@@ -1,6 +1,6 @@
 {
-  "checked_at": "2026-11-02T00:33:31+00:00",
-  "task": "Separate generated-code coverage from finished playable recompilation progress",
+  "checked_at": "2026-11-02T00:52:18+00:00",
+  "task": "Restore prominent visual playable-port status without misleading completion percentages",
   "repositories": [
     {
       "id": "ctw-native",

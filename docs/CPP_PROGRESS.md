@@ -4,7 +4,9 @@
 
 Benjamin's current definition is **100% = a finished, playable PSP recompilation**, not simply source generation or successful object compilation. The original-game scope must be explicit and accepted: original features/modes are not silently dropped, while optional future PC enhancements are separate.
 
-![Playable recompilation readiness](assets/cpp-progress.svg)
+![Visual status map](assets/cpp-status-map.svg)
+
+A second, always-visible [dense PSP code mosaic](assets/cpp-code-map.svg) is shown in README and on the site. Its blue tiles describe generated/compiled routines and its areas follow original PSP byte sizes. It does not display a completion percentage or establish gameplay validation. The green cells in the functional map above describe bounded test observations.
 
 The working private build has a real milestone: Benjamin reports two story missions completed using normal controls. The migration also passed 35 bounded kernel checks. Neither establishes a percentage of the complete game validated.
 
