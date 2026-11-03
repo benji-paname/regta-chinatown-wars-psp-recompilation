@@ -24,7 +24,7 @@ All gates below must have documented passing evidence, the original-game scope m
 | Native translation | partial | 250 generated units verified; one unsupported candidate remains excluded. This only establishes static coverage. |
 | PSP runtime services | partial | 35 bounded kernel checks pass. 203/252 source bindings are not proof of complete required PSP service behavior. |
 | Campaign and activities | partial | Benjamin reports five story missions completed consecutively (up to 'The Wheelman') and a taxi side activity. Remaining missions and secondary activities lack comprehensive validation. |
-| Rendering and audio | partial | Observed in tested sequences; broader PSP rendering/audio comparisons remain open. |
+| Rendering and audio | partial | HD texture replacement validated in native C++20 gameplay by Benjamin (3 Nov 2026): toggling Original PSP <-> HD Upscaled without crash, visible improvements on minimap, texts, and HUD, and setting persistence across restarts. Broader pack coverage, behavior without pack, PSP lighting, and 60 FPS flickering remain open. See docs/HD_VALIDATION.md. |
 | Controls and saves | partial | Controller, keyboard, and savedata persistence (saving and reloading progress across sessions) verified in Benjamin's playtest. Broader device configurations remain open. |
 | Stability and performance | partial | Boot synchronization fixes are integrated; dense-driving frametimes remain irregular and repeatability needs broader testing. |
 | Reproducible local setup | partial | The prepared Windows Playtest works; a complete documented fresh local setup from the owner ISO remains to be packaged. |

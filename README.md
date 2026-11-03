@@ -39,6 +39,8 @@ These two badges describe the same static inventory: original-byte-weighted tran
 </details>
 <!-- CPP_RECOMP_PROGRESS_END -->
 
+**HD texture validation (3 November 2026, v0.2.0-alpha):** the HD texture replacement system is now officially validated in native C++20 gameplay by Benjamin (Owner Playtest). The test confirmed live toggling between Original PSP and HD Upscaled without crash, visible HD enhancements on the minimap, texts, and HUD, and setting persistence in `ctw.ini` across game restarts. Full texture pack coverage, fallback behavior without pack, PSP lighting, and 60 FPS flickering remain under active development. [Evidence, limits and test scope](docs/HD_VALIDATION.md).
+
 ## Playable progress, with clear limits
 
 **Benjamin reports completing five story missions (up to 'The Wheelman') and a taxi activity in the private PC Playtest using normal controls.** His test covered cinematics/dialogue, walking/swimming, driving/traffic, police/NPC interactions, window-breaking and vehicle-start mini-games, HUD/map, controller input, and verified save/reload persistence. These are observations from tested sequences, not a claim that every system or mission is finished.

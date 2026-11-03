@@ -1,3 +1,14 @@
+# 2026-11-03 — HD replacement integration & gameplay validation (v0.2.0-alpha)
+
+- **Official gameplay validation by Benjamin (3 November 2026)**:
+  - Live toggling between Original PSP and HD Upscaled textures from the in-game PC menu without crash: **PASS**.
+  - Visible HD enhancements confirmed on the minimap, game texts, and HUD: **PASS**.
+  - Configuration persistence (`hd_textures = 1`) in `ctw.ini` across game exit and restart: **PASS**.
+- Integrated stabilized PC options menu, savedata modal dialog, and texture replacement subsystem into the canonical 32-component native C++20 build.
+- Secured validated functional engine in `outputs/ReGTA-CTW-Playtest/ctw_game.exe` (SHA256: `6B48A3B29DD4DE510FD2A38E6DDD5BCB16BE2D1DAAF196781264DD96E5C1A7DA`) with dedicated backup in `binary-backups/`.
+- Development version remains `v0.2.0-alpha`; next milestone `v0.3.0-alpha` pending PSP lighting validation.
+- Clear non-claims: not all game textures are improved; behavior when HD pack is absent, PSP lighting fidelity, and 60 FPS flickering remain open. See [validation report](docs/HD_VALIDATION.md).
+
 # C++ mainline migration — 2026-11-02 (development milestone)
 
 ## 2026-11-02 — Visible status map

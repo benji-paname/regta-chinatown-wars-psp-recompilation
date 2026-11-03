@@ -59,11 +59,12 @@
 <text x="34" y="460" fill="#c58e3c" font-size="10" font-weight="bold" font-family="Arial,sans-serif">PARTIAL</text>
 <rect x="31" y="472" width="234" height="64" rx="3" fill="#294e34"/>
 <text x="39" y="489" fill="#b9d9c0" font-size="9" font-weight="bold" font-family="Arial,sans-serif">OBSERVED IN TESTED SCOPE</text>
-<text x="39" y="509" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">Opening cutscenes observed</text>
+<text x="39" y="509" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">Opening cutscenes; HD minimap,</text>
+<text x="39" y="525" fill="#e0eee4" font-size="11" font-family="Arial,sans-serif">HUD, texts and safehouse toggle</text>
 <rect x="31" y="545" width="234" height="69" rx="3" fill="#3c3325"/>
 <text x="39" y="563" fill="#e2c38b" font-size="9" font-weight="bold" font-family="Arial,sans-serif">REMAINING WORK</text>
-<text x="39" y="584" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">Wider PSP scene comparisons</text>
-<text x="39" y="600" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">still open</text>
+<text x="39" y="584" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">Broader texture coverage, PSP</text>
+<text x="39" y="600" fill="#d0c9bc" font-size="11" font-family="Arial,sans-serif">lighting, 60 FPS and wider scene</text>
 <rect x="290" y="400" width="252" height="226" rx="5" fill="#1d252e" stroke="#455260"/>
 <rect x="290" y="400" width="252" height="6" fill="#c58e3c"/>
 <text x="302" y="428" fill="#f0f3f6" font-size="14" font-family="Arial,sans-serif">Controls and saves</text>
